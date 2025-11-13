@@ -1,6 +1,8 @@
 import { SandboxType as Sandbox } from '@/lib/sandbox'
-import { AgentExecutionResult } from './index'
+
 import { SafeCommandExecutor } from './utils'
+
+import { AgentExecutionResult } from './index'
 
 export async function executeQwenInSandbox(
   sandbox: Sandbox,

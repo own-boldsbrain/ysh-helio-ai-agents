@@ -221,15 +221,15 @@ Nenhuma mudança no código é necessária - a abstração é compatível com am
 
 ## Comparação Vercel vs Docker
 
-| Recurso | Vercel Sandbox | Docker Sandbox |
-|---------|---------------|----------------|
-| Custo | Pago (após free tier) | Gratuito |
-| Setup | Rápido (só credenciais) | Requer build de imagem |
-| Performance | Alta (servidores Vercel) | Depende do host |
-| Isolamento | Total (cloud) | Processo isolado (local) |
-| Customização | Limitada | Total |
-| Offline | Não | Sim |
-| Rede | Vercel Edge | Rede Docker local |
+| Recurso      | Vercel Sandbox           | Docker Sandbox           |
+| ------------ | ------------------------ | ------------------------ |
+| Custo        | Pago (após free tier)    | Gratuito                 |
+| Setup        | Rápido (só credenciais)  | Requer build de imagem   |
+| Performance  | Alta (servidores Vercel) | Depende do host          |
+| Isolamento   | Total (cloud)            | Processo isolado (local) |
+| Customização | Limitada                 | Total                    |
+| Offline      | Não                      | Sim                      |
+| Rede         | Vercel Edge              | Rede Docker local        |
 
 ## Próximos Passos
 
@@ -305,6 +305,7 @@ SANDBOX_DOCKER_IMAGE=coding-agent-sandbox:python
 ```
 
 Inclui:
+
 - Python 3.12
 - NumPy, Pandas, Matplotlib, Scikit-learn
 - Flask, FastAPI, Uvicorn
@@ -319,6 +320,7 @@ SANDBOX_DOCKER_IMAGE=coding-agent-sandbox:java
 ```
 
 Inclui:
+
 - OpenJDK 21 (Eclipse Temurin)
 - Maven 3.9.6
 - Gradle 8.5
@@ -332,6 +334,7 @@ SANDBOX_DOCKER_IMAGE=coding-agent-sandbox:nodejs
 ```
 
 Inclui:
+
 - Node.js 20
 - pnpm, yarn, npm
 - TypeScript, tsx, ts-node

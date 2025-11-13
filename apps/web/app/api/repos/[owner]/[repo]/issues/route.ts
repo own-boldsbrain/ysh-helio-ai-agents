@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+
 import { getOctokit } from '@/lib/github/client'
 
 export async function GET(request: NextRequest, context: { params: Promise<{ owner: string; repo: string }> }) {

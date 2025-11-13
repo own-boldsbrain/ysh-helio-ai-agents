@@ -1,0 +1,91 @@
+{
+  "dashboard": {
+    "title": "Cost Analysis - Cloud vs Local Agents",
+    "uid": "cost-analysis",
+    "timezone": "browser",
+    "schemaVersion": 30,
+    "panels": [
+      {
+        "id": 1,
+        "title": "Monthly Cost Breakdown",
+        "type": "piechart",
+        "targets": [
+          {
+            "expr": "sum(agent_cost_total{type='cloud'}) by (provider)",
+            "legendFormat": "{{provider}}"
+          }
+        ],
+        "gridPos": {
+          "x": 0,
+          "y": 0,
+          "w": 12,
+          "h": 8
+        }
+      },
+      {
+        "id": 2,
+        "title": "Cost Savings with Ollama",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "sum(agent_cost_total{type='cloud'})",
+            "legendFormat": "Cloud Costs"
+          },
+          {
+            "expr": "sum(agent_cost_total{type='local'})",
+            "legendFormat": "Local Costs"
+          },
+          {
+            "expr": "sum(agent_cost_total{type='cloud'}) - sum(agent_cost_total{type='local'})",
+            "legendFormat": "Savings"
+          }
+        ],
+        "gridPos": {
+          "x": 12,
+          "y": 0,
+          "w": 12,
+          "h": 8
+        }
+      },
+      {
+        "id": 3,
+        "title": "Cost per Task",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(agent_cost_total) / sum(agent_tasks_completed_total)",
+            "legendFormat": "Average Cost"
+          }
+        ],
+        "gridPos": {
+          "x": 0,
+          "y": 8,
+          "w": 6,
+          "h": 4
+        }
+      },
+      {
+        "id": 4,
+        "title": "Projected Monthly Savings",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "(sum(agent_cost_total{type='cloud'}) - sum(agent_cost_total{type='local'})) * 30",
+            "legendFormat": "Monthly Savings"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "currencyUSD"
+          }
+        },
+        "gridPos": {
+          "x": 6,
+          "y": 8,
+          "w": 6,
+          "h": 4
+        }
+      }
+    ]
+  }
+}

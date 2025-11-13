@@ -1,6 +1,9 @@
 'use client'
 
+import { Loader2, AlertTriangle } from 'lucide-react'
 import { useState } from 'react'
+import { toast } from 'sonner'
+
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -12,8 +15,6 @@ import {
 } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { toast } from 'sonner'
-import { Loader2, AlertTriangle } from 'lucide-react'
 
 interface MergePRDialogProps {
   taskId: string

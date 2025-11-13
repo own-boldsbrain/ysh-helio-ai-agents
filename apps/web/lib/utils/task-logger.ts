@@ -1,6 +1,8 @@
+import { eq } from 'drizzle-orm'
+
 import { db } from '@/lib/db/client'
 import { tasks } from '@/lib/db/schema'
-import { eq } from 'drizzle-orm'
+
 import { createInfoLog, createCommandLog, createErrorLog, createSuccessLog, LogEntry } from './logging'
 
 export class TaskLogger {

@@ -1,4 +1,5 @@
 import { Octokit } from '@octokit/rest'
+
 import { getUserGitHubToken } from './user-token'
 
 /**

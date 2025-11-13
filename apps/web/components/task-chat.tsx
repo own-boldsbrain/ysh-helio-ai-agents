@@ -1,10 +1,6 @@
 'use client'
 
-import { TaskMessage, Task } from '@/lib/db/schema'
-import { useState, useEffect, useRef, useCallback, Children, isValidElement } from 'react'
-import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
+import { useAtom } from 'jotai'
 import {
   ArrowUp,
   Loader2,
@@ -19,11 +15,16 @@ import {
   MoreVertical,
   MessageSquare,
 } from 'lucide-react'
+import { useState, useEffect, useRef, useCallback, Children, isValidElement } from 'react'
 import { toast } from 'sonner'
 import { Streamdown } from 'streamdown'
-import { useAtom } from 'jotai'
-import { taskChatInputAtomFamily } from '@/lib/atoms/task'
+
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Textarea } from '@/components/ui/textarea'
+import { taskChatInputAtomFamily } from '@/lib/atoms/task'
+import { TaskMessage, Task } from '@/lib/db/schema'
 
 interface TaskChatProps {
   taskId: string

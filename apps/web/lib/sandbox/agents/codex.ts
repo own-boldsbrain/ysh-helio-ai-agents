@@ -1,9 +1,11 @@
 import { Sandbox } from '@vercel/sandbox'
-import { runInProject, PROJECT_DIR } from '../commands'
-import { AgentExecutionResult } from '../types'
+
+import { connectors } from '@/lib/db/schema'
 import { redactSensitiveInfo } from '@/lib/utils/logging'
 import { TaskLogger } from '@/lib/utils/task-logger'
-import { connectors } from '@/lib/db/schema'
+
+import { runInProject, PROJECT_DIR } from '../commands'
+import { AgentExecutionResult } from '../types'
 import { SafeCommandExecutor } from './utils'
 
 type Connector = typeof connectors.$inferSelect

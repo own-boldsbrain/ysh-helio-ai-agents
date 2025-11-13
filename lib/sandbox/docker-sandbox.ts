@@ -46,7 +46,7 @@ export class DockerSandbox implements SandboxType {
   static async create(options: SandboxCreateOptions): Promise<DockerSandbox> {
     const sandboxId = `sandbox-${randomBytes(8).toString('hex')}`
     const ports = options.ports || [3000]
-    
+
     // Create persistent volume for project data
     const volumeName = `${sandboxId}-data`
     try {
@@ -54,10 +54,10 @@ export class DockerSandbox implements SandboxType {
     } catch (error) {
       console.error('Failed to create volume:', error)
     }
-    
+
     // Build port mappings for Docker
-    const portMappings = ports.map(p => `-p ${p}:${p}`).join(' ')
-    
+    const portMappings = ports.map((p) => `-p ${p}:${p}`).join(' ')
+
     // Prepare environment variables
     const envVars: string[] = []
     if (options.source) {
@@ -69,16 +69,16 @@ export class DockerSandbox implements SandboxType {
         envVars.push(`-e GIT_DEPTH=${options.source.depth}`)
       }
     }
-    
+
     // Add resource limits
     const memoryLimit = process.env.SANDBOX_MEMORY_LIMIT || '2g'
     const cpuLimit = process.env.SANDBOX_CPU_LIMIT || '2'
     const resourceLimits = `--memory=${memoryLimit} --cpus=${cpuLimit}`
-    
+
     // Create and start container
     const dockerImage = process.env.SANDBOX_DOCKER_IMAGE || 'coding-agent-sandbox:latest'
     const networkName = process.env.DOCKER_NETWORK || 'coding-agent-network'
-    
+
     try {
       // Ensure network exists
       try {
@@ -86,23 +86,23 @@ export class DockerSandbox implements SandboxType {
       } catch {
         await execAsync(`docker network create ${networkName}`)
       }
-      
+
       // Run container with volume mount and resource limits
       let finalCommand = `docker run -d --name ${sandboxId} --network ${networkName} ${portMappings} ${resourceLimits} -v ${volumeName}:/workspace ${envVars.join(' ')} ${dockerImage}`
-      
+
       if (options.source) {
         // Add init script to clone repo
         finalCommand += ` /bin/sh -c "git clone --depth ${options.source.depth || 1} -b ${options.source.revision || 'main'} ${options.source.url} /workspace/project && tail -f /dev/null"`
       } else {
         finalCommand += ' tail -f /dev/null'
       }
-      
+
       const { stdout } = await execAsync(finalCommand)
       const containerId = stdout.trim()
-      
+
       const sandbox = new DockerSandbox(sandboxId, containerId, ports, volumeName)
       activeContainers.set(sandboxId, sandbox)
-      
+
       return sandbox
     } catch (error) {
       // Cleanup volume on failure
@@ -119,29 +119,29 @@ export class DockerSandbox implements SandboxType {
     if (existing) {
       return existing
     }
-    
+
     // Try to find existing container
     try {
       const { stdout } = await execAsync(`docker ps -q -f name=${options.sandboxId}`)
       const containerId = stdout.trim()
-      
+
       if (!containerId) {
         throw new Error(`Container ${options.sandboxId} not found`)
       }
-      
+
       // Get port mappings
       const { stdout: portsOut } = await execAsync(
-        `docker inspect --format='{{range $p, $conf := .NetworkSettings.Ports}}{{$p}} {{end}}' ${containerId}`
+        `docker inspect --format='{{range $p, $conf := .NetworkSettings.Ports}}{{$p}} {{end}}' ${containerId}`,
       )
       const ports = portsOut
         .split(' ')
-        .filter(p => p.includes('tcp'))
-        .map(p => parseInt(p.split('/')[0]))
-        .filter(p => !isNaN(p))
-      
+        .filter((p) => p.includes('tcp'))
+        .map((p) => parseInt(p.split('/')[0]))
+        .filter((p) => !isNaN(p))
+
       const sandbox = new DockerSandbox(options.sandboxId, containerId, ports.length > 0 ? ports : [3000])
       activeContainers.set(options.sandboxId, sandbox)
-      
+
       return sandbox
     } catch (error) {
       throw new Error(`Failed to get Docker sandbox: ${error}`)
@@ -153,29 +153,29 @@ export class DockerSandbox implements SandboxType {
       return {
         success: false,
         output: '',
-        error: 'Container not initialized'
+        error: 'Container not initialized',
       }
     }
-    
+
     const workDir = options.cwd || this.projectDir
     const fullCommand = [options.cmd, ...options.args].join(' ')
     const escapedCommand = fullCommand.replace(/"/g, '\\"')
-    
+
     try {
       const { stdout, stderr } = await execAsync(
-        `docker exec -w ${workDir} ${this.containerId} /bin/sh -c "${escapedCommand}"`
+        `docker exec -w ${workDir} ${this.containerId} /bin/sh -c "${escapedCommand}"`,
       )
-      
+
       return {
         success: true,
-        output: stdout || stderr || ''
+        output: stdout || stderr || '',
       }
     } catch (error: unknown) {
       const err = error as { stdout?: string; stderr?: string; message?: string }
       return {
         success: false,
         output: err.stdout || '',
-        error: err.stderr || err.message || 'Command execution failed'
+        error: err.stderr || err.message || 'Command execution failed',
       }
     }
   }
@@ -184,18 +184,18 @@ export class DockerSandbox implements SandboxType {
     if (!this.containerId) {
       return
     }
-    
+
     try {
       // Stop and remove container
       await execAsync(`docker stop ${this.containerId}`)
       await execAsync(`docker rm ${this.containerId}`)
-      
+
       // Optionally remove volume (configurable)
       const keepVolume = process.env.SANDBOX_KEEP_VOLUME === 'true'
       if (!keepVolume && this.volumeName) {
         await execAsync(`docker volume rm ${this.volumeName}`)
       }
-      
+
       // Remove from active containers
       activeContainers.delete(this.sandboxId)
     } catch (error) {
@@ -214,7 +214,7 @@ export class DockerSandbox implements SandboxType {
     try {
       // Get container stats (single snapshot)
       const { stdout } = await execAsync(
-        `docker stats ${this.containerId} --no-stream --format "{{.CPUPerc}},{{.MemUsage}},{{.NetIO}}"`
+        `docker stats ${this.containerId} --no-stream --format "{{.CPUPerc}},{{.MemUsage}},{{.NetIO}}"`,
       )
 
       const [cpuStr, memStr, netStr] = stdout.trim().split(',')
@@ -247,9 +247,7 @@ export class DockerSandbox implements SandboxType {
       let diskUsage = 0
       if (this.volumeName) {
         try {
-          const { stdout: duOut } = await execAsync(
-            `docker exec ${this.containerId} du -sm /workspace | cut -f1`
-          )
+          const { stdout: duOut } = await execAsync(`docker exec ${this.containerId} du -sm /workspace | cut -f1`)
           diskUsage = Number.parseInt(duOut.trim(), 10)
         } catch {
           diskUsage = 0

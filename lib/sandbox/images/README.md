@@ -11,6 +11,7 @@ This directory contains optimized Dockerfile definitions for specialized develop
 **Size**: ~762MB
 
 Lightweight base image with:
+
 - Node.js 20 (Alpine)
 - Python 3, pip
 - Git, bash, curl, openssh
@@ -26,6 +27,7 @@ Lightweight base image with:
 **Size**: ~2.5GB
 
 Optimized for Python development with:
+
 - Python 3.12 (Debian Slim)
 - Scientific computing: NumPy, Pandas, Matplotlib, Scikit-learn
 - Web frameworks: Flask, FastAPI, Uvicorn
@@ -43,6 +45,7 @@ Optimized for Python development with:
 **Size**: ~1.8GB
 
 Optimized for Java development with:
+
 - OpenJDK 21 (Eclipse Temurin)
 - Maven 3.9.6 with pre-configured cache
 - Gradle 8.5 with pre-configured cache
@@ -58,6 +61,7 @@ Optimized for Java development with:
 **Size**: ~1.2GB
 
 Optimized for modern Node.js/TypeScript development with:
+
 - Node.js 20 (Debian Slim)
 - Package managers: pnpm (with store cache), yarn, npm
 - TypeScript tooling: tsx, ts-node, typescript
@@ -186,16 +190,16 @@ SANDBOX_CPU_LIMIT=4
 
 ## Comparison
 
-| Feature | Base | Python | Java | Node.js |
-|---------|------|--------|------|---------|
-| Size | ~762MB | ~2.5GB | ~1.8GB | ~1.2GB |
-| Node.js | ✅ | ✅ | ✅ | ✅ |
-| Python | Basic | Full | Basic | Basic |
-| Java | ❌ | ❌ | Full | ❌ |
-| Scientific Libs | ❌ | ✅ | ❌ | ❌ |
-| Build Tools | Basic | Full | Maven+Gradle | Full |
-| Package Cache | ❌ | ✅ | ✅ | ✅ |
-| Best For | General | Data/ML | Enterprise | Web |
+| Feature         | Base    | Python  | Java         | Node.js |
+| --------------- | ------- | ------- | ------------ | ------- |
+| Size            | ~762MB  | ~2.5GB  | ~1.8GB       | ~1.2GB  |
+| Node.js         | ✅      | ✅      | ✅           | ✅      |
+| Python          | Basic   | Full    | Basic        | Basic   |
+| Java            | ❌      | ❌      | Full         | ❌      |
+| Scientific Libs | ❌      | ✅      | ❌           | ❌      |
+| Build Tools     | Basic   | Full    | Maven+Gradle | Full    |
+| Package Cache   | ❌      | ✅      | ✅           | ✅      |
+| Best For        | General | Data/ML | Enterprise   | Web     |
 
 ## Troubleshooting
 
@@ -204,6 +208,7 @@ SANDBOX_CPU_LIMIT=4
 **Issue**: "failed to solve with frontend dockerfile.v0"
 
 **Solution**: Enable BuildKit:
+
 ```bash
 export DOCKER_BUILDKIT=1
 ```
@@ -213,6 +218,7 @@ export DOCKER_BUILDKIT=1
 **Issue**: "no space left on device"
 
 **Solution**: Clean up unused images and cache:
+
 ```bash
 docker system prune -a
 docker builder prune
@@ -223,6 +229,7 @@ docker builder prune
 **Issue**: Builds taking too long
 
 **Solutions**:
+
 1. Ensure BuildKit is enabled
 2. Use `--cache-from` for layer reuse
 3. Check Docker Desktop resources (Settings → Resources)
@@ -233,6 +240,7 @@ docker builder prune
 **Issue**: Package fails to install during build
 
 **Solutions**:
+
 1. Check package name and version
 2. Verify network connectivity during build
 3. Clear Docker build cache: `docker builder prune -a`

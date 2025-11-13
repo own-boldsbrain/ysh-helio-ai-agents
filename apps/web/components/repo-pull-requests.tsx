@@ -1,11 +1,17 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Label } from '@/components/ui/label'
+import { GitPullRequest, Calendar, MessageSquare, MoreHorizontal, X, ListTodo } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
+
+import Claude from '@/components/logos/claude'
+import Codex from '@/components/logos/codex'
+import Copilot from '@/components/logos/copilot'
+import Cursor from '@/components/logos/cursor'
+import Gemini from '@/components/logos/gemini'
+import OpenCode from '@/components/logos/opencode'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,6 +22,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
   DialogContent,
@@ -24,17 +34,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Label } from '@/components/ui/label'
-import { GitPullRequest, Calendar, MessageSquare, MoreHorizontal, X, ListTodo } from 'lucide-react'
-import { toast } from 'sonner'
-import Claude from '@/components/logos/claude'
-import Codex from '@/components/logos/codex'
-import Copilot from '@/components/logos/copilot'
-import Cursor from '@/components/logos/cursor'
-import Gemini from '@/components/logos/gemini'
-import OpenCode from '@/components/logos/opencode'
 
 const CODING_AGENTS = [
   { value: 'claude', label: 'Claude', icon: Claude },

@@ -57,6 +57,7 @@ export async function GET(req: NextRequest): Promise<Response> {
 export async function POST(req: NextRequest): Promise<Response> {
   // Check if user is authenticated with Vercel first
   const session = await getSessionFromReq(req)
+  const baseUrl = process.env.NEXTAUTH_URL || req.nextUrl.origin
   if (!session?.user) {
     return Response.json({ error: 'Not authenticated' }, { status: 401 })
   }

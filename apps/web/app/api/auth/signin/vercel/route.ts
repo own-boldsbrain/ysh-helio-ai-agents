@@ -1,8 +1,9 @@
-import { type NextRequest } from 'next/server'
-import { cookies } from 'next/headers'
-import { isRelativeUrl } from '@/lib/utils/is-relative-url'
 import { CodeChallengeMethod, OAuth2Client, generateCodeVerifier, generateState } from 'arctic'
+import { cookies } from 'next/headers'
+import { type NextRequest } from 'next/server'
+
 import { getBaseUrl } from '@/lib/utils'
+import { isRelativeUrl } from '@/lib/utils/is-relative-url'
 
 export async function POST(req: NextRequest): Promise<Response> {
   const baseUrl = getBaseUrl(req)

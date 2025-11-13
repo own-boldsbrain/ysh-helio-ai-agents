@@ -1,12 +1,18 @@
 'use client'
 
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { Loader2, ArrowUp, Settings, X, Cable, Users } from 'lucide-react'
+import { useSearchParams } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
+import { toast } from 'sonner'
+
+import { ConnectorDialog } from '@/components/connectors/manage-connectors'
+import { useConnectors } from '@/components/connectors-provider'
+import { Claude, Codex, Copilot, Cursor, Gemini, OpenCode } from '@/components/logos'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,18 +20,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { Loader2, ArrowUp, Settings, X, Cable, Users } from 'lucide-react'
-import { Claude, Codex, Copilot, Cursor, Gemini, OpenCode } from '@/components/logos'
-import { setInstallDependencies, setMaxDuration, setKeepAlive } from '@/lib/utils/cookies'
-import { useConnectors } from '@/components/connectors-provider'
-import { ConnectorDialog } from '@/components/connectors/manage-connectors'
-import { toast } from 'sonner'
-import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { taskPromptAtom } from '@/lib/atoms/task'
 import { lastSelectedAgentAtom, lastSelectedModelAtomFamily } from '@/lib/atoms/agent-selection'
 import { githubReposAtomFamily } from '@/lib/atoms/github-cache'
-import { useSearchParams } from 'next/navigation'
+import { taskPromptAtom } from '@/lib/atoms/task'
+import { setInstallDependencies, setMaxDuration, setKeepAlive } from '@/lib/utils/cookies'
 
 interface GitHubRepo {
   name: string

@@ -1,16 +1,11 @@
 'use client'
 
-import { Task, Connector } from '@/lib/db/schema'
-import { Button } from '@/components/ui/button'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import {
   GitBranch,
-  CheckCircle,
   AlertCircle,
   Loader2,
   Server,
   Cable,
-  Square,
   GitPullRequest,
   RotateCcw,
   Trash2,
@@ -20,34 +15,15 @@ import {
   MessageSquare,
   FileText,
   Monitor,
-  Eye,
-  EyeOff,
   RefreshCw,
-  Play,
   StopCircle,
   MoreVertical,
   X,
-  ExternalLink,
   Plus,
   Maximize,
   Minimize,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { useState, useEffect, useRef, useCallback } from 'react'
-import { toast } from 'sonner'
-import { Claude, Codex, Copilot, Cursor, Gemini, OpenCode } from '@/components/logos'
-import { useTasks } from '@/components/app-layout'
-import {
-  getShowFilesPane,
-  setShowFilesPane as saveShowFilesPane,
-  getShowCodePane,
-  setShowCodePane as saveShowCodePane,
-  getShowPreviewPane,
-  setShowPreviewPane as saveShowPreviewPane,
-  getShowChatPane,
-  setShowChatPane as saveShowChatPane,
-} from '@/lib/utils/cookies'
-import { FileBrowser } from '@/components/file-browser'
+
 import { FileDiffViewer } from '@/components/file-diff-viewer'
 import { CreatePRDialog } from '@/components/create-pr-dialog'
 import { MergePRDialog } from '@/components/merge-pr-dialog'
@@ -75,6 +51,11 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { toast } from 'sonner'
+import { useTasks } from '@/components/app-layout'
+import { FileBrowser } from '@/components/file-browser'
+
 import BrowserbaseIcon from '@/components/icons/browserbase-icon'
 import Context7Icon from '@/components/icons/context7-icon'
 import ConvexIcon from '@/components/icons/convex-icon'
@@ -85,7 +66,22 @@ import NotionIcon from '@/components/icons/notion-icon'
 import PlaywrightIcon from '@/components/icons/playwright-icon'
 import SupabaseIcon from '@/components/icons/supabase-icon'
 import VercelIcon from '@/components/icons/vercel-icon'
+import { Claude, Codex, Copilot, Cursor, Gemini, OpenCode } from '@/components/logos'
 import { PRStatusIcon } from '@/components/pr-status-icon'
+import { Button } from '@/components/ui/button'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Task, Connector } from '@/lib/db/schema'
+import { cn } from '@/lib/utils'
+import {
+  getShowFilesPane,
+  setShowFilesPane as saveShowFilesPane,
+  getShowCodePane,
+  setShowCodePane as saveShowCodePane,
+  getShowPreviewPane,
+  setShowPreviewPane as saveShowPreviewPane,
+  getShowChatPane,
+  setShowChatPane as saveShowChatPane,
+} from '@/lib/utils/cookies'
 
 interface TaskDetailsProps {
   task: Task

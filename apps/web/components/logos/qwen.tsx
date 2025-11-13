@@ -1,4 +1,5 @@
 import * as React from 'react'
+
 import type { SVGProps } from 'react'
 
 const Qwen = (props: SVGProps<SVGSVGElement>) => (

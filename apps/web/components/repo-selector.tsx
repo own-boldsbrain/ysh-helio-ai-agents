@@ -1,13 +1,14 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useAtomValue, useSetAtom, useAtom } from 'jotai'
+import { Lock, Loader2 } from 'lucide-react'
 import Image from 'next/image'
+import { useState, useEffect, useRef } from 'react'
+
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Lock, Loader2 } from 'lucide-react'
-import { useAtomValue, useSetAtom, useAtom } from 'jotai'
-import { githubConnectionAtom } from '@/lib/atoms/github-connection'
 import { githubOwnersAtom, githubReposAtomFamily } from '@/lib/atoms/github-cache'
+import { githubConnectionAtom } from '@/lib/atoms/github-connection'
 
 interface GitHubOwner {
   login: string

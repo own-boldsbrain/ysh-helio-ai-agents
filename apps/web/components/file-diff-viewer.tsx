@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useState, useMemo, useRef } from 'react'
-import { useParams } from 'next/navigation'
-import { DiffView, DiffModeEnum } from '@git-diff-view/react'
 import { generateDiffFile } from '@git-diff-view/file'
+import { DiffView, DiffModeEnum } from '@git-diff-view/react'
+import { useParams } from 'next/navigation'
+import { useEffect, useState, useMemo, useRef } from 'react'
+
 import '@git-diff-view/react/styles/diff-view-pure.css'
 import { FileEditor } from '@/components/file-editor'
 

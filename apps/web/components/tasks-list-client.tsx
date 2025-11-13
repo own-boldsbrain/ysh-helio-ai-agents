@@ -1,12 +1,15 @@
 'use client'
 
+import { AlertCircle, Trash2, Square, StopCircle, CheckSquare, X, Clock } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useState, useEffect, useMemo } from 'react'
-import { Task } from '@/lib/db/schema'
-import { PageHeader } from '@/components/page-header'
+import { toast } from 'sonner'
+
 import { useTasks } from '@/components/app-layout'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
+import { User } from '@/components/auth/user'
+import { GitHubStarsButton } from '@/components/github-stars-button'
+import { Claude, Codex, Copilot, Cursor, Gemini, OpenCode } from '@/components/logos'
+import { PageHeader } from '@/components/page-header'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,16 +20,16 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
+import { Task } from '@/lib/db/schema'
+import { Card, CardContent } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { AlertCircle, Trash2, Square, StopCircle, CheckSquare, X, Clock } from 'lucide-react'
-import { GitHubStarsButton } from '@/components/github-stars-button'
-import { User } from '@/components/auth/user'
-import { toast } from 'sonner'
-import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
+
 import type { Session } from '@/lib/session/types'
+
 import { VERCEL_DEPLOY_URL } from '@/lib/constants'
-import { Claude, Codex, Copilot, Cursor, Gemini, OpenCode } from '@/components/logos'
 import { PRStatusIcon } from '@/components/pr-status-icon'
 import { PRCheckStatus } from '@/components/pr-check-status'
 

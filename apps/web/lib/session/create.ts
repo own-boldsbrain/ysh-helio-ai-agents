@@ -1,14 +1,17 @@
 import 'server-only'
 
-import type { Session, Tokens } from './types'
-import { SESSION_COOKIE_NAME } from './constants'
+import ms from 'ms'
+
+import { encrypt } from '@/lib/crypto'
+import { upsertUser } from '@/lib/db/users'
 import { encryptJWE } from '@/lib/jwe/encrypt'
 import { fetchTeams } from '@/lib/vercel-client/teams'
 import { fetchUser } from '@/lib/vercel-client/user'
 import { getHighestAccountLevel } from '@/lib/vercel-client/utils'
-import { upsertUser } from '@/lib/db/users'
-import { encrypt } from '@/lib/crypto'
-import ms from 'ms'
+
+import { SESSION_COOKIE_NAME } from './constants'
+
+import type { Session, Tokens } from './types'
 
 export async function createSession(tokens: Tokens): Promise<Session | undefined> {
   const [user, teams] = await Promise.all([fetchUser(tokens.accessToken), fetchTeams(tokens.accessToken)])

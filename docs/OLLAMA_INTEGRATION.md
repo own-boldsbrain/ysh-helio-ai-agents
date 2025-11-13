@@ -59,10 +59,10 @@ Ollama is integrated into the multi-agent system to provide local, open-source L
 │Coder 1│    │Coder 2│  │Agent 1│  │Ag. 2│
 └───────┘    └───────┘  └───────┘  └─────┘
     │             │          │         │
-┌───▼───┐    ┌───▼───┐              
-│Qwen   │    │Qwen   │              
-│Vision1│    │Vision2│              
-└───────┘    └───────┘              
+┌───▼───┐    ┌───▼───┐
+│Qwen   │    │Qwen   │
+│Vision1│    │Vision2│
+└───────┘    └───────┘
 ```
 
 ## 🚀 Quick Start
@@ -147,11 +147,11 @@ curl -X POST http://localhost/api/agent/task \
 ```yaml
 # In docker-compose.multi-agent.yml
 environment:
-  - OLLAMA_KEEP_ALIVE=24h        # Keep models loaded
-  - OLLAMA_HOST=0.0.0.0:11434    # Listen on all interfaces
-  - OLLAMA_ORIGINS=*              # Allow all origins
-  - OLLAMA_NUM_PARALLEL=4         # Run 4 requests in parallel
-  - OLLAMA_MAX_LOADED_MODELS=3    # Keep 3 models in memory
+  - OLLAMA_KEEP_ALIVE=24h # Keep models loaded
+  - OLLAMA_HOST=0.0.0.0:11434 # Listen on all interfaces
+  - OLLAMA_ORIGINS=* # Allow all origins
+  - OLLAMA_NUM_PARALLEL=4 # Run 4 requests in parallel
+  - OLLAMA_MAX_LOADED_MODELS=3 # Keep 3 models in memory
 ```
 
 ### Resource Limits
@@ -160,11 +160,11 @@ environment:
 deploy:
   resources:
     limits:
-      cpus: '8'      # 8 CPU cores
-      memory: 16G    # 16GB RAM
+      cpus: '8' # 8 CPU cores
+      memory: 16G # 16GB RAM
     reservations:
-      cpus: '4'      # Min 4 cores
-      memory: 8G     # Min 8GB
+      cpus: '4' # Min 4 cores
+      memory: 8G # Min 8GB
 ```
 
 ### Model Management
@@ -185,21 +185,21 @@ docker exec ollama ollama show qwen2.5-coder
 
 ## 📊 Performance Comparison
 
-| Model | Size | Speed (tok/s) | Quality | Best Use Case |
-|-------|------|---------------|---------|---------------|
-| Qwen2.5 Coder | 32B | ~20 | ⭐⭐⭐⭐⭐ | Production code |
-| Gemma2 | 9B | ~40 | ⭐⭐⭐⭐ | Quick tasks |
-| Qwen2-VL | 7B | ~30 | ⭐⭐⭐⭐ | Multimodal |
+| Model         | Size | Speed (tok/s) | Quality    | Best Use Case   |
+| ------------- | ---- | ------------- | ---------- | --------------- |
+| Qwen2.5 Coder | 32B  | ~20           | ⭐⭐⭐⭐⭐ | Production code |
+| Gemma2        | 9B   | ~40           | ⭐⭐⭐⭐   | Quick tasks     |
+| Qwen2-VL      | 7B   | ~30           | ⭐⭐⭐⭐   | Multimodal      |
 
 ### vs Cloud APIs
 
-| Metric | Ollama (Local) | Cloud API |
-|--------|----------------|-----------|
-| Cost | $0/month | $10-100/month |
-| Latency | 50-100ms | 200-500ms |
-| Privacy | ✅ Complete | ⚠️ Data sent to cloud |
-| Availability | ✅ Offline capable | ❌ Internet required |
-| Quality | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| Metric       | Ollama (Local)     | Cloud API             |
+| ------------ | ------------------ | --------------------- |
+| Cost         | $0/month           | $10-100/month         |
+| Latency      | 50-100ms           | 200-500ms             |
+| Privacy      | ✅ Complete        | ⚠️ Data sent to cloud |
+| Availability | ✅ Offline capable | ❌ Internet required  |
+| Quality      | ⭐⭐⭐⭐           | ⭐⭐⭐⭐⭐            |
 
 ## 💡 Best Practices
 
@@ -252,6 +252,7 @@ environment:
 **Problem**: `ollama-init` fails to pull models
 
 **Check**:
+
 ```bash
 # View logs
 docker-compose -f docker-compose.multi-agent.yml logs ollama-init
@@ -263,6 +264,7 @@ docker-compose -f docker-compose.multi-agent.yml logs ollama-init
 ```
 
 **Solution**:
+
 ```bash
 # Manually pull models
 docker exec ollama ollama pull qwen2.5-coder:latest
@@ -275,11 +277,13 @@ docker exec ollama ollama pull gemma2:latest
 **Problem**: Ollama using too much RAM
 
 **Check**:
+
 ```bash
 docker stats ollama
 ```
 
 **Solution**:
+
 ```bash
 # Reduce loaded models
 docker exec ollama sh -c 'echo "OLLAMA_MAX_LOADED_MODELS=1" >> ~/.ollama/config'
@@ -295,16 +299,18 @@ docker-compose -f docker-compose.multi-agent.yml restart ollama
 **Solutions**:
 
 1. **Use smaller models**:
+
    ```bash
    # Instead of qwen2.5-coder (32B)
    # Use gemma2 (9B) for simpler tasks
    ```
 
 2. **Increase CPU allocation**:
+
    ```yaml
    # In docker-compose.multi-agent.yml
    limits:
-     cpus: '16'  # Instead of 8
+     cpus: '16' # Instead of 8
    ```
 
 3. **Enable GPU acceleration** (if available):
@@ -323,6 +329,7 @@ docker-compose -f docker-compose.multi-agent.yml restart ollama
 **Problem**: Cannot connect to Ollama API
 
 **Check**:
+
 ```bash
 # Test Ollama health
 curl http://localhost:11434/api/tags
@@ -332,6 +339,7 @@ docker-compose -f docker-compose.multi-agent.yml ps ollama
 ```
 
 **Solution**:
+
 ```bash
 # Restart Ollama
 docker-compose -f docker-compose.multi-agent.yml restart ollama
@@ -399,11 +407,11 @@ environment:
 
 ### Monthly Comparison (1M tokens/day)
 
-| Provider | Monthly Cost |
-|----------|-------------|
-| Cloud API (GPT-4) | ~$900 |
-| Cloud API (Claude) | ~$1,350 |
-| Ollama (Local) | $0 |
+| Provider           | Monthly Cost |
+| ------------------ | ------------ |
+| Cloud API (GPT-4)  | ~$900        |
+| Cloud API (Claude) | ~$1,350      |
+| Ollama (Local)     | $0           |
 
 **Break-even point**: Hardware investment pays for itself in 2-3 months for high-volume usage.
 

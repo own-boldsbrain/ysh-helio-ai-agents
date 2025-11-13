@@ -1,21 +1,23 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { TaskForm } from '@/components/task-form'
-import { HomePageHeader } from '@/components/home-page-header'
-import { toast } from 'sonner'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useTasks } from '@/components/app-layout'
-import { setSelectedOwner, setSelectedRepo } from '@/lib/utils/cookies'
-import type { Session } from '@/lib/session/types'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { redirectToSignIn } from '@/lib/session/redirect-to-sign-in'
-import { GitHubIcon } from '@/components/icons/github-icon'
-import { getEnabledAuthProviders } from '@/lib/auth/providers'
 import { useSetAtom } from 'jotai'
-import { taskPromptAtom } from '@/lib/atoms/task'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { toast } from 'sonner'
+
+import { useTasks } from '@/components/app-layout'
+import { HomePageHeader } from '@/components/home-page-header'
 import { HomePageMobileFooter } from '@/components/home-page-mobile-footer'
+import { GitHubIcon } from '@/components/icons/github-icon'
+import { TaskForm } from '@/components/task-form'
+import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { taskPromptAtom } from '@/lib/atoms/task'
+import { getEnabledAuthProviders } from '@/lib/auth/providers'
+import { redirectToSignIn } from '@/lib/session/redirect-to-sign-in'
+import { setSelectedOwner, setSelectedRepo } from '@/lib/utils/cookies'
+
+import type { Session } from '@/lib/session/types'
 
 interface HomePageContentProps {
   initialSelectedOwner?: string

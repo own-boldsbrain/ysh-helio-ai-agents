@@ -1,7 +1,8 @@
+import { eq, and, isNull } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
+
 import { db } from '@/lib/db/client'
 import * as schema from '@/lib/db/schema'
-import { eq, and, isNull } from 'drizzle-orm'
 import { getServerSession } from '@/lib/session/get-server-session'
 
 const { tasks } = schema

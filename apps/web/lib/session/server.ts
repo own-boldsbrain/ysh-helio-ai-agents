@@ -1,7 +1,9 @@
-import type { NextRequest } from 'next/server'
-import type { Session } from './types'
-import { SESSION_COOKIE_NAME } from './constants'
 import { decryptJWE } from '@/lib/jwe/decrypt'
+
+import { SESSION_COOKIE_NAME } from './constants'
+
+import type { Session } from './types'
+import type { NextRequest } from 'next/server'
 
 export async function getSessionFromCookie(cookieValue?: string): Promise<Session | undefined> {
   if (cookieValue) {

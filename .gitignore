@@ -32,6 +32,15 @@ yarn-error.log*
 
 # env files
 .env*
+!.env.example
+
+# credentials and secrets
+*.pem
+*.key
+*.p12
+*.pfx
+*-key.pem
+github-private-key.pem
 
 # vercel
 .vercel

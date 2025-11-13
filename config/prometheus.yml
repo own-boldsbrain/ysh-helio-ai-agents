@@ -106,6 +106,83 @@ scrape_configs:
           service: 'ai-agent'
           provider: 'specialized'
           tier: 'expert'
+  
+  # Ollama Server
+  - job_name: 'ollama-server'
+    static_configs:
+      - targets: ['ollama:11434']
+        labels:
+          service: 'ollama'
+          type: 'local-llm-server'
+    metrics_path: /metrics
+    scrape_interval: 30s
+  
+  # Ollama Qwen Coder Agents
+  - job_name: 'agents-ollama-qwen'
+    static_configs:
+      - targets:
+          - 'agent-ollama-qwen-1:3000'
+          - 'agent-ollama-qwen-2:3000'
+        labels:
+          service: 'ai-agent'
+          provider: 'ollama'
+          model: 'qwen2.5-coder'
+          tier: 'local'
+          cost: 'zero'
+    scrape_interval: 20s
+  
+  # Ollama Qwen Vision Agents
+  - job_name: 'agents-ollama-qwen-vl'
+    static_configs:
+      - targets:
+          - 'agent-ollama-qwen-vl-1:3000'
+          - 'agent-ollama-qwen-vl-2:3000'
+        labels:
+          service: 'ai-agent'
+          provider: 'ollama'
+          model: 'qwen2-vl'
+          tier: 'local'
+          cost: 'zero'
+          capability: 'vision'
+    scrape_interval: 20s
+  
+  # Ollama Gemma2 Agents
+  - job_name: 'agents-ollama-gemma'
+    static_configs:
+      - targets:
+          - 'agent-ollama-gemma-1:3000'
+          - 'agent-ollama-gemma-2:3000'
+        labels:
+          service: 'ai-agent'
+          provider: 'ollama'
+          model: 'gemma2'
+          tier: 'local'
+          cost: 'zero'
+    scrape_interval: 20s
+  
+  # Ollama Specialized Agents
+  - job_name: 'agents-ollama-specialized'
+    static_configs:
+      - targets:
+          - 'agent-ollama-code-1:3000'
+          - 'agent-ollama-docs-1:3000'
+        labels:
+          service: 'ai-agent'
+          provider: 'ollama'
+          model: 'specialized'
+          tier: 'local'
+          cost: 'zero'
+    scrape_interval: 20s
+  
+  # Application Metrics
+  - job_name: 'application'
+    static_configs:
+      - targets: ['app:3000']
+        labels:
+          service: 'web-app'
+          component: 'next-js'
+    metrics_path: /api/metrics
+    scrape_interval: 30s
 
 # Alerting configuration
 alerting:

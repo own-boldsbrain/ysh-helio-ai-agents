@@ -1,13 +1,20 @@
 'use client'
 
-import { Task } from '@/lib/db/schema'
-import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { useAtomValue } from 'jotai'
 import { AlertCircle, Plus, Trash2, GitBranch } from 'lucide-react'
-import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+
+import { Checkbox } from '@/components/ui/checkbox'
+
+import { useState, useMemo } from 'react'
+import { toast } from 'sonner'
+
+import { useTasks } from '@/components/app-layout'
 import { Claude, Codex, Copilot, Cursor, Gemini, OpenCode } from '@/components/logos'
+
+import { PRStatusIcon } from '@/components/pr-status-icon'
+import { PRCheckStatus } from '@/components/pr-check-status'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,14 +25,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { Checkbox } from '@/components/ui/checkbox'
-import { useState, useMemo } from 'react'
-import { toast } from 'sonner'
-import { useTasks } from '@/components/app-layout'
-import { useAtomValue } from 'jotai'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 import { sessionAtom } from '@/lib/atoms/session'
-import { PRStatusIcon } from '@/components/pr-status-icon'
-import { PRCheckStatus } from '@/components/pr-check-status'
+import { Task } from '@/lib/db/schema'
+import { cn } from '@/lib/utils'
 
 // Model mappings for human-friendly names
 const AGENT_MODELS = {

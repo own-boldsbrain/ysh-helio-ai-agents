@@ -1,12 +1,13 @@
-import { type NextRequest } from 'next/server'
-import { cookies } from 'next/headers'
-import { db } from '@/lib/db/client'
-import { getBaseUrl } from '@/lib/utils'
-import { users, accounts, tasks, connectors, keys } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
-import { createGitHubSession, saveSession } from '@/lib/session/create-github'
+import { cookies } from 'next/headers'
+import { type NextRequest } from 'next/server'
+
 import { encrypt } from '@/lib/crypto'
+import { db } from '@/lib/db/client'
+import { users, accounts, tasks, connectors, keys } from '@/lib/db/schema'
+import { createGitHubSession, saveSession } from '@/lib/session/create-github'
+import { getBaseUrl } from '@/lib/utils'
 
 export async function GET(req: NextRequest): Promise<Response> {
   const code = req.nextUrl.searchParams.get('code')

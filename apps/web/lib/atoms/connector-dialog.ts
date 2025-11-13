@@ -1,4 +1,5 @@
 import { atom } from 'jotai'
+
 import type { Connector } from '@/lib/db/schema'
 
 export type DialogView = 'list' | 'presets' | 'form'

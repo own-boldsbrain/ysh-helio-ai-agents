@@ -1,6 +1,7 @@
 # WSL2 Port Forwarding Setup for Development
 
 ## Problem
+
 When running the development server in WSL2, Windows cannot access `http://localhost:3000` because WSL2 uses a virtual network adapter with its own IP address.
 
 ## Solution Options
@@ -16,6 +17,7 @@ When running the development server in WSL2, Windows cannot access `http://local
    ```
 
 3. Run the setup script:
+
    ```powershell
    .\setup-wsl-port-forward.ps1
    ```
@@ -49,6 +51,7 @@ Access the server directly using WSL's IP address:
 > **Note:** WSL IP changes after Windows reboot, so you'll need to get the new IP each time.
 
 To get current WSL IP, run in WSL terminal:
+
 ```bash
 hostname -I | awk '{print $1}'
 ```
@@ -56,11 +59,13 @@ hostname -I | awk '{print $1}'
 ## Verification
 
 Check port forwarding is active (PowerShell):
+
 ```powershell
 netsh interface portproxy show all
 ```
 
 You should see:
+
 ```
 Listen on ipv4:             Connect to ipv4:
 Address         Port        Address         Port
@@ -71,6 +76,7 @@ Address         Port        Address         Port
 ## Cleanup
 
 To remove port forwarding when done (PowerShell as Administrator):
+
 ```powershell
 netsh interface portproxy delete v4tov4 listenport=3000 listenaddress=0.0.0.0
 Remove-NetFirewallRule -DisplayName "WSL Port 3000"
@@ -81,12 +87,15 @@ Remove-NetFirewallRule -DisplayName "WSL Port 3000"
 ### Still can't connect?
 
 1. **Check if server is running in WSL:**
+
    ```bash
    curl http://localhost:3000
    ```
+
    Should return HTTP 200
 
 2. **Check if port is listening:**
+
    ```bash
    ss -tlnp | grep 3000
    ```

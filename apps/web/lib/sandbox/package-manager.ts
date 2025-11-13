@@ -1,6 +1,8 @@
 import { Sandbox } from '@vercel/sandbox'
-import { runInProject } from './commands'
+
 import { TaskLogger } from '@/lib/utils/task-logger'
+
+import { runInProject } from './commands'
 
 // Helper function to detect package manager based on lock files
 export async function detectPackageManager(sandbox: Sandbox, logger: TaskLogger): Promise<'pnpm' | 'yarn' | 'npm'> {

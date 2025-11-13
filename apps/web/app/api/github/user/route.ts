@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+
 import { getUserGitHubToken } from '@/lib/github/user-token'
 
 export async function GET(req: NextRequest) {

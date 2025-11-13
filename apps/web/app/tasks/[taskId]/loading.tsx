@@ -1,11 +1,12 @@
 'use client'
 
-import { PageHeader } from '@/components/page-header'
-import { useTasks } from '@/components/app-layout'
-import { Button } from '@/components/ui/button'
 import { Loader2 } from 'lucide-react'
-import { VERCEL_DEPLOY_URL } from '@/lib/constants'
+
+import { useTasks } from '@/components/app-layout'
 import { GitHubStarsButton } from '@/components/github-stars-button'
+import { PageHeader } from '@/components/page-header'
+import { Button } from '@/components/ui/button'
+import { VERCEL_DEPLOY_URL } from '@/lib/constants'
 
 export default function TaskLoading() {
   const { toggleSidebar } = useTasks()

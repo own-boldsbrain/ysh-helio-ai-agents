@@ -1,9 +1,10 @@
 import 'server-only'
 
-import { db } from './client'
-import { users, accounts, type InsertUser } from './schema'
 import { eq, and } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
+
+import { db } from './client'
+import { users, accounts, type InsertUser } from './schema'
 
 /**
  * Find or create a user in the database

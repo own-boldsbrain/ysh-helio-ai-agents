@@ -1,5 +1,4 @@
-import { atomWithStorage } from 'jotai/utils'
-import { atomFamily } from 'jotai/utils'
+import { atomWithStorage, atomFamily } from 'jotai/utils'
 
 // Task prompt that persists in localStorage
 export const taskPromptAtom = atomWithStorage('task-prompt', '')

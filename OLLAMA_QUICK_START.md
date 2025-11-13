@@ -26,8 +26,9 @@ docker-compose -f docker-compose.multi-agent.yml logs -f ollama-init
 ```
 
 **Models being downloaded:**
+
 - Qwen2.5 Coder (32B) - ~16GB - Best for code
-- Qwen2-VL (7B) - ~4GB - Vision model  
+- Qwen2-VL (7B) - ~4GB - Vision model
 - Gemma2 (9B) - ~5GB - Fast general purpose
 
 **Total**: ~25GB download
@@ -140,7 +141,7 @@ curl http://localhost:11434/api/generate -d '{
 
 ```
 100 code generations/day via Ollama:
-- ~50,000 tokens/day  
+- ~50,000 tokens/day
 - ~1.5M tokens/month
 - Cost: $0/month 🎉
 ```
@@ -259,7 +260,7 @@ environment:
 ```yaml
 # In docker-compose.multi-agent.yml
 environment:
-  - OLLAMA_KEEP_ALIVE=24h  # Keep models in memory
+  - OLLAMA_KEEP_ALIVE=24h # Keep models in memory
 ```
 
 **Benefit**: First request is instant (no model load time)
@@ -268,7 +269,7 @@ environment:
 
 ```yaml
 environment:
-  - OLLAMA_NUM_PARALLEL=4  # Process 4 requests simultaneously
+  - OLLAMA_NUM_PARALLEL=4 # Process 4 requests simultaneously
 ```
 
 **Benefit**: 4x throughput

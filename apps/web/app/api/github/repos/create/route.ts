@@ -1,7 +1,8 @@
-import { NextResponse } from 'next/server'
-import { getServerSession } from '@/lib/session/get-server-session'
-import { getUserGitHubToken } from '@/lib/github/user-token'
 import { Octokit } from '@octokit/rest'
+import { NextResponse } from 'next/server'
+
+import { getUserGitHubToken } from '@/lib/github/user-token'
+import { getServerSession } from '@/lib/session/get-server-session'
 
 interface RepoTemplate {
   id: string

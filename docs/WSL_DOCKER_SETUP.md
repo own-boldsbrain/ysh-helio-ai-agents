@@ -22,6 +22,7 @@ bash scripts/wsl-docker-setup.sh
 ```
 
 Este script irá:
+
 - ✅ Verificar se está rodando no WSL
 - ✅ Instalar Docker (se necessário)
 - ✅ Iniciar os containers do Docker
@@ -292,10 +293,12 @@ pnpm install
 ## 🔐 Segurança
 
 ⚠️ **IMPORTANTE**: O `docker-compose.yml` atual usa credenciais de desenvolvimento padrão:
+
 - User: `postgres`
 - Password: `password`
 
 **Para produção:**
+
 1. Use variáveis de ambiente
 2. Configure senhas fortes
 3. Use secrets do Docker

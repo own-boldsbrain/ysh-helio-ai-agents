@@ -1,6 +1,7 @@
-import type { Sandbox } from '@vercel/sandbox'
-import { TaskLogger } from '@/lib/utils/task-logger'
 import { redactSensitiveInfo } from '@/lib/utils/logging'
+import { TaskLogger } from '@/lib/utils/task-logger'
+
+import type { Sandbox } from '@vercel/sandbox'
 
 export interface CommandResult {
   success: boolean

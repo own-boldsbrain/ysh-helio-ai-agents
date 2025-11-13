@@ -1,13 +1,15 @@
-import { Sandbox } from '@vercel/sandbox'
 import { Writable } from 'stream'
-import { runInProject, PROJECT_DIR } from '../commands'
-import { AgentExecutionResult } from '../types'
+
+import { Sandbox } from '@vercel/sandbox'
+import { eq } from 'drizzle-orm'
+
+import { db } from '@/lib/db/client'
+import { connectors, taskMessages } from '@/lib/db/schema'
 import { redactSensitiveInfo } from '@/lib/utils/logging'
 import { TaskLogger } from '@/lib/utils/task-logger'
-import { connectors, taskMessages } from '@/lib/db/schema'
-import { db } from '@/lib/db/client'
-import { eq } from 'drizzle-orm'
-import { generateId } from '@/lib/utils/id'
+
+import { runInProject, PROJECT_DIR } from '../commands'
+import { AgentExecutionResult } from '../types'
 import { SafeCommandExecutor } from './utils'
 
 type Connector = typeof connectors.$inferSelect

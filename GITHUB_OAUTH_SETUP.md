@@ -11,11 +11,13 @@
 Your GitHub OAuth App needs to have these callback URLs registered:
 
 ### Primary URL (Windows via Port Forwarding)
+
 ```
 http://localhost:3000/api/auth/github/callback
 ```
 
 ### Alternative URL (Direct WSL IP)
+
 ```
 http://172.19.51.102:3000/api/auth/github/callback
 ```
@@ -50,6 +52,7 @@ http://172.19.51.102:3000/api/auth/github/callback
 ## Troubleshooting
 
 ### Error: "redirect_uri is not associated with this application"
+
 - **Cause:** The callback URL in your GitHub OAuth App doesn't match
 - **Solution:** Make sure the callback URL is exactly:
   ```
@@ -58,7 +61,9 @@ http://172.19.51.102:3000/api/auth/github/callback
   (No trailing slash, exact match)
 
 ### Using WSL IP Instead of localhost
+
 If you prefer to use the WSL IP directly (172.19.51.102):
+
 1. Update the callback URL in GitHub to:
    ```
    http://172.19.51.102:3000/api/auth/github/callback
@@ -73,7 +78,9 @@ If you prefer to use the WSL IP directly (172.19.51.102):
    ```
 
 ### Port Forwarding Not Working
+
 If localhost:3000 isn't accessible from Windows:
+
 - Make sure you ran the PowerShell port forwarding commands as Admin
 - Verify with: `netsh interface portproxy show all`
 - The WSL IP may change after Windows reboot

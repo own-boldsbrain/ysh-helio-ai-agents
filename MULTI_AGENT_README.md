@@ -287,13 +287,13 @@ secrets:
 
 ### API Pricing (per 1M tokens)
 
-| Provider | Input | Output | Best For |
-|----------|-------|--------|----------|
+| Provider           | Input  | Output | Best For              |
+| ------------------ | ------ | ------ | --------------------- |
 | **Ollama (Local)** | **$0** | **$0** | **High-volume tasks** |
-| Claude | $15 | $75 | Complex reasoning |
-| GPT-4 Turbo | $10 | $30 | General tasks |
-| Gemini Pro | $0.50 | $1.50 | Simple tasks |
-| Groq | $0.27 | $0.27 | Real-time responses |
+| Claude             | $15    | $75    | Complex reasoning     |
+| GPT-4 Turbo        | $10    | $30    | General tasks         |
+| Gemini Pro         | $0.50  | $1.50  | Simple tasks          |
+| Groq               | $0.27  | $0.27  | Real-time responses   |
 
 ### Recommendations
 
@@ -306,6 +306,7 @@ secrets:
 ### Monthly Savings Example
 
 Processing 1M tokens/day:
+
 - **Cloud only**: ~$900-1,350/month
 - **Ollama + Cloud hybrid**: ~$200-400/month
 - **Savings**: ~$600-1,000/month (67-74%)

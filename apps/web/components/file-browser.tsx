@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useAtom } from 'jotai'
 import {
   File,
   Folder,
@@ -19,18 +19,9 @@ import {
   FolderPlus,
   Trash2,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { useAtom } from 'jotai'
-import { getTaskFileBrowserState } from '@/lib/atoms/file-browser'
-import { useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { toast } from 'sonner'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuShortcut,
-} from '@/components/ui/dropdown-menu'
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -41,6 +32,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -49,8 +41,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuShortcut,
+} from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { getTaskFileBrowserState } from '@/lib/atoms/file-browser'
 
 interface FileChange {
   filename: string

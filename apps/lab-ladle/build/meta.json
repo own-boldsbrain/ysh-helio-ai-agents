@@ -7,9 +7,7 @@
   "stories": {
     "button--button": {
       "name": "Button",
-      "levels": [
-        "Button"
-      ],
+      "levels": ["Button"],
       "locStart": 11,
       "locEnd": 43,
       "filePath": "src/Button.stories.tsx",
@@ -18,9 +16,7 @@
     },
     "button--disabled": {
       "name": "Disabled",
-      "levels": [
-        "Button"
-      ],
+      "levels": ["Button"],
       "locStart": 56,
       "locEnd": 56,
       "filePath": "src/Button.stories.tsx",
@@ -29,9 +25,7 @@
     },
     "button--large": {
       "name": "Large",
-      "levels": [
-        "Button"
-      ],
+      "levels": ["Button"],
       "locStart": 54,
       "locEnd": 54,
       "filePath": "src/Button.stories.tsx",
@@ -40,9 +34,7 @@
     },
     "button--outline": {
       "name": "Outline",
-      "levels": [
-        "Button"
-      ],
+      "levels": ["Button"],
       "locStart": 50,
       "locEnd": 50,
       "filePath": "src/Button.stories.tsx",
@@ -51,9 +43,7 @@
     },
     "button--primary": {
       "name": "Primary",
-      "levels": [
-        "Button"
-      ],
+      "levels": ["Button"],
       "locStart": 46,
       "locEnd": 46,
       "filePath": "src/Button.stories.tsx",
@@ -62,9 +52,7 @@
     },
     "button--secondary": {
       "name": "Secondary",
-      "levels": [
-        "Button"
-      ],
+      "levels": ["Button"],
       "locStart": 48,
       "locEnd": 48,
       "filePath": "src/Button.stories.tsx",
@@ -73,9 +61,7 @@
     },
     "button--small": {
       "name": "Small",
-      "levels": [
-        "Button"
-      ],
+      "levels": ["Button"],
       "locStart": 52,
       "locEnd": 52,
       "filePath": "src/Button.stories.tsx",
@@ -84,9 +70,7 @@
     },
     "button--with-click": {
       "name": "With click",
-      "levels": [
-        "Button"
-      ],
+      "levels": ["Button"],
       "locStart": 58,
       "locEnd": 58,
       "filePath": "src/Button.stories.tsx",
@@ -95,9 +79,7 @@
     },
     "card--bordered": {
       "name": "Bordered",
-      "levels": [
-        "Card"
-      ],
+      "levels": ["Card"],
       "locStart": 43,
       "locEnd": 47,
       "filePath": "src/Card.stories.tsx",
@@ -106,9 +88,7 @@
     },
     "card--card": {
       "name": "Card",
-      "levels": [
-        "Card"
-      ],
+      "levels": ["Card"],
       "locStart": 11,
       "locEnd": 28,
       "filePath": "src/Card.stories.tsx",
@@ -117,9 +97,7 @@
     },
     "card--default": {
       "name": "Default",
-      "levels": [
-        "Card"
-      ],
+      "levels": ["Card"],
       "locStart": 31,
       "locEnd": 35,
       "filePath": "src/Card.stories.tsx",
@@ -128,9 +106,7 @@
     },
     "card--elevated": {
       "name": "Elevated",
-      "levels": [
-        "Card"
-      ],
+      "levels": ["Card"],
       "locStart": 37,
       "locEnd": 41,
       "filePath": "src/Card.stories.tsx",
@@ -139,9 +115,7 @@
     },
     "card--with-footer": {
       "name": "With footer",
-      "levels": [
-        "Card"
-      ],
+      "levels": ["Card"],
       "locStart": 49,
       "locEnd": 62,
       "filePath": "src/Card.stories.tsx",

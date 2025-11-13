@@ -188,6 +188,7 @@ curl -X POST http://localhost/api/agent/task \
 Access raw metrics: http://localhost:9090
 
 Key queries:
+
 ```promql
 # Agent request rate
 rate(agent_requests_total[5m])

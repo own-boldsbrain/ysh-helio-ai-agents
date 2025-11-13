@@ -1,5 +1,4 @@
-import { atomWithStorage } from 'jotai/utils'
-import { atomFamily } from 'jotai/utils'
+import { atomWithStorage, atomFamily } from 'jotai/utils'
 
 // Last selected agent
 export const lastSelectedAgentAtom = atomWithStorage<string | null>('last-selected-agent', null)

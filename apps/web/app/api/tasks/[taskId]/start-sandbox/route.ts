@@ -1,17 +1,18 @@
+import { Sandbox } from '@vercel/sandbox'
+import { eq } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
+
 import { db } from '@/lib/db/client'
 import { tasks } from '@/lib/db/schema'
-import { eq } from 'drizzle-orm'
-import { Sandbox } from '@vercel/sandbox'
-import { getServerSession } from '@/lib/session/get-server-session'
+import { getMaxSandboxDuration } from '@/lib/db/settings'
 import { getGitHubUser } from '@/lib/github/client'
 import { getUserGitHubToken } from '@/lib/github/user-token'
-import { registerSandbox, unregisterSandbox } from '@/lib/sandbox/sandbox-registry'
 import { runCommandInSandbox, runInProject, PROJECT_DIR } from '@/lib/sandbox/commands'
 import { detectPackageManager, installDependencies } from '@/lib/sandbox/package-manager'
-import { createTaskLogger } from '@/lib/utils/task-logger'
-import { getMaxSandboxDuration } from '@/lib/db/settings'
 import { detectPortFromRepo } from '@/lib/sandbox/port-detection'
+import { registerSandbox, unregisterSandbox } from '@/lib/sandbox/sandbox-registry'
+import { getServerSession } from '@/lib/session/get-server-session'
+import { createTaskLogger } from '@/lib/utils/task-logger'
 
 export async function POST(_request: NextRequest, { params }: { params: Promise<{ taskId: string }> }) {
   try {

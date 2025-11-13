@@ -1,11 +1,12 @@
 'use client'
 
+import { useState } from 'react'
+
+import { GitHubIcon } from '@/components/icons/github-icon'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { redirectToSignIn } from '@/lib/session/redirect-to-sign-in'
-import { GitHubIcon } from '@/components/icons/github-icon'
-import { useState } from 'react'
 import { getEnabledAuthProviders } from '@/lib/auth/providers'
+import { redirectToSignIn } from '@/lib/session/redirect-to-sign-in'
 
 export function SignIn() {
   const [showDialog, setShowDialog] = useState(false)

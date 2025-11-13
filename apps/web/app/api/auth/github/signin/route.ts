@@ -1,9 +1,10 @@
-import { type NextRequest } from 'next/server'
+import { generateState } from 'arctic'
 import { cookies } from 'next/headers'
+import { type NextRequest } from 'next/server'
+
 import { getSessionFromReq } from '@/lib/session/server'
 import { getBaseUrl } from '@/lib/utils'
 import { isRelativeUrl } from '@/lib/utils/is-relative-url'
-import { generateState } from 'arctic'
 
 export async function GET(req: NextRequest): Promise<Response> {
   // Check if user is authenticated with Vercel first
@@ -58,6 +59,7 @@ export async function GET(req: NextRequest): Promise<Response> {
 export async function POST(req: NextRequest): Promise<Response> {
   // Check if user is authenticated with Vercel first
   const session = await getSessionFromReq(req)
+  const baseUrl = process.env.NEXTAUTH_URL || req.nextUrl.origin
   if (!session?.user) {
     return Response.json({ error: 'Not authenticated' }, { status: 401 })
   }

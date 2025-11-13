@@ -3,10 +3,10 @@ export { VercelSandboxProvider } from './vercel-provider'
 export { DockerSandboxProvider } from './docker-provider'
 export { StubSandboxProvider } from './stub-provider'
 
-import { VercelSandboxProvider } from './vercel-provider'
 import { DockerSandboxProvider } from './docker-provider'
-import { StubSandboxProvider } from './stub-provider'
 import { ISandboxProvider } from './sandbox-provider'
+import { StubSandboxProvider } from './stub-provider'
+import { VercelSandboxProvider } from './vercel-provider'
 
 export type ProviderType = 'vercel' | 'docker' | 'stub'
 

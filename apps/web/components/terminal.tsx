@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect, useImperativeHandle, forwardRef } from 'react'
+
 import { cn } from '@/lib/utils'
 
 interface TerminalProps {

@@ -1,8 +1,9 @@
+import { eq, and, asc, isNull } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from '@/lib/session/get-server-session'
+
 import { db } from '@/lib/db/client'
 import { taskMessages, tasks } from '@/lib/db/schema'
-import { eq, and, asc, isNull } from 'drizzle-orm'
+import { getServerSession } from '@/lib/session/get-server-session'
 
 export async function GET(req: NextRequest, context: { params: Promise<{ taskId: string }> }) {
   try {

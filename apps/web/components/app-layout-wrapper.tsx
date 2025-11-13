@@ -1,6 +1,8 @@
 import { cookies, headers } from 'next/headers'
-import { AppLayout } from './app-layout'
+
 import { getSidebarWidthFromCookie, getSidebarOpenFromCookie } from '@/lib/utils/cookies'
+
+import { AppLayout } from './app-layout'
 
 interface AppLayoutWrapperProps {
   children: React.ReactNode
