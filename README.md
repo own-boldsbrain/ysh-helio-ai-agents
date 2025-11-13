@@ -248,10 +248,10 @@ nano .env.local
 ```
 
 Notes:
+
 - Keep `.env.local` out of version control (it's ignored by `.gitignore`).
 - Avoid placing real secrets in public repositories and only use `.env.local` for local development.
 - The example file contains placeholders for most environment variables used by this project.
-
 
 #### Sandbox Provider Configuration
 
