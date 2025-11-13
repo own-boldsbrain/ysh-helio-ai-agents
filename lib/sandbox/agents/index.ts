@@ -1,4 +1,4 @@
-import { Sandbox } from '@vercel/sandbox'
+import type { SandboxType } from '../index'
 import { AgentExecutionResult } from '../types'
 import { executeClaudeInSandbox } from './claude'
 import { executeCodexInSandbox } from './codex'
@@ -6,17 +6,19 @@ import { executeCopilotInSandbox } from './copilot'
 import { executeCursorInSandbox } from './cursor'
 import { executeGeminiInSandbox } from './gemini'
 import { executeOpenCodeInSandbox } from './opencode'
+import { executeQwenInSandbox } from './qwen'
+import { executeDeepSeekInSandbox } from './deepseek'
 import { TaskLogger } from '@/lib/utils/task-logger'
 import { Connector } from '@/lib/db/schema'
 
-export type AgentType = 'claude' | 'codex' | 'copilot' | 'cursor' | 'gemini' | 'opencode'
+export type AgentType = 'claude' | 'codex' | 'copilot' | 'cursor' | 'gemini' | 'opencode' | 'qwen' | 'deepseek'
 
 // Re-export types
 export type { AgentExecutionResult } from '../types'
 
 // Main agent execution function
 export async function executeAgentInSandbox(
-  sandbox: Sandbox,
+  sandbox: SandboxType,
   instruction: string,
   agentType: AgentType,
   logger: TaskLogger,
@@ -137,6 +139,12 @@ export async function executeAgentInSandbox(
           isResumed,
           sessionId,
         )
+
+      case 'qwen':
+        return await executeQwenInSandbox(sandbox, instruction, logger, selectedModel, mcpServers)
+
+      case 'deepseek':
+        return await executeDeepSeekInSandbox(sandbox, instruction, logger, selectedModel, mcpServers)
 
       default:
         return {

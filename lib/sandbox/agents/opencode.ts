@@ -1,20 +1,29 @@
-import { Sandbox } from '@vercel/sandbox'
-import { runCommandInSandbox, runInProject, PROJECT_DIR } from '../commands'
+import type { SandboxType } from '../index'
+import { runInProject } from '../commands'
 import { AgentExecutionResult } from '../types'
 import { redactSensitiveInfo } from '@/lib/utils/logging'
 import { TaskLogger } from '@/lib/utils/task-logger'
 import { connectors } from '@/lib/db/schema'
+import { SafeCommandExecutor } from './utils'
 
 type Connector = typeof connectors.$inferSelect
 
 // Helper function to run command and log it in project directory
-async function runAndLogCommand(sandbox: Sandbox, command: string, args: string[], logger: TaskLogger) {
+async function runAndLogCommand(
+  sandbox: SandboxType,
+  command: string,
+  args: string[],
+  logger: TaskLogger,
+  safeExecutor?: SafeCommandExecutor,
+) {
   const fullCommand = args.length > 0 ? `${command} ${args.join(' ')}` : command
   const redactedCommand = redactSensitiveInfo(fullCommand)
 
   await logger.command(redactedCommand)
 
-  const result = await runInProject(sandbox, command, args)
+  const result = safeExecutor
+    ? await safeExecutor.executeSafe(command, args)
+    : await runInProject(sandbox, command, args)
 
   // Only try to access properties if result is valid
   if (result && result.output && result.output.trim()) {
@@ -44,7 +53,7 @@ async function runAndLogCommand(sandbox: Sandbox, command: string, args: string[
 }
 
 export async function executeOpenCodeInSandbox(
-  sandbox: Sandbox,
+  sandbox: SandboxType,
   instruction: string,
   logger: TaskLogger,
   selectedModel?: string,
@@ -52,6 +61,7 @@ export async function executeOpenCodeInSandbox(
   isResumed?: boolean,
   sessionId?: string,
 ): Promise<AgentExecutionResult> {
+  const safeExecutor = new SafeCommandExecutor(sandbox, logger)
   try {
     // Executing OpenCode with instruction
     await logger.info('Starting OpenCode agent execution...')
@@ -69,7 +79,7 @@ export async function executeOpenCodeInSandbox(
     }
 
     // Check if OpenCode CLI is already installed (for resumed sandboxes)
-    const existingCLICheck = await runCommandInSandbox(sandbox, 'which', ['opencode'])
+    const existingCLICheck = await safeExecutor.executeSafe('which', ['opencode'])
 
     let installResult: { success: boolean; output?: string; error?: string } = { success: true }
 
@@ -219,13 +229,13 @@ ${opencodeConfigJson}
 EOF`
 
       await logger.info('Creating OpenCode MCP configuration file...')
-      const configResult = await runCommandInSandbox(sandbox, 'sh', ['-c', createConfigCmd])
+      const configResult = await safeExecutor.executeSafe('sh', ['-c', createConfigCmd])
 
       if (configResult.success) {
         await logger.info('OpenCode configuration file (~/.opencode/config.json) created successfully')
 
         // Verify the file was created (without logging sensitive contents)
-        const verifyConfig = await runCommandInSandbox(sandbox, 'test', ['-f', '~/.opencode/config.json'])
+        const verifyConfig = await safeExecutor.executeSafe('test', ['-f', '~/.opencode/config.json'])
         if (verifyConfig.success) {
           await logger.info('OpenCode MCP configuration verified')
         }
@@ -245,7 +255,7 @@ EOF`
       }
 
       // Use opencode auth to configure OpenAI
-      const openaiAuthResult = await runCommandInSandbox(sandbox, 'sh', [
+      const openaiAuthResult = await safeExecutor.executeSafe('sh', [
         '-c',
         `echo "${process.env.OPENAI_API_KEY}" | opencode auth add openai`,
       ])
@@ -267,7 +277,7 @@ EOF`
       }
 
       // Use opencode auth to configure Anthropic
-      const anthropicAuthResult = await runCommandInSandbox(sandbox, 'sh', [
+      const anthropicAuthResult = await safeExecutor.executeSafe('sh', [
         '-c',
         `echo "${process.env.ANTHROPIC_API_KEY}" | opencode auth add anthropic`,
       ])
@@ -353,7 +363,7 @@ EOF`
     }
 
     // Execute OpenCode run command
-    const executeResult = await runCommandInSandbox(sandbox, 'sh', ['-c', fullCommand])
+    const executeResult = await safeExecutor.executeSafe('sh', ['-c', fullCommand])
 
     const stdout = executeResult.output || ''
     const stderr = executeResult.error || ''

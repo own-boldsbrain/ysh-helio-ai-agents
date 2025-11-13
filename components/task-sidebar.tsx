@@ -75,6 +75,7 @@ const AGENT_MODELS = {
 
 interface TaskSidebarProps {
   tasks: Task[]
+  onTaskSelect: (task: Task) => void
   width?: number
 }
 
@@ -88,7 +89,7 @@ interface RepoInfo {
   lastUsed: Date
 }
 
-export function TaskSidebar({ tasks, width = 288 }: TaskSidebarProps) {
+export function TaskSidebar({ tasks, onTaskSelect, width = 288 }: TaskSidebarProps) {
   const pathname = usePathname()
   const { refreshTasks, toggleSidebar } = useTasks()
   const session = useAtomValue(sessionAtom)
@@ -99,8 +100,15 @@ export function TaskSidebar({ tasks, width = 288 }: TaskSidebarProps) {
   const [deleteStopped, setDeleteStopped] = useState(true)
   const [activeTab, setActiveTab] = useState<TabType>('tasks')
 
-  // Close sidebar on mobile when clicking any link
-  const handleLinkClick = () => {
+  // Close sidebar on mobile when navigating
+  const handleNewTaskClick = () => {
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      toggleSidebar()
+    }
+  }
+
+  // Close sidebar on mobile when selecting a repo
+  const handleRepoClick = () => {
     if (typeof window !== 'undefined' && window.innerWidth < 1024) {
       toggleSidebar()
     }
@@ -257,7 +265,7 @@ export function TaskSidebar({ tasks, width = 288 }: TaskSidebarProps) {
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
-              <Link href="/" onClick={handleLinkClick}>
+              <Link href="/" onClick={handleNewTaskClick}>
                 <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="New Task">
                   <Plus className="h-4 w-4" />
                 </Button>
@@ -328,7 +336,7 @@ export function TaskSidebar({ tasks, width = 288 }: TaskSidebarProps) {
             >
               <Trash2 className="h-4 w-4" />
             </Button>
-            <Link href="/" onClick={handleLinkClick}>
+            <Link href="/" onClick={handleNewTaskClick}>
               <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="New Task">
                 <Plus className="h-4 w-4" />
               </Button>
@@ -355,7 +363,7 @@ export function TaskSidebar({ tasks, width = 288 }: TaskSidebarProps) {
                   <Link
                     key={task.id}
                     href={`/tasks/${task.id}`}
-                    onClick={handleLinkClick}
+                    onClick={() => onTaskSelect(task)}
                     className={cn('block rounded-lg', isActive && 'ring-1 ring-primary/50 ring-offset-0')}
                   >
                     <Card
@@ -435,7 +443,7 @@ export function TaskSidebar({ tasks, width = 288 }: TaskSidebarProps) {
               })}
               {tasks.length >= 1 && (
                 <div className="pt-1">
-                  <Link href="/tasks" onClick={handleLinkClick}>
+                  <Link href="/tasks" onClick={handleNewTaskClick}>
                     <Button variant="ghost" size="sm" className="w-full justify-start h-7 px-2 text-xs">
                       View All Tasks
                     </Button>
@@ -465,7 +473,7 @@ export function TaskSidebar({ tasks, width = 288 }: TaskSidebarProps) {
                 <Link
                   key={`${repo.owner}/${repo.name}`}
                   href={repoPath}
-                  onClick={handleLinkClick}
+                  onClick={handleRepoClick}
                   className={cn('block rounded-lg', isActive && 'ring-1 ring-primary/50 ring-offset-0')}
                 >
                   <Card

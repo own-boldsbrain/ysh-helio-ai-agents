@@ -1,4 +1,5 @@
-import { Sandbox } from '@vercel/sandbox'
+import { Sandbox } from './index'
+import type { SandboxType } from './index'
 import { validateEnvironmentVariables, createAuthenticatedRepoUrl } from './config'
 import { runCommandInSandbox, runInProject, PROJECT_DIR } from './commands'
 import { generateId } from '@/lib/utils/id'
@@ -9,7 +10,13 @@ import { detectPackageManager, installDependencies } from './package-manager'
 import { registerSandbox } from './sandbox-registry'
 
 // Helper function to run command and log it
-async function runAndLogCommand(sandbox: Sandbox, command: string, args: string[], logger: TaskLogger, cwd?: string) {
+async function runAndLogCommand(
+  sandbox: SandboxType,
+  command: string,
+  args: string[],
+  logger: TaskLogger,
+  cwd?: string,
+) {
   // Properly escape arguments for shell execution
   const escapeArg = (arg: string) => {
     // Escape single quotes by replacing ' with '\''

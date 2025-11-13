@@ -1,4 +1,5 @@
-import { Sandbox } from '@vercel/sandbox'
+import { Sandbox } from './index'
+import type { SandboxType } from './index'
 import { LogEntry } from '@/lib/db/schema'
 
 export interface SandboxConfig {
@@ -32,7 +33,7 @@ export interface SandboxConfig {
 
 export interface SandboxResult {
   success: boolean
-  sandbox?: Sandbox
+  sandbox?: SandboxType
   domain?: string
   branchName?: string
   error?: string

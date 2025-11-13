@@ -27,6 +27,8 @@ import Copilot from '@/components/logos/copilot'
 import Cursor from '@/components/logos/cursor'
 import Gemini from '@/components/logos/gemini'
 import OpenCode from '@/components/logos/opencode'
+import Qwen from '@/components/logos/qwen'
+import DeepSeek from '@/components/logos/deepseek'
 
 const CODING_AGENTS = [
   { value: 'claude', label: 'Claude', icon: Claude },

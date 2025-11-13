@@ -1,18 +1,27 @@
-import { Sandbox } from '@vercel/sandbox'
-import { runCommandInSandbox, runInProject, PROJECT_DIR } from '../commands'
+import type { SandboxType } from '../index'
+import { runInProject, PROJECT_DIR } from '../commands'
 import { AgentExecutionResult } from '../types'
 import { redactSensitiveInfo } from '@/lib/utils/logging'
 import { TaskLogger } from '@/lib/utils/task-logger'
 import { connectors } from '@/lib/db/schema'
+import { SafeCommandExecutor } from './utils'
 
 type Connector = typeof connectors.$inferSelect
 
 // Helper function to run command and log it in project directory
-async function runAndLogCommand(sandbox: Sandbox, command: string, args: string[], logger: TaskLogger) {
+async function runAndLogCommand(
+  sandbox: SandboxType,
+  command: string,
+  args: string[],
+  logger: TaskLogger,
+  safeExecutor?: SafeCommandExecutor,
+) {
   const fullCommand = args.length > 0 ? `${command} ${args.join(' ')}` : command
   await logger.command(redactSensitiveInfo(fullCommand))
 
-  const result = await runInProject(sandbox, command, args)
+  const result = safeExecutor
+    ? await safeExecutor.executeSafe(command, args)
+    : await runInProject(sandbox, command, args)
 
   if (result.output && result.output.trim()) {
     await logger.info(redactSensitiveInfo(result.output.trim()))
@@ -26,7 +35,7 @@ async function runAndLogCommand(sandbox: Sandbox, command: string, args: string[
 }
 
 export async function executeCodexInSandbox(
-  sandbox: Sandbox,
+  sandbox: SandboxType,
   instruction: string,
   logger: TaskLogger,
   selectedModel?: string,
@@ -34,11 +43,12 @@ export async function executeCodexInSandbox(
   isResumed?: boolean,
   sessionId?: string,
 ): Promise<AgentExecutionResult> {
+  const safeExecutor = new SafeCommandExecutor(sandbox, logger)
   try {
     // Executing Codex CLI with instruction
 
     // Check if Codex CLI is already installed (for resumed sandboxes)
-    const existingCLICheck = await runCommandInSandbox(sandbox, 'which', ['codex'])
+    const existingCLICheck = await safeExecutor.executeSafe('which', ['codex'])
 
     let installResult: { success: boolean; output?: string; error?: string } = { success: true }
 
@@ -49,7 +59,7 @@ export async function executeCodexInSandbox(
       // Install Codex CLI using npm
       // Installing Codex CLI
       await logger.info('Installing Codex CLI...')
-      installResult = await runAndLogCommand(sandbox, 'npm', ['install', '-g', '@openai/codex'], logger)
+      installResult = await runAndLogCommand(sandbox, 'npm', ['install', '-g', '@openai/codex'], logger, safeExecutor)
 
       if (!installResult.success) {
         return {
@@ -64,7 +74,7 @@ export async function executeCodexInSandbox(
     }
 
     // Check if Codex CLI is available
-    const cliCheck = await runAndLogCommand(sandbox, 'which', ['codex'], logger)
+    const cliCheck = await runAndLogCommand(sandbox, 'which', ['codex'], logger, safeExecutor)
 
     if (!cliCheck.success) {
       return {
@@ -264,13 +274,13 @@ url = "${server.baseUrl}"
     }
 
     // Debug: List files in the current directory before running Codex
-    const lsDebugResult = await runCommandInSandbox(sandbox, 'ls', ['-la'])
+    const lsDebugResult = await safeExecutor.executeSafe('ls', ['-la'])
     if (logger) {
       await logger.info('Current directory contents retrieved')
     }
 
     // Debug: Show current working directory
-    const pwdResult = await runCommandInSandbox(sandbox, 'pwd', [])
+    const pwdResult = await safeExecutor.executeSafe('pwd', [])
     if (logger) {
       await logger.info('Current working directory retrieved')
     }
@@ -343,7 +353,7 @@ url = "${server.baseUrl}"
     }
 
     // Check if any files were modified
-    const gitStatusCheck = await runAndLogCommand(sandbox, 'git', ['status', '--porcelain'], logger)
+    const gitStatusCheck = await runAndLogCommand(sandbox, 'git', ['status', '--porcelain'], logger, safeExecutor)
     const hasChanges = gitStatusCheck.success && gitStatusCheck.output?.trim()
 
     if (result.success || result.exitCode === 0) {

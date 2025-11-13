@@ -1,20 +1,29 @@
-import { Sandbox } from '@vercel/sandbox'
-import { runCommandInSandbox, runInProject, PROJECT_DIR } from '../commands'
+import type { SandboxType } from '../index'
+import { runInProject } from '../commands'
 import { AgentExecutionResult } from '../types'
 import { redactSensitiveInfo } from '@/lib/utils/logging'
 import { TaskLogger } from '@/lib/utils/task-logger'
 import { connectors } from '@/lib/db/schema'
+import { SafeCommandExecutor } from './utils'
 
 type Connector = typeof connectors.$inferSelect
 
 // Helper function to run command and log it in project directory
-async function runAndLogCommand(sandbox: Sandbox, command: string, args: string[], logger: TaskLogger) {
+async function runAndLogCommand(
+  sandbox: SandboxType,
+  command: string,
+  args: string[],
+  logger: TaskLogger,
+  safeExecutor?: SafeCommandExecutor,
+) {
   const fullCommand = args.length > 0 ? `${command} ${args.join(' ')}` : command
   const redactedCommand = redactSensitiveInfo(fullCommand)
 
   await logger.command(redactedCommand)
 
-  const result = await runInProject(sandbox, command, args)
+  const result = safeExecutor
+    ? await safeExecutor.executeSafe(command, args)
+    : await runInProject(sandbox, command, args)
 
   // Only try to access properties if result is valid
   if (result && result.output && result.output.trim()) {
@@ -44,12 +53,13 @@ async function runAndLogCommand(sandbox: Sandbox, command: string, args: string[
 }
 
 export async function executeGeminiInSandbox(
-  sandbox: Sandbox,
+  sandbox: SandboxType,
   instruction: string,
   logger: TaskLogger,
   selectedModel?: string,
   mcpServers?: Connector[],
 ): Promise<AgentExecutionResult> {
+  const safeExecutor = new SafeCommandExecutor(sandbox, logger)
   try {
     // Executing Gemini CLI with instruction
 
@@ -155,13 +165,13 @@ ${settingsJson}
 EOF`
 
       await logger.info('Creating Gemini MCP settings file...')
-      const settingsResult = await runCommandInSandbox(sandbox, 'sh', ['-c', createSettingsCmd])
+      const settingsResult = await safeExecutor.executeSafe('sh', ['-c', createSettingsCmd])
 
       if (settingsResult.success) {
         await logger.info('Gemini settings.json file created successfully')
 
         // Verify the file was created (without logging sensitive contents)
-        const verifySettings = await runCommandInSandbox(sandbox, 'test', ['-f', '~/.gemini/settings.json'])
+        const verifySettings = await safeExecutor.executeSafe('test', ['-f', '~/.gemini/settings.json'])
         if (verifySettings.success) {
           await logger.info('Gemini MCP configuration verified')
         }
@@ -234,7 +244,7 @@ EOF`
     const fullCommand = envPrefix
       ? `${envPrefix} gemini ${args.join(' ')} "${instruction}"`
       : `gemini ${args.join(' ')} "${instruction}"`
-    let result = await runCommandInSandbox(sandbox, 'sh', ['-c', fullCommand])
+    let result = await safeExecutor.executeSafe('sh', ['-c', fullCommand])
 
     // If that fails with tool registry error, try with different approval modes
     if (!result.success && result.error?.includes('Tool') && result.error?.includes('not found in registry')) {
@@ -250,7 +260,7 @@ EOF`
       const fallbackCommand = envPrefix
         ? `${envPrefix} gemini ${fallbackArgs.join(' ')} "${instruction}"`
         : `gemini ${fallbackArgs.join(' ')} "${instruction}"`
-      result = await runCommandInSandbox(sandbox, 'sh', ['-c', fallbackCommand])
+      result = await safeExecutor.executeSafe('sh', ['-c', fallbackCommand])
 
       // If still failing, try the most basic approach
       if (!result.success && result.error?.includes('Tool') && result.error?.includes('not found in registry')) {
@@ -259,7 +269,7 @@ EOF`
         const minimalCommand = envPrefix
           ? `${envPrefix} gemini ${minimalArgs.join(' ')} "${instruction}"`
           : `gemini ${minimalArgs.join(' ')} "${instruction}"`
-        result = await runCommandInSandbox(sandbox, 'sh', ['-c', minimalCommand])
+        result = await safeExecutor.executeSafe('sh', ['-c', minimalCommand])
       }
     }
 

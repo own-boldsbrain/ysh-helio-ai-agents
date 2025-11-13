@@ -1,0 +1,540 @@
+# docker-compose.multi-agent.yml
+# Configuração otimizada para sistema multi-agente com recursos Docker PRO
+# Suporta até 32 agentes simultâneos com isolamento e performance máxima
+
+version: '3.8'
+
+x-agent-defaults: &agent-defaults
+  image: coding-agent-sandbox:latest
+  networks:
+    - coding-agent-network
+  deploy:
+    resources:
+      limits:
+        cpus: '2'
+        memory: 4G
+      reservations:
+        cpus: '1'
+        memory: 2G
+  restart: unless-stopped
+  logging:
+    driver: 'json-file'
+    options:
+      max-size: '10m'
+      max-file: '3'
+  security_opt:
+    - no-new-privileges:true
+  cap_drop:
+    - ALL
+  cap_add:
+    - NET_BIND_SERVICE
+
+services:
+  # PostgreSQL - Banco de dados principal
+  postgres:
+    image: postgres:15-alpine
+    container_name: coding-agent-postgres
+    environment:
+      POSTGRES_DB: coding_agent
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_MAX_CONNECTIONS: 200
+      POSTGRES_SHARED_BUFFERS: 2GB
+      POSTGRES_EFFECTIVE_CACHE_SIZE: 6GB
+    ports:
+      - '5433:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./config/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+    command: >
+      postgres
+      -c max_connections=200
+      -c shared_buffers=2GB
+      -c effective_cache_size=6GB
+      -c maintenance_work_mem=512MB
+      -c checkpoint_completion_target=0.9
+      -c wal_buffers=16MB
+      -c default_statistics_target=100
+      -c random_page_cost=1.1
+      -c effective_io_concurrency=200
+      -c work_mem=10485kB
+      -c min_wal_size=1GB
+      -c max_wal_size=4GB
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8G
+        reservations:
+          cpus: '2'
+          memory: 4G
+    networks:
+      - coding-agent-network
+
+  # Redis - Cache e fila de tarefas para agentes
+  redis:
+    image: redis:7-alpine
+    container_name: coding-agent-redis
+    command: >
+      redis-server
+      --maxmemory 4gb
+      --maxmemory-policy allkeys-lru
+      --appendonly yes
+      --appendfsync everysec
+      --save 900 1
+      --save 300 10
+      --save 60 10000
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 2G
+    networks:
+      - coding-agent-network
+
+  # RabbitMQ - Message broker para comunicação entre agentes
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: coding-agent-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-admin}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-admin123}
+      RABBITMQ_VM_MEMORY_HIGH_WATERMARK: 3GB
+    ports:
+      - '5672:5672' # AMQP
+      - '15672:15672' # Management UI
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ['CMD', 'rabbitmq-diagnostics', 'ping']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 2G
+    networks:
+      - coding-agent-network
+
+  # Nginx - Load balancer e reverse proxy
+  nginx:
+    image: nginx:alpine
+    container_name: coding-agent-nginx
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./config/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - app
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+    networks:
+      - coding-agent-network
+
+  # Aplicação principal
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: coding-agent-app
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+      - /app/apps/web/node_modules
+    ports:
+      - '3000:3000'
+      - '3001:3001'
+      - '3002:3002'
+    environment:
+      - NODE_ENV=development
+      - POSTGRES_URL=postgresql://postgres:${POSTGRES_PASSWORD:-password}@postgres:5432/coding_agent
+      - REDIS_URL=redis://redis:6379
+      - RABBITMQ_URL=amqp://${RABBITMQ_USER:-admin}:${RABBITMQ_PASS:-admin123}@rabbitmq:5672
+      - MAX_AGENTS=32
+      - AGENT_TIMEOUT=300
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8G
+        reservations:
+          cpus: '2'
+          memory: 4G
+    networks:
+      - coding-agent-network
+    command: pnpm dev
+
+  # Pool de agentes - Claude (8 instâncias)
+  agent-claude-1:
+    <<: *agent-defaults
+    container_name: agent-claude-1
+    environment:
+      AGENT_ID: claude-1
+      AGENT_TYPE: claude
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-admin}:${RABBITMQ_PASS:-admin123}@rabbitmq:5672
+    depends_on:
+      - redis
+      - rabbitmq
+
+  agent-claude-2:
+    <<: *agent-defaults
+    container_name: agent-claude-2
+    environment:
+      AGENT_ID: claude-2
+      AGENT_TYPE: claude
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-admin}:${RABBITMQ_PASS:-admin123}@rabbitmq:5672
+    depends_on:
+      - redis
+      - rabbitmq
+
+  agent-claude-3:
+    <<: *agent-defaults
+    container_name: agent-claude-3
+    environment:
+      AGENT_ID: claude-3
+      AGENT_TYPE: claude
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-admin}:${RABBITMQ_PASS:-admin123}@rabbitmq:5672
+    depends_on:
+      - redis
+      - rabbitmq
+
+  agent-claude-4:
+    <<: *agent-defaults
+    container_name: agent-claude-4
+    environment:
+      AGENT_ID: claude-4
+      AGENT_TYPE: claude
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-admin}:${RABBITMQ_PASS:-admin123}@rabbitmq:5672
+    depends_on:
+      - redis
+      - rabbitmq
+
+  # Pool de agentes - GPT (8 instâncias)
+  agent-gpt-1:
+    <<: *agent-defaults
+    container_name: agent-gpt-1
+    environment:
+      AGENT_ID: gpt-1
+      AGENT_TYPE: openai
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-admin}:${RABBITMQ_PASS:-admin123}@rabbitmq:5672
+    depends_on:
+      - redis
+      - rabbitmq
+
+  agent-gpt-2:
+    <<: *agent-defaults
+    container_name: agent-gpt-2
+    environment:
+      AGENT_ID: gpt-2
+      AGENT_TYPE: openai
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-admin}:${RABBITMQ_PASS:-admin123}@rabbitmq:5672
+    depends_on:
+      - redis
+      - rabbitmq
+
+  # Pool de agentes - Gemini (8 instâncias)
+  agent-gemini-1:
+    <<: *agent-defaults
+    container_name: agent-gemini-1
+    environment:
+      AGENT_ID: gemini-1
+      AGENT_TYPE: gemini
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-admin}:${RABBITMQ_PASS:-admin123}@rabbitmq:5672
+    depends_on:
+      - redis
+      - rabbitmq
+
+  agent-gemini-2:
+    <<: *agent-defaults
+    container_name: agent-gemini-2
+    environment:
+      AGENT_ID: gemini-2
+      AGENT_TYPE: gemini
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-admin}:${RABBITMQ_PASS:-admin123}@rabbitmq:5672
+    depends_on:
+      - redis
+      - rabbitmq
+
+  # Pool de agentes - Groq (8 instâncias) - Alta velocidade
+  agent-groq-1:
+    <<: *agent-defaults
+    container_name: agent-groq-1
+    environment:
+      AGENT_ID: groq-1
+      AGENT_TYPE: groq
+      GROQ_API_KEY: ${GROQ_API_KEY}
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-admin}:${RABBITMQ_PASS:-admin123}@rabbitmq:5672
+    depends_on:
+      - redis
+      - rabbitmq
+
+  agent-groq-2:
+    <<: *agent-defaults
+    container_name: agent-groq-2
+    environment:
+      AGENT_ID: groq-2
+      AGENT_TYPE: groq
+      GROQ_API_KEY: ${GROQ_API_KEY}
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-admin}:${RABBITMQ_PASS:-admin123}@rabbitmq:5672
+    depends_on:
+      - redis
+      - rabbitmq
+
+  # Ollama - Local LLM server com modelos open-source
+  ollama:
+    image: ollama/ollama:latest
+    container_name: coding-agent-ollama
+    ports:
+      - '11434:11434'
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h
+      - OLLAMA_HOST=0.0.0.0:11434
+      - OLLAMA_ORIGINS=*
+      - OLLAMA_NUM_PARALLEL=4
+      - OLLAMA_MAX_LOADED_MODELS=3
+    deploy:
+      resources:
+        limits:
+          cpus: '8'
+          memory: 16G
+        reservations:
+          cpus: '4'
+          memory: 8G
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:11434/api/tags']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - coding-agent-network
+    restart: unless-stopped
+
+  # Ollama Model Initializer - Faz pull dos modelos na primeira execução
+  ollama-init:
+    image: ollama/ollama:latest
+    container_name: ollama-init
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      - OLLAMA_HOST=ollama:11434
+    volumes:
+      - ./scripts/ollama-init.sh:/scripts/ollama-init.sh:ro
+    entrypoint: ['/bin/sh', '/scripts/ollama-init.sh']
+    networks:
+      - coding-agent-network
+    restart: 'no'
+
+  # Pool de agentes - Ollama Qwen Coder (4 instâncias)
+  agent-ollama-qwen-1:
+    <<: *agent-defaults
+    container_name: agent-ollama-qwen-1
+    environment:
+      AGENT_ID: ollama-qwen-1
+      AGENT_TYPE: ollama
+      OLLAMA_MODEL: qwen2.5-coder:latest
+      OLLAMA_BASE_URL: http://ollama:11434
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-admin}:${RABBITMQ_PASS:-admin123}@rabbitmq:5672
+    depends_on:
+      - redis
+      - rabbitmq
+      - ollama
+
+  agent-ollama-qwen-2:
+    <<: *agent-defaults
+    container_name: agent-ollama-qwen-2
+    environment:
+      AGENT_ID: ollama-qwen-2
+      AGENT_TYPE: ollama
+      OLLAMA_MODEL: qwen2.5-coder:latest
+      OLLAMA_BASE_URL: http://ollama:11434
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-admin}:${RABBITMQ_PASS:-admin123}@rabbitmq:5672
+    depends_on:
+      - redis
+      - rabbitmq
+      - ollama
+
+  # Pool de agentes - Ollama Gemma2 (4 instâncias)
+  agent-ollama-gemma-1:
+    <<: *agent-defaults
+    container_name: agent-ollama-gemma-1
+    environment:
+      AGENT_ID: ollama-gemma-1
+      AGENT_TYPE: ollama
+      OLLAMA_MODEL: gemma2:latest
+      OLLAMA_BASE_URL: http://ollama:11434
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-admin}:${RABBITMQ_PASS:-admin123}@rabbitmq:5672
+    depends_on:
+      - redis
+      - rabbitmq
+      - ollama
+
+  agent-ollama-gemma-2:
+    <<: *agent-defaults
+    container_name: agent-ollama-gemma-2
+    environment:
+      AGENT_ID: ollama-gemma-2
+      AGENT_TYPE: ollama
+      OLLAMA_MODEL: gemma2:latest
+      OLLAMA_BASE_URL: http://ollama:11434
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-admin}:${RABBITMQ_PASS:-admin123}@rabbitmq:5672
+    depends_on:
+      - redis
+      - rabbitmq
+      - ollama
+
+  # Pool de agentes - Ollama Qwen Vision (2 instâncias)
+  agent-ollama-qwen-vision-1:
+    <<: *agent-defaults
+    container_name: agent-ollama-qwen-vision-1
+    environment:
+      AGENT_ID: ollama-qwen-vision-1
+      AGENT_TYPE: ollama
+      OLLAMA_MODEL: qwen2-vl:latest
+      OLLAMA_BASE_URL: http://ollama:11434
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-admin}:${RABBITMQ_PASS:-admin123}@rabbitmq:5672
+    depends_on:
+      - redis
+      - rabbitmq
+      - ollama
+
+  agent-ollama-qwen-vision-2:
+    <<: *agent-defaults
+    container_name: agent-ollama-qwen-vision-2
+    environment:
+      AGENT_ID: ollama-qwen-vision-2
+      AGENT_TYPE: ollama
+      OLLAMA_MODEL: qwen2-vl:latest
+      OLLAMA_BASE_URL: http://ollama:11434
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-admin}:${RABBITMQ_PASS:-admin123}@rabbitmq:5672
+    depends_on:
+      - redis
+      - rabbitmq
+      - ollama
+
+  # Monitoring - Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: coding-agent-prometheus
+    ports:
+      - '9090:9090'
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+    networks:
+      - coding-agent-network
+
+  # Monitoring - Grafana
+  grafana:
+    image: grafana/grafana:latest
+    container_name: coding-agent-grafana
+    ports:
+      - '3100:3000'
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+      - GF_INSTALL_PLUGINS=redis-datasource
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./config/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    depends_on:
+      - prometheus
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+    networks:
+      - coding-agent-network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+  ollama_data:
+    driver: local
+
+networks:
+  coding-agent-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16

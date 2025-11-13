@@ -1,6 +1,6 @@
-import { Sandbox } from '@vercel/sandbox'
+import type { SandboxType } from '../index'
 import { Writable } from 'stream'
-import { runCommandInSandbox, runInProject, PROJECT_DIR } from '../commands'
+import { runInProject, PROJECT_DIR } from '../commands'
 import { AgentExecutionResult } from '../types'
 import { redactSensitiveInfo } from '@/lib/utils/logging'
 import { TaskLogger } from '@/lib/utils/task-logger'
@@ -8,11 +8,18 @@ import { connectors, taskMessages } from '@/lib/db/schema'
 import { db } from '@/lib/db/client'
 import { eq } from 'drizzle-orm'
 import { generateId } from '@/lib/utils/id'
+import { SafeCommandExecutor } from './utils'
 
 type Connector = typeof connectors.$inferSelect
 
 // Helper function to run command and collect logs in project directory
-async function runAndLogCommand(sandbox: Sandbox, command: string, args: string[], logger: TaskLogger) {
+async function runAndLogCommand(
+  sandbox: SandboxType,
+  command: string,
+  args: string[],
+  logger: TaskLogger,
+  safeExecutor?: SafeCommandExecutor,
+) {
   const fullCommand = args.length > 0 ? `${command} ${args.join(' ')}` : command
   const redactedCommand = redactSensitiveInfo(fullCommand)
 
@@ -22,7 +29,9 @@ async function runAndLogCommand(sandbox: Sandbox, command: string, args: string[
     await logger.command(redactedCommand)
   }
 
-  const result = await runInProject(sandbox, command, args)
+  const result = safeExecutor
+    ? await safeExecutor.executeSafe(command, args)
+    : await runInProject(sandbox, command, args)
 
   // Only try to access properties if result is valid
   if (result && result.output && result.output.trim()) {
@@ -61,13 +70,14 @@ async function runAndLogCommand(sandbox: Sandbox, command: string, args: string[
 }
 
 export async function installClaudeCLI(
-  sandbox: Sandbox,
+  sandbox: SandboxType,
   logger: TaskLogger,
   selectedModel?: string,
   mcpServers?: Connector[],
 ): Promise<{ success: boolean }> {
+  const safeExecutor = new SafeCommandExecutor(sandbox, logger)
   // Check if Claude CLI is already installed (for resumed sandboxes)
-  const existingCLICheck = await runCommandInSandbox(sandbox, 'which', ['claude'])
+  const existingCLICheck = await safeExecutor.executeSafe('which', ['claude'])
 
   let claudeInstall: { success: boolean; output?: string; error?: string } = { success: true }
 
@@ -77,7 +87,7 @@ export async function installClaudeCLI(
   } else {
     // Install Claude CLI
     await logger.info('Installing Claude CLI...')
-    claudeInstall = await runCommandInSandbox(sandbox, 'npm', ['install', '-g', '@anthropic-ai/claude-code'])
+    claudeInstall = await safeExecutor.executeSafe('npm', ['install', '-g', '@anthropic-ai/claude-code'])
   }
 
   if (claudeInstall.success) {
@@ -88,7 +98,7 @@ export async function installClaudeCLI(
       await logger.info('Authenticating Claude CLI...')
 
       // Create Claude config directory (use $HOME instead of ~)
-      await runCommandInSandbox(sandbox, 'mkdir', ['-p', '$HOME/.config/claude'])
+      await safeExecutor.executeSafe('mkdir', ['-p', '$HOME/.config/claude'])
 
       // Create config file directly using absolute path
       // Use selectedModel if provided, otherwise fall back to default
@@ -112,7 +122,7 @@ export async function installClaudeCLI(
               addMcpCmd = addMcpCmd.replace(' --', ` ${envVars} --`)
             }
 
-            const addResult = await runCommandInSandbox(sandbox, 'sh', ['-c', addMcpCmd])
+            const addResult = await safeExecutor.executeSafe('sh', ['-c', addMcpCmd])
 
             if (addResult.success) {
               await logger.info('Successfully added local MCP server')
@@ -133,7 +143,7 @@ export async function installClaudeCLI(
               addMcpCmd += ` --header "X-Client-ID: ${server.oauthClientId}"`
             }
 
-            const addResult = await runCommandInSandbox(sandbox, 'sh', ['-c', addMcpCmd])
+            const addResult = await safeExecutor.executeSafe('sh', ['-c', addMcpCmd])
 
             if (addResult.success) {
               await logger.info('Successfully added remote MCP server')
@@ -152,7 +162,7 @@ export async function installClaudeCLI(
   "default_model": "${modelToUse}"
 }
 EOF`
-      const configFileResult = await runCommandInSandbox(sandbox, 'sh', ['-c', configFileCmd])
+      const configFileResult = await safeExecutor.executeSafe('sh', ['-c', configFileCmd])
 
       if (configFileResult.success) {
         await logger.info('Claude CLI config file created successfully')
@@ -161,7 +171,7 @@ EOF`
       }
 
       // Verify authentication
-      const verifyAuth = await runCommandInSandbox(sandbox, 'sh', [
+      const verifyAuth = await safeExecutor.executeSafe('sh', [
         '-c',
         `ANTHROPIC_API_KEY=${process.env.ANTHROPIC_API_KEY} claude --version`,
       ])
@@ -182,7 +192,7 @@ EOF`
 }
 
 export async function executeClaudeInSandbox(
-  sandbox: Sandbox,
+  sandbox: SandboxType,
   instruction: string,
   logger: TaskLogger,
   selectedModel?: string,
@@ -193,17 +203,18 @@ export async function executeClaudeInSandbox(
   agentMessageId?: string,
 ): Promise<AgentExecutionResult> {
   let extractedSessionId: string | undefined
+  const safeExecutor = new SafeCommandExecutor(sandbox, logger)
   try {
     // Executing Claude CLI with instruction
 
     // Check if Claude CLI is available and get version info
-    const cliCheck = await runAndLogCommand(sandbox, 'which', ['claude'], logger)
+    const cliCheck = await runAndLogCommand(sandbox, 'which', ['claude'], logger, safeExecutor)
 
     if (cliCheck.success) {
       // Get Claude CLI version for debugging
-      await runAndLogCommand(sandbox, 'claude', ['--version'], logger)
+      await runAndLogCommand(sandbox, 'claude', ['--version'], logger, safeExecutor)
       // Also try to see what commands are available
-      await runAndLogCommand(sandbox, 'claude', ['--help'], logger)
+      await runAndLogCommand(sandbox, 'claude', ['--help'], logger, safeExecutor)
     }
 
     if (!cliCheck.success) {
@@ -222,7 +233,7 @@ export async function executeClaudeInSandbox(
       // Claude CLI installed successfully
 
       // Verify installation worked
-      const verifyCheck = await runAndLogCommand(sandbox, 'which', ['claude'], logger)
+      const verifyCheck = await runAndLogCommand(sandbox, 'which', ['claude'], logger, safeExecutor)
       if (!verifyCheck.success) {
         return {
           success: false,
@@ -253,7 +264,7 @@ export async function executeClaudeInSandbox(
 
     // Check MCP configuration status
     const envPrefix = `ANTHROPIC_API_KEY="${process.env.ANTHROPIC_API_KEY}"`
-    const mcpList = await runCommandInSandbox(sandbox, 'sh', ['-c', `${envPrefix} claude mcp list`])
+    const mcpList = await safeExecutor.executeSafe('sh', ['-c', `${envPrefix} claude mcp list`])
     await logger.info('MCP servers list retrieved')
     if (mcpList.error) {
       await logger.info('MCP list error occurred')
@@ -434,7 +445,7 @@ export async function executeClaudeInSandbox(
     await logger.info('Claude completed successfully')
 
     // Check if any files were modified
-    const gitStatusCheck = await runAndLogCommand(sandbox, 'git', ['status', '--porcelain'], logger)
+    const gitStatusCheck = await runAndLogCommand(sandbox, 'git', ['status', '--porcelain'], logger, safeExecutor)
 
     const hasChanges = gitStatusCheck.success && gitStatusCheck.output?.trim()
 
@@ -443,8 +454,8 @@ export async function executeClaudeInSandbox(
       await logger.info('No changes detected. Checking if files exist...')
 
       // Check if common files exist
-      await runAndLogCommand(sandbox, 'find', ['.', '-name', 'README*', '-o', '-name', 'readme*'], logger)
-      await runAndLogCommand(sandbox, 'ls', ['-la'], logger)
+      await runAndLogCommand(sandbox, 'find', ['.', '-name', 'README*', '-o', '-name', 'readme*'], logger, safeExecutor)
+      await runAndLogCommand(sandbox, 'ls', ['-la'], logger, safeExecutor)
     }
 
     console.log('Claude execution completed, returning sessionId:', extractedSessionId)

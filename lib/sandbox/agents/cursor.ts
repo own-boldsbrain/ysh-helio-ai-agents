@@ -1,4 +1,4 @@
-import { Sandbox } from '@vercel/sandbox'
+import type { SandboxType } from '../index'
 import { runCommandInSandbox, runInProject, PROJECT_DIR } from '../commands'
 import { AgentExecutionResult } from '../types'
 import { redactSensitiveInfo } from '@/lib/utils/logging'
@@ -7,15 +7,24 @@ import { connectors, taskMessages } from '@/lib/db/schema'
 import { db } from '@/lib/db/client'
 import { eq } from 'drizzle-orm'
 import { generateId } from '@/lib/utils/id'
+import { SafeCommandExecutor } from './utils'
 
 type Connector = typeof connectors.$inferSelect
 
 // Helper function to run command in sandbox root (for installation checks)
-async function runAndLogCommandRoot(sandbox: Sandbox, command: string, args: string[], logger: TaskLogger) {
+async function runAndLogCommandRoot(
+  sandbox: SandboxType,
+  command: string,
+  args: string[],
+  logger: TaskLogger,
+  safeExecutor?: SafeCommandExecutor,
+) {
   const fullCommand = args.length > 0 ? `${command} ${args.join(' ')}` : command
   await logger.command(redactSensitiveInfo(fullCommand))
 
-  const result = await runCommandInSandbox(sandbox, command, args)
+  const result = safeExecutor
+    ? await safeExecutor.executeSafe(command, args)
+    : await runCommandInSandbox(sandbox, command, args)
 
   if (result.output && result.output.trim()) {
     await logger.info(redactSensitiveInfo(result.output.trim()))
@@ -29,11 +38,19 @@ async function runAndLogCommandRoot(sandbox: Sandbox, command: string, args: str
 }
 
 // Helper function to run command in project directory (for git operations)
-async function runAndLogCommand(sandbox: Sandbox, command: string, args: string[], logger: TaskLogger) {
+async function runAndLogCommand(
+  sandbox: SandboxType,
+  command: string,
+  args: string[],
+  logger: TaskLogger,
+  safeExecutor?: SafeCommandExecutor,
+) {
   const fullCommand = args.length > 0 ? `${command} ${args.join(' ')}` : command
   await logger.command(redactSensitiveInfo(fullCommand))
 
-  const result = await runInProject(sandbox, command, args)
+  const result = safeExecutor
+    ? await safeExecutor.executeSafe(command, args)
+    : await runInProject(sandbox, command, args)
 
   if (result.output && result.output.trim()) {
     await logger.info(redactSensitiveInfo(result.output.trim()))
@@ -47,7 +64,7 @@ async function runAndLogCommand(sandbox: Sandbox, command: string, args: string[
 }
 
 export async function executeCursorInSandbox(
-  sandbox: Sandbox,
+  sandbox: SandboxType,
   instruction: string,
   logger: TaskLogger,
   selectedModel?: string,
@@ -59,13 +76,13 @@ export async function executeCursorInSandbox(
   try {
     // Executing Cursor CLI with instruction
 
+    const safeExecutor = new SafeCommandExecutor(sandbox, logger)
+
     // Check if Cursor CLI is already installed (for resumed sandboxes)
-    const existingCliCheck = await runCommandInSandbox(
-      sandbox,
-      'sh',
-      ['-c', 'export PATH="$HOME/.local/bin:$PATH"; which cursor-agent 2>/dev/null'],
-      // Don't log this check to avoid cluttering logs
-    )
+    const existingCliCheck = await safeExecutor.executeSafe('sh', [
+      '-c',
+      'export PATH="$HOME/.local/bin:$PATH"; which cursor-agent 2>/dev/null',
+    ])
 
     let cursorInstall: { success: boolean; output?: string; error?: string } = { success: true }
 
@@ -83,7 +100,7 @@ export async function executeCursorInSandbox(
       // Install Cursor CLI using the official installation script
       // Add debugging to see what the installation script does
       const installCommand = 'curl https://cursor.com/install -fsS | bash -s -- --verbose'
-      cursorInstall = await runAndLogCommandRoot(sandbox, 'sh', ['-c', installCommand], logger)
+      cursorInstall = await runAndLogCommandRoot(sandbox, 'sh', ['-c', installCommand], logger, safeExecutor)
 
       // After installation, check what was installed and where
       if (logger) {
@@ -98,7 +115,7 @@ export async function executeCursorInSandbox(
       ]
 
       for (const checkCmd of postInstallChecks) {
-        const checkResult = await runAndLogCommandRoot(sandbox, 'sh', ['-c', checkCmd], logger)
+        const checkResult = await runAndLogCommandRoot(sandbox, 'sh', ['-c', checkCmd], logger, safeExecutor)
         if (logger && checkResult.output) {
           await logger.info('Post-install check completed')
         }
@@ -135,6 +152,7 @@ export async function executeCursorInSandbox(
       'sh',
       ['-c', 'export PATH="$HOME/.local/bin:$PATH"; which cursor-agent'],
       logger,
+      safeExecutor,
     )
 
     if (!cliCheck.success) {
@@ -152,7 +170,7 @@ export async function executeCursorInSandbox(
       ]
 
       for (const searchCmd of searchPaths) {
-        const searchResult = await runAndLogCommandRoot(sandbox, 'sh', ['-c', searchCmd], logger)
+        const searchResult = await runAndLogCommandRoot(sandbox, 'sh', ['-c', searchCmd], logger, safeExecutor)
         if (logger && searchResult.output) {
           await logger.info('Search completed')
         }
@@ -245,13 +263,13 @@ ${mcpConfigJson}
 EOF`
 
       await logger.info('Creating Cursor MCP configuration file...')
-      const mcpConfigResult = await runCommandInSandbox(sandbox, 'sh', ['-c', createMcpConfigCmd])
+      const mcpConfigResult = await safeExecutor.executeSafe('sh', ['-c', createMcpConfigCmd])
 
       if (mcpConfigResult.success) {
         await logger.info('MCP configuration file (~/.cursor/mcp.json) created successfully')
 
         // Verify the file was created (without logging sensitive contents)
-        const verifyMcpConfig = await runCommandInSandbox(sandbox, 'test', ['-f', '~/.cursor/mcp.json'])
+        const verifyMcpConfig = await safeExecutor.executeSafe('test', ['-f', '~/.cursor/mcp.json'])
         if (verifyMcpConfig.success) {
           await logger.info('MCP configuration verified')
         }
@@ -271,6 +289,7 @@ EOF`
       'sh',
       ['-c', 'export PATH="$HOME/.local/bin:$PATH"; which cursor-agent'],
       logger,
+      safeExecutor,
     )
     if (logger) {
       await logger.info('Pre-execution cursor-agent check completed')
@@ -526,7 +545,7 @@ EOF`
     // Session ID is now extracted during streaming parse above
 
     // Check if any files were modified
-    const gitStatusCheck = await runAndLogCommand(sandbox, 'git', ['status', '--porcelain'], logger)
+    const gitStatusCheck = await runAndLogCommand(sandbox, 'git', ['status', '--porcelain'], logger, safeExecutor)
     const hasChanges = gitStatusCheck.success && gitStatusCheck.output?.trim()
 
     // Success is determined by the CLI execution, not by code changes

@@ -9,6 +9,7 @@ This document contains critical rules and guidelines for AI agents working on th
 **All log statements MUST use static strings only. NEVER include dynamic values, regardless of severity.**
 
 #### Bad Examples (DO NOT DO THIS):
+
 ```typescript
 // BAD - Contains dynamic values
 await logger.info(`Task created: ${taskId}`)
@@ -18,6 +19,7 @@ console.error(`Error for ${provider}:`, error)
 ```
 
 #### Good Examples (DO THIS):
+
 ```typescript
 // GOOD - Static strings only
 await logger.info('Task created')
@@ -27,11 +29,13 @@ console.error('Error occurred:', error)
 ```
 
 #### Rationale:
+
 - **Prevents data leakage**: Dynamic values in logs can expose sensitive information (user IDs, file paths, credentials, etc.) to end users
 - **Security by default**: Logs are displayed directly in the UI and returned in API responses
 - **No exceptions**: This applies to ALL log levels (info, error, success, command, console.log, console.error, console.warn, etc.)
 
 #### Sensitive Data That Must NEVER Appear in Logs:
+
 - Vercel credentials (SANDBOX_VERCEL_TOKEN, SANDBOX_VERCEL_TEAM_ID, SANDBOX_VERCEL_PROJECT_ID)
 - User IDs and personal information
 - File paths and repository URLs
@@ -44,8 +48,9 @@ console.error('Error occurred:', error)
 The `redactSensitiveInfo()` function in `lib/utils/logging.ts` automatically redacts known sensitive patterns, but this is a **backup measure only**. The primary defense is to never log dynamic values in the first place.
 
 #### Current Redaction Patterns:
+
 - API keys (ANTHROPIC_API_KEY, OPENAI_API_KEY, etc.)
-- GitHub tokens (ghp_, gho_, ghu_, ghs_, ghr_)
+- GitHub tokens (ghp*, gho*, ghu*, ghs*, ghr\_)
 - Vercel credentials (SANDBOX_VERCEL_TOKEN, SANDBOX_VERCEL_TEAM_ID, SANDBOX_VERCEL_PROJECT_ID)
 - Bearer tokens
 - JSON fields (teamId, projectId)
@@ -66,6 +71,7 @@ pnpm lint
 ```
 
 **If any errors are found:**
+
 1. **Type errors**: Fix TypeScript type errors by correcting type annotations, adding missing imports, or fixing type mismatches
 2. **Lint errors**: Fix ESLint errors by following the suggested fixes or adjusting the code to meet the linting rules
 3. **Do not skip or ignore errors** - all errors must be resolved before considering the task complete
@@ -77,12 +83,14 @@ This ensures all code follows the project's formatting standards, type safety re
 **DO NOT run development servers (e.g., `npm run dev`, `pnpm dev`, `next dev`) as they will conflict with other running instances.**
 
 #### Why This Rule Exists:
+
 - Dev servers run indefinitely and block the terminal session
 - Multiple instances on the same port cause conflicts
 - The application may already be running in the user's environment
 - Long-running processes make the conversation hang for the user
 
 #### Commands to AVOID:
+
 ```bash
 # DO NOT RUN THESE:
 npm run dev
@@ -96,6 +104,7 @@ nodemon
 ```
 
 #### What to Do Instead:
+
 1. **Testing changes**: Use `pnpm build` to verify the production build works
 2. **Type checking**: Use `pnpm type-check` to verify types
 3. **Linting**: Use `pnpm lint` to check code quality
@@ -103,11 +112,13 @@ nodemon
 5. **If the user needs to test**: Let the user run the dev server themselves
 
 #### Exception:
+
 If the user explicitly asks you to start a dev server, politely explain why you cannot do this and suggest they run it themselves instead.
 
 ### Logging Best Practices
 
 1. **Use descriptive static messages**
+
    ```typescript
    // Instead of logging the value, log the action
    await logger.info('Sandbox created successfully')
@@ -116,6 +127,7 @@ If the user explicitly asks you to start a dev server, politely explain why you 
    ```
 
 2. **Server-side logging for debugging**
+
    ```typescript
    // Use console.error for server-side debugging (not shown to users)
    // But still avoid sensitive data
@@ -132,6 +144,7 @@ If the user explicitly asks you to start a dev server, politely explain why you 
 ### Error Handling
 
 1. **Generic error messages to users**
+
    ```typescript
    await logger.error('Operation failed')
    // NOT: await logger.error(`Operation failed: ${error.message}`)
@@ -148,10 +161,11 @@ If the user explicitly asks you to start a dev server, politely explain why you 
 When making changes that involve logging:
 
 1. **Search for dynamic values**
+
    ```bash
    # Check for logger statements with template literals
    grep -r "logger\.(info|error|success|command)\(\`.*\$\{" .
-   
+
    # Check for console statements with template literals
    grep -r "console\.(log|error|warn|info)\(\`.*\$\{" .
    ```
@@ -166,6 +180,7 @@ When making changes that involve logging:
 ### Environment Variables
 
 Never expose these in logs or to the client:
+
 - `SANDBOX_VERCEL_TOKEN` - Vercel API token
 - `SANDBOX_VERCEL_TEAM_ID` - Vercel team identifier
 - `SANDBOX_VERCEL_PROJECT_ID` - Vercel project identifier
@@ -181,6 +196,7 @@ Never expose these in logs or to the client:
 ### Client-Safe Variables
 
 Only these variables should be exposed to the client (via `NEXT_PUBLIC_` prefix):
+
 - `NEXT_PUBLIC_AUTH_PROVIDERS` - Available auth providers
 - `NEXT_PUBLIC_GITHUB_CLIENT_ID` - GitHub OAuth client ID (public)
 
@@ -191,6 +207,7 @@ Only these variables should be exposed to the client (via `NEXT_PUBLIC_` prefix)
 The repository page uses a nested routing structure with separate pages for each tab:
 
 #### Route Structure
+
 ```
 app/repos/[owner]/[repo]/
 ├── layout.tsx           # Shared layout with navigation tabs
@@ -204,12 +221,14 @@ app/repos/[owner]/[repo]/
 ```
 
 #### Components
+
 - `components/repo-layout.tsx` - Shared layout component with tab navigation
 - `components/repo-commits.tsx` - Commits list component
 - `components/repo-issues.tsx` - Issues list component
 - `components/repo-pull-requests.tsx` - Pull requests list component
 
 #### API Routes
+
 ```
 app/api/repos/[owner]/[repo]/
 ├── commits/route.ts         # GET - Fetch commits
@@ -218,6 +237,7 @@ app/api/repos/[owner]/[repo]/
 ```
 
 #### Key Features
+
 1. **Tab Navigation**: Uses Next.js Link components for client-side navigation between tabs
 2. **Separate Pages**: Each tab renders on its own route (commits, issues, pull-requests)
 3. **Default Route**: Visiting `/repos/[owner]/[repo]` redirects to `/repos/[owner]/[repo]/commits`
@@ -225,6 +245,7 @@ app/api/repos/[owner]/[repo]/
 5. **GitHub Integration**: All data is fetched from GitHub API using Octokit client
 
 #### Adding New Tabs
+
 To add a new tab to the repository page:
 
 1. Create a new directory under `app/repos/[owner]/[repo]/[tab-name]/`
@@ -253,6 +274,7 @@ Before submitting changes, verify:
 ## Questions?
 
 If you need to log information for debugging purposes:
+
 1. Use server-side console logs (not shown to users)
 2. Still avoid logging sensitive credentials
 3. Consider adding better error handling instead of logging details
@@ -261,4 +283,3 @@ If you need to log information for debugging purposes:
 ---
 
 **Remember: When in doubt, use a static string. No exceptions.**
-

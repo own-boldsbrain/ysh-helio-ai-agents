@@ -1,0 +1,117 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'multi-agent-cluster'
+    environment: 'production'
+
+# Rule files
+rule_files:
+  - '/etc/prometheus/rules/*.yml'
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          service: 'prometheus'
+  
+  # PostgreSQL
+  - job_name: 'postgresql'
+    static_configs:
+      - targets: ['postgres:5432']
+        labels:
+          service: 'database'
+          type: 'postgresql'
+  
+  # Redis
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis:6379']
+        labels:
+          service: 'cache'
+          type: 'redis'
+  
+  # RabbitMQ
+  - job_name: 'rabbitmq'
+    static_configs:
+      - targets: ['rabbitmq:15692']
+        labels:
+          service: 'message-queue'
+          type: 'rabbitmq'
+  
+  # Nginx Load Balancer
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['nginx:80']
+        labels:
+          service: 'load-balancer'
+          type: 'nginx'
+    metrics_path: /metrics
+  
+  # Claude Agents
+  - job_name: 'agents-claude'
+    static_configs:
+      - targets:
+          - 'agent-claude-1:3000'
+          - 'agent-claude-2:3000'
+          - 'agent-claude-3:3000'
+        labels:
+          service: 'ai-agent'
+          provider: 'claude'
+          tier: 'premium'
+  
+  # GPT Agents
+  - job_name: 'agents-gpt'
+    static_configs:
+      - targets:
+          - 'agent-gpt-4:3000'
+          - 'agent-gpt-4-turbo:3000'
+        labels:
+          service: 'ai-agent'
+          provider: 'openai'
+          tier: 'premium'
+  
+  # Gemini Agents
+  - job_name: 'agents-gemini'
+    static_configs:
+      - targets:
+          - 'agent-gemini-pro:3000'
+          - 'agent-gemini-flash:3000'
+        labels:
+          service: 'ai-agent'
+          provider: 'google'
+          tier: 'standard'
+  
+  # Groq Agents
+  - job_name: 'agents-groq'
+    static_configs:
+      - targets:
+          - 'agent-groq-llama:3000'
+          - 'agent-groq-mixtral:3000'
+        labels:
+          service: 'ai-agent'
+          provider: 'groq'
+          tier: 'fast'
+  
+  # Specialized Agents
+  - job_name: 'agents-specialized'
+    static_configs:
+      - targets:
+          - 'agent-code-review:3000'
+          - 'agent-test-writer:3000'
+        labels:
+          service: 'ai-agent'
+          provider: 'specialized'
+          tier: 'expert'
+
+# Alerting configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+      scheme: http
+      timeout: 10s
+      api_version: v2

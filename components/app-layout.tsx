@@ -3,6 +3,7 @@
 import { useState, useEffect, createContext, useContext, useCallback } from 'react'
 import { TaskSidebar } from '@/components/task-sidebar'
 import { Task } from '@/lib/db/schema'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Plus, Trash2 } from 'lucide-react'
@@ -106,6 +107,7 @@ export function AppLayout({ children, initialSidebarWidth, initialSidebarOpen, i
   const [isResizing, setIsResizing] = useState(false)
   const [isDesktop, setIsDesktop] = useState(!initialIsMobile)
   const [hasMounted, setHasMounted] = useState(false)
+  const router = useRouter()
 
   // Update sidebar width and save to cookie
   const updateSidebarWidth = (newWidth: number) => {
@@ -205,6 +207,14 @@ export function AppLayout({ children, initialSidebarWidth, initialSidebarOpen, i
       console.error('Error fetching tasks:', error)
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handleTaskSelect = (task: Task) => {
+    router.push(`/tasks/${task.id}`)
+    // Close sidebar when navigating on mobile (don't save to cookie)
+    if (!isDesktop) {
+      updateSidebarOpen(false, false)
     }
   }
 
@@ -337,7 +347,11 @@ export function AppLayout({ children, initialSidebarWidth, initialSidebarOpen, i
                 width: `${sidebarWidth}px`,
               }}
             >
-              {isLoading ? <SidebarLoader width={sidebarWidth} /> : <TaskSidebar tasks={tasks} width={sidebarWidth} />}
+              {isLoading ? (
+                <SidebarLoader width={sidebarWidth} />
+              ) : (
+                <TaskSidebar tasks={tasks} onTaskSelect={handleTaskSelect} width={sidebarWidth} />
+              )}
             </div>
           </div>
 

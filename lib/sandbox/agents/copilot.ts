@@ -1,4 +1,4 @@
-import { Sandbox } from '@vercel/sandbox'
+import type { SandboxType } from '../index'
 import { runCommandInSandbox, runInProject, PROJECT_DIR } from '../commands'
 import { AgentExecutionResult } from '../types'
 import { redactSensitiveInfo } from '@/lib/utils/logging'
@@ -11,7 +11,7 @@ import { generateId } from '@/lib/utils/id'
 type Connector = typeof connectors.$inferSelect
 
 // Helper function to run command and collect logs in project directory
-async function runAndLogCommand(sandbox: Sandbox, command: string, args: string[], logger: TaskLogger) {
+async function runAndLogCommand(sandbox: SandboxType, command: string, args: string[], logger: TaskLogger) {
   const fullCommand = args.length > 0 ? `${command} ${args.join(' ')}` : command
   await logger.command(redactSensitiveInfo(fullCommand))
 
@@ -29,7 +29,7 @@ async function runAndLogCommand(sandbox: Sandbox, command: string, args: string[
 }
 
 export async function executeCopilotInSandbox(
-  sandbox: Sandbox,
+  sandbox: SandboxType,
   instruction: string,
   logger: TaskLogger,
   selectedModel?: string,

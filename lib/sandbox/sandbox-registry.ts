@@ -1,4 +1,4 @@
-import { Sandbox } from '@vercel/sandbox'
+import type { SandboxType } from './index'
 
 /**
  * Simplified sandbox registry since we now use Sandbox.get() to reconnect
@@ -6,9 +6,9 @@ import { Sandbox } from '@vercel/sandbox'
  */
 
 // Temporary in-memory tracking for current execution only
-const activeSandboxes = new Map<string, Sandbox>()
+const activeSandboxes = new Map<string, SandboxType>()
 
-export function registerSandbox(taskId: string, sandbox: Sandbox, _keepAlive: boolean = false): void {
+export function registerSandbox(taskId: string, sandbox: SandboxType, _keepAlive: boolean = false): void {
   // Note: keepAlive parameter kept for backward compatibility but not used
   // Real persistence happens via sandboxId in database
   activeSandboxes.set(taskId, sandbox)
@@ -18,7 +18,7 @@ export function unregisterSandbox(taskId: string): void {
   activeSandboxes.delete(taskId)
 }
 
-export function getSandbox(taskId: string): Sandbox | undefined {
+export function getSandbox(taskId: string): SandboxType | undefined {
   return activeSandboxes.get(taskId)
 }
 
