@@ -209,9 +209,7 @@
   },
   "../../node_modules/.pnpm/shiki@3.15.0/node_modules/shiki/dist/bundle-full.mjs -> shiki/wasm": {
     "id": "../../node_modules/.pnpm/shiki@3.15.0/node_modules/shiki/dist/bundle-full.mjs -> shiki/wasm",
-    "files": [
-      "static/chunks/_app-pages-browser_node_modules_pnpm_shiki_3_15_0_node_modules_shiki_dist_wasm_mjs.js"
-    ]
+    "files": ["static/chunks/_app-pages-browser_node_modules_pnpm_shiki_3_15_0_node_modules_shiki_dist_wasm_mjs.js"]
   },
   "../../node_modules/.pnpm/shiki@3.15.0/node_modules/shiki/dist/langs.mjs -> @shikijs/langs/abap": {
     "id": "../../node_modules/.pnpm/shiki@3.15.0/node_modules/shiki/dist/langs.mjs -> @shikijs/langs/abap",
