@@ -84,11 +84,13 @@ export async function createSandbox(config: SandboxConfig, logger: TaskLogger): 
     // Default to both 3000 (Next.js) and 5173 (Vite) for now
     const defaultPorts = config.ports || [3000, 5173]
 
-    // Create sandbox without source - we'll clone manually to /vercel/sandbox/project
+    // Create Docker sandbox with git source
     const sandboxConfig = {
-      teamId: process.env.SANDBOX_VERCEL_TEAM_ID!,
-      projectId: process.env.SANDBOX_VERCEL_PROJECT_ID!,
-      token: process.env.SANDBOX_VERCEL_TOKEN!,
+      source: {
+        type: 'git' as const,
+        url: authenticatedRepoUrl,
+        depth: 1,
+      },
       timeout: timeoutMs,
       ports: defaultPorts,
       runtime: config.runtime || 'node22',
@@ -97,7 +99,7 @@ export async function createSandbox(config: SandboxConfig, logger: TaskLogger): 
 
     // Call progress callback before sandbox creation
     if (config.onProgress) {
-      await config.onProgress(25, 'Validating configuration...')
+      await config.onProgress(25, 'Creating Docker sandbox...')
     }
 
     let sandbox: Sandbox
@@ -114,30 +116,8 @@ export async function createSandbox(config: SandboxConfig, logger: TaskLogger): 
         return { success: false, cancelled: true }
       }
 
-      // Clone repository to /vercel/sandbox/project
-      await logger.info('Cloning repository to project directory...')
-
-      // Create project directory
-      const mkdirResult = await runCommandInSandbox(sandbox, 'mkdir', ['-p', PROJECT_DIR])
-      if (!mkdirResult.success) {
-        throw new Error('Failed to create project directory')
-      }
-
-      // Clone the repository with shallow clone
-      const cloneResult = await runCommandInSandbox(sandbox, 'git', [
-        'clone',
-        '--depth',
-        '1',
-        authenticatedRepoUrl,
-        PROJECT_DIR,
-      ])
-
-      if (!cloneResult.success) {
-        await logger.error('Failed to clone repository')
-        throw new Error('Failed to clone repository to project directory')
-      }
-
-      await logger.info('Repository cloned successfully')
+      // Docker sandbox automatically clones the repository
+      await logger.info('Repository cloned successfully by Docker sandbox')
 
       // Call progress callback after sandbox creation
       if (config.onProgress) {

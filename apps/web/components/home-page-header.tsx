@@ -27,7 +27,6 @@ import { VERCEL_DEPLOY_URL } from '@/lib/constants'
 
 import type { Session } from '@/lib/session/types'
 
-
 interface HomePageHeaderProps {
   selectedOwner: string
   selectedRepo: string

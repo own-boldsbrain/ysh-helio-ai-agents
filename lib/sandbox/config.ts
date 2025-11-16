@@ -47,18 +47,7 @@ export function validateEnvironmentVariables(
     errors.push('GitHub is required for repository access. Please connect your GitHub account.')
   }
 
-  // Check for Vercel sandbox environment variables
-  if (!process.env.SANDBOX_VERCEL_TEAM_ID) {
-    errors.push('SANDBOX_VERCEL_TEAM_ID is required for sandbox creation')
-  }
-
-  if (!process.env.SANDBOX_VERCEL_PROJECT_ID) {
-    errors.push('SANDBOX_VERCEL_PROJECT_ID is required for sandbox creation')
-  }
-
-  if (!process.env.SANDBOX_VERCEL_TOKEN) {
-    errors.push('SANDBOX_VERCEL_TOKEN is required for sandbox creation')
-  }
+  // Docker sandbox is the default provider - no additional checks needed
 
   return {
     valid: errors.length === 0,

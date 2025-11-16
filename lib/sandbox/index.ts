@@ -57,42 +57,24 @@ export abstract class Sandbox implements SandboxType {
   abstract stop(): Promise<void>
 
   static async create(options: SandboxCreateOptions): Promise<SandboxType> {
-    const provider = process.env.SANDBOX_PROVIDER || 'vercel'
+    const provider = process.env.SANDBOX_PROVIDER || 'docker'
 
     if (provider === 'docker') {
       const { DockerSandbox } = await import('./docker-sandbox')
       return DockerSandbox.create(options)
     } else {
-      // Fallback to Vercel Sandbox
-      const { Sandbox: VercelSandbox } = await import('@vercel/sandbox')
-      return VercelSandbox.create({
-        teamId: options.teamId!,
-        projectId: options.projectId!,
-        token: options.token!,
-        source: options.source,
-        timeout: options.timeout,
-        ports: options.ports,
-        runtime: options.runtime,
-        resources: options.resources,
-      }) as unknown as SandboxType
+      throw new Error('Only Docker sandbox provider is supported. Set SANDBOX_PROVIDER=docker in your environment.')
     }
   }
 
   static async get(options: SandboxGetOptions): Promise<SandboxType> {
-    const provider = process.env.SANDBOX_PROVIDER || 'vercel'
+    const provider = process.env.SANDBOX_PROVIDER || 'docker'
 
     if (provider === 'docker') {
       const { DockerSandbox } = await import('./docker-sandbox')
       return DockerSandbox.get(options)
     } else {
-      // Fallback to Vercel Sandbox
-      const { Sandbox: VercelSandbox } = await import('@vercel/sandbox')
-      return VercelSandbox.get({
-        sandboxId: options.sandboxId,
-        teamId: options.teamId!,
-        projectId: options.projectId!,
-        token: options.token!,
-      }) as unknown as SandboxType
+      throw new Error('Only Docker sandbox provider is supported. Set SANDBOX_PROVIDER=docker in your environment.')
     }
   }
 }

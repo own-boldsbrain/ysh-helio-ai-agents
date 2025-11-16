@@ -32,7 +32,6 @@ import { cn } from '@/lib/utils'
 
 import type { Session } from '@/lib/session/types'
 
-
 interface TasksListClientProps {
   user: Session['user'] | null
   authProvider: Session['authProvider'] | null

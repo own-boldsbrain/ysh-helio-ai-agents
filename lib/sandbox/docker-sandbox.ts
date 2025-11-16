@@ -55,8 +55,9 @@ export class DockerSandbox implements SandboxType {
       console.error('Failed to create volume:', error)
     }
 
-    // Build port mappings for Docker
-    const portMappings = ports.map((p) => `-p ${p}:${p}`).join(' ')
+    // Build port mappings for Docker - use dynamic host ports to avoid conflicts
+    // Docker will automatically assign available host ports
+    const portMappings = ports.map((p) => `-p ${p}`).join(' ')
 
     // Prepare environment variables
     const envVars: string[] = []
@@ -91,25 +92,44 @@ export class DockerSandbox implements SandboxType {
       let finalCommand = `docker run -d --name ${sandboxId} --network ${networkName} ${portMappings} ${resourceLimits} -v ${volumeName}:/workspace ${envVars.join(' ')} ${dockerImage}`
 
       if (options.source) {
-        // Add init script to clone repo
-        finalCommand += ` /bin/sh -c "git clone --depth ${options.source.depth || 1} -b ${options.source.revision || 'main'} ${options.source.url} /workspace/project && tail -f /dev/null"`
+        // Escape Git URL for shell execution (handle special characters like @, :, etc)
+        const escapedGitUrl = options.source.url.replace(/'/g, "'\\''")
+        const gitBranch = options.source.revision || 'main'
+        const gitDepth = options.source.depth || 1
+
+        // Add init script to clone repo with properly escaped URL
+        finalCommand += ` /bin/sh -c 'git clone --depth ${gitDepth} -b ${gitBranch} '\\''${escapedGitUrl}'\\'' /workspace/project && tail -f /dev/null'`
       } else {
         finalCommand += ' tail -f /dev/null'
       }
 
-      const { stdout } = await execAsync(finalCommand)
+      const { stdout, stderr } = await execAsync(finalCommand)
       const containerId = stdout.trim()
+
+      if (!containerId) {
+        throw new Error(`Docker run returned empty container ID. Stderr: ${stderr}`)
+      }
 
       const sandbox = new DockerSandbox(sandboxId, containerId, ports, volumeName)
       activeContainers.set(sandboxId, sandbox)
 
       return sandbox
-    } catch (error) {
+    } catch (error: unknown) {
       // Cleanup volume on failure
       try {
         await execAsync(`docker volume rm ${volumeName}`)
       } catch {}
-      throw new Error(`Failed to create Docker sandbox: ${error}`)
+
+      // Enhanced error reporting
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      const stderr = (error as { stderr?: string })?.stderr
+      const stdout = (error as { stdout?: string })?.stdout
+
+      let fullError = `Failed to create Docker sandbox: ${errorMessage}`
+      if (stderr) fullError += `\nStderr: ${stderr}`
+      if (stdout) fullError += `\nStdout: ${stdout}`
+
+      throw new Error(fullError)
     }
   }
 

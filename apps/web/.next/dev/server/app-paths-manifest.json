@@ -2,14 +2,9 @@
   "/api/tasks/route": "app/api/tasks/route.js",
   "/api/auth/info/route": "app/api/auth/info/route.js",
   "/api/auth/github/status/route": "app/api/auth/github/status/route.js",
-  "/api/tasks/[taskId]/messages/route": "app/api/tasks/[taskId]/messages/route.js",
   "/api/tasks/[taskId]/route": "app/api/tasks/[taskId]/route.js",
-  "/api/github/user/route": "app/api/github/user/route.js",
-  "/api/github/orgs/route": "app/api/github/orgs/route.js",
-  "/api/github/repos/route": "app/api/github/repos/route.js",
-  "/api/auth/rate-limit/route": "app/api/auth/rate-limit/route.js",
-  "/api/api-keys/check/route": "app/api/api-keys/check/route.js",
-  "/api/tasks/[taskId]/files/route": "app/api/tasks/[taskId]/files/route.js",
+  "/api/tasks/[taskId]/messages/route": "app/api/tasks/[taskId]/messages/route.js",
+  "/api/tasks/[taskId]/start-sandbox/route": "app/api/tasks/[taskId]/start-sandbox/route.js",
   "/page": "app/page.js",
   "/tasks/[taskId]/page": "app/tasks/[taskId]/page.js"
 }
