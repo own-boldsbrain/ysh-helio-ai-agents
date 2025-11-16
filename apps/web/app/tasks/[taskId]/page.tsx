@@ -4,13 +4,13 @@ import { getGitHubStars } from '@/lib/github-stars'
 import { getServerSession } from '@/lib/session/get-server-session'
 
 interface TaskPageProps {
-  params: {
+  params: Promise<{
     taskId: string
-  }
+  }>
 }
 
 export default async function TaskPage({ params }: TaskPageProps) {
-  const { taskId } = params
+  const { taskId } = await params
   const session = await getServerSession()
 
   // Get max sandbox duration for this user (user-specific > global > env var)
@@ -30,7 +30,7 @@ export default async function TaskPage({ params }: TaskPageProps) {
 }
 
 export async function generateMetadata({ params }: TaskPageProps) {
-  const { taskId } = params
+  const { taskId } = await params
   const session = await getServerSession()
 
   // Try to fetch the task to get its title
