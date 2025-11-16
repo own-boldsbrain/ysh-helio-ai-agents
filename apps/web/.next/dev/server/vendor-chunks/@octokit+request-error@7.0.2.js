@@ -1,0 +1,25 @@
+"use strict";
+/*
+ * ATTENTION: An "eval-source-map" devtool has been used.
+ * This devtool is neither made for production nor for readable output files.
+ * It uses "eval()" calls to create a separate source file with attached SourceMaps in the browser devtools.
+ * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
+ * or disable the default devtool with "devtool: false".
+ * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
+ */
+exports.id = "vendor-chunks/@octokit+request-error@7.0.2";
+exports.ids = ["vendor-chunks/@octokit+request-error@7.0.2"];
+exports.modules = {
+
+/***/ "(rsc)/../../node_modules/.pnpm/@octokit+request-error@7.0.2/node_modules/@octokit/request-error/dist-src/index.js":
+/*!*******************************************************************************************************************!*\
+  !*** ../../node_modules/.pnpm/@octokit+request-error@7.0.2/node_modules/@octokit/request-error/dist-src/index.js ***!
+  \*******************************************************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   RequestError: () => (/* binding */ RequestError)\n/* harmony export */ });\nclass RequestError extends Error {\n  name;\n  /**\n   * http status code\n   */\n  status;\n  /**\n   * Request options that lead to the error.\n   */\n  request;\n  /**\n   * Response object if a response was received\n   */\n  response;\n  constructor(message, statusCode, options) {\n    super(message);\n    this.name = \"HttpError\";\n    this.status = Number.parseInt(statusCode);\n    if (Number.isNaN(this.status)) {\n      this.status = 0;\n    }\n    if (\"response\" in options) {\n      this.response = options.response;\n    }\n    const requestCopy = Object.assign({}, options.request);\n    if (options.request.headers.authorization) {\n      requestCopy.headers = Object.assign({}, options.request.headers, {\n        authorization: options.request.headers.authorization.replace(\n          /(?<! ) .*$/,\n          \" [REDACTED]\"\n        )\n      });\n    }\n    requestCopy.url = requestCopy.url.replace(/\\bclient_secret=\\w+/g, \"client_secret=[REDACTED]\").replace(/\\baccess_token=\\w+/g, \"access_token=[REDACTED]\");\n    this.request = requestCopy;\n  }\n}\n\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiKHJzYykvLi4vLi4vbm9kZV9tb2R1bGVzLy5wbnBtL0BvY3Rva2l0K3JlcXVlc3QtZXJyb3JANy4wLjIvbm9kZV9tb2R1bGVzL0BvY3Rva2l0L3JlcXVlc3QtZXJyb3IvZGlzdC1zcmMvaW5kZXguanMiLCJtYXBwaW5ncyI6Ijs7OztBQUFBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBLHdDQUF3QztBQUN4QztBQUNBLDRDQUE0QztBQUM1QztBQUNBO0FBQ0E7QUFDQTtBQUNBLE9BQU87QUFDUDtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBR0UiLCJzb3VyY2VzIjpbIi9ob21lL3Jvb2tpZS9wcm9qZWN0cy9jb2RpbmctYWdlbnQtdGVtcGxhdGUvbm9kZV9tb2R1bGVzLy5wbnBtL0BvY3Rva2l0K3JlcXVlc3QtZXJyb3JANy4wLjIvbm9kZV9tb2R1bGVzL0BvY3Rva2l0L3JlcXVlc3QtZXJyb3IvZGlzdC1zcmMvaW5kZXguanMiXSwic291cmNlc0NvbnRlbnQiOlsiY2xhc3MgUmVxdWVzdEVycm9yIGV4dGVuZHMgRXJyb3Ige1xuICBuYW1lO1xuICAvKipcbiAgICogaHR0cCBzdGF0dXMgY29kZVxuICAgKi9cbiAgc3RhdHVzO1xuICAvKipcbiAgICogUmVxdWVzdCBvcHRpb25zIHRoYXQgbGVhZCB0byB0aGUgZXJyb3IuXG4gICAqL1xuICByZXF1ZXN0O1xuICAvKipcbiAgICogUmVzcG9uc2Ugb2JqZWN0IGlmIGEgcmVzcG9uc2Ugd2FzIHJlY2VpdmVkXG4gICAqL1xuICByZXNwb25zZTtcbiAgY29uc3RydWN0b3IobWVzc2FnZSwgc3RhdHVzQ29kZSwgb3B0aW9ucykge1xuICAgIHN1cGVyKG1lc3NhZ2UpO1xuICAgIHRoaXMubmFtZSA9IFwiSHR0cEVycm9yXCI7XG4gICAgdGhpcy5zdGF0dXMgPSBOdW1iZXIucGFyc2VJbnQoc3RhdHVzQ29kZSk7XG4gICAgaWYgKE51bWJlci5pc05hTih0aGlzLnN0YXR1cykpIHtcbiAgICAgIHRoaXMuc3RhdHVzID0gMDtcbiAgICB9XG4gICAgaWYgKFwicmVzcG9uc2VcIiBpbiBvcHRpb25zKSB7XG4gICAgICB0aGlzLnJlc3BvbnNlID0gb3B0aW9ucy5yZXNwb25zZTtcbiAgICB9XG4gICAgY29uc3QgcmVxdWVzdENvcHkgPSBPYmplY3QuYXNzaWduKHt9LCBvcHRpb25zLnJlcXVlc3QpO1xuICAgIGlmIChvcHRpb25zLnJlcXVlc3QuaGVhZGVycy5hdXRob3JpemF0aW9uKSB7XG4gICAgICByZXF1ZXN0Q29weS5oZWFkZXJzID0gT2JqZWN0LmFzc2lnbih7fSwgb3B0aW9ucy5yZXF1ZXN0LmhlYWRlcnMsIHtcbiAgICAgICAgYXV0aG9yaXphdGlvbjogb3B0aW9ucy5yZXF1ZXN0LmhlYWRlcnMuYXV0aG9yaXphdGlvbi5yZXBsYWNlKFxuICAgICAgICAgIC8oPzwhICkgLiokLyxcbiAgICAgICAgICBcIiBbUkVEQUNURURdXCJcbiAgICAgICAgKVxuICAgICAgfSk7XG4gICAgfVxuICAgIHJlcXVlc3RDb3B5LnVybCA9IHJlcXVlc3RDb3B5LnVybC5yZXBsYWNlKC9cXGJjbGllbnRfc2VjcmV0PVxcdysvZywgXCJjbGllbnRfc2VjcmV0PVtSRURBQ1RFRF1cIikucmVwbGFjZSgvXFxiYWNjZXNzX3Rva2VuPVxcdysvZywgXCJhY2Nlc3NfdG9rZW49W1JFREFDVEVEXVwiKTtcbiAgICB0aGlzLnJlcXVlc3QgPSByZXF1ZXN0Q29weTtcbiAgfVxufVxuZXhwb3J0IHtcbiAgUmVxdWVzdEVycm9yXG59O1xuIl0sIm5hbWVzIjpbXSwiaWdub3JlTGlzdCI6WzBdLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///(rsc)/../../node_modules/.pnpm/@octokit+request-error@7.0.2/node_modules/@octokit/request-error/dist-src/index.js\n");
+
+/***/ })
+
+};
+;

@@ -44,6 +44,12 @@ const nextConfig: NextConfig = {
         stream: false,
         path: false,
         os: false,
+        perf_hooks: false,
+        child_process: false,
+        util: false,
+        buffer: false,
+        events: false,
+        assert: false,
       }
     }
 
