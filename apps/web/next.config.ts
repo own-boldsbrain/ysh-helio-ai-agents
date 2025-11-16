@@ -30,6 +30,23 @@ const nextConfig: NextConfig = {
         config.externals = ['lightningcss']
       }
     }
+
+    // Prevent Node.js modules from being bundled in client-side code
+    if (!isServer) {
+      config.resolve = config.resolve || {}
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        net: false,
+        tls: false,
+        fs: false,
+        dns: false,
+        crypto: false,
+        stream: false,
+        path: false,
+        os: false,
+      }
+    }
+
     return config
   },
 }

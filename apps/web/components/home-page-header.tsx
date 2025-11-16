@@ -10,6 +10,7 @@ import { useTasks, useTasks as useTasksContext } from '@/components/app-layout'
 import { User } from '@/components/auth/user'
 import { GitHubStarsButton } from '@/components/github-stars-button'
 import { GitHubIcon } from '@/components/icons/github-icon'
+import { OpenRepoUrlDialog } from '@/components/open-repo-url-dialog'
 import { PageHeader } from '@/components/page-header'
 import { RepoSelector } from '@/components/repo-selector'
 import { Button } from '@/components/ui/button'
@@ -20,14 +21,12 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
-
 import { githubConnectionAtom, githubConnectionInitializedAtom } from '@/lib/atoms/github-connection'
 import { sessionAtom } from '@/lib/atoms/session'
 import { VERCEL_DEPLOY_URL } from '@/lib/constants'
 
 import type { Session } from '@/lib/session/types'
 
-import { OpenRepoUrlDialog } from '@/components/open-repo-url-dialog'
 
 interface HomePageHeaderProps {
   selectedOwner: string

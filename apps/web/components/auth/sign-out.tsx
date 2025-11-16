@@ -1,15 +1,15 @@
 'use client'
 
 import { useSetAtom, useAtomValue } from 'jotai'
-
-import { SandboxesDialog } from '@/components/sandboxes-dialog'
-import { ThemeToggle } from '@/components/theme-toggle'
 import { Key, Server } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, useCallback } from 'react'
 import { toast } from 'sonner'
+
 import { ApiKeysDialog } from '@/components/api-keys-dialog'
 import { GitHubIcon } from '@/components/icons/github-icon'
+import { SandboxesDialog } from '@/components/sandboxes-dialog'
+import { ThemeToggle } from '@/components/theme-toggle'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,

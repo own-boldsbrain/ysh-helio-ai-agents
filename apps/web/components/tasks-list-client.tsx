@@ -10,6 +10,8 @@ import { User } from '@/components/auth/user'
 import { GitHubStarsButton } from '@/components/github-stars-button'
 import { Claude, Codex, Copilot, Cursor, Gemini, OpenCode } from '@/components/logos'
 import { PageHeader } from '@/components/page-header'
+import { PRCheckStatus } from '@/components/pr-check-status'
+import { PRStatusIcon } from '@/components/pr-status-icon'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,17 +23,15 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
-import { Task } from '@/lib/db/schema'
 import { Card, CardContent } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { VERCEL_DEPLOY_URL } from '@/lib/constants'
+import { Task } from '@/lib/db/schema'
 import { cn } from '@/lib/utils'
 
 import type { Session } from '@/lib/session/types'
 
-import { VERCEL_DEPLOY_URL } from '@/lib/constants'
-import { PRStatusIcon } from '@/components/pr-status-icon'
-import { PRCheckStatus } from '@/components/pr-check-status'
 
 interface TasksListClientProps {
   user: Session['user'] | null

@@ -4,17 +4,13 @@ import { useAtomValue } from 'jotai'
 import { AlertCircle, Plus, Trash2, GitBranch } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-
-import { Checkbox } from '@/components/ui/checkbox'
-
 import { useState, useMemo } from 'react'
 import { toast } from 'sonner'
 
 import { useTasks } from '@/components/app-layout'
 import { Claude, Codex, Copilot, Cursor, Gemini, OpenCode } from '@/components/logos'
-
-import { PRStatusIcon } from '@/components/pr-status-icon'
 import { PRCheckStatus } from '@/components/pr-check-status'
+import { PRStatusIcon } from '@/components/pr-status-icon'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,6 +23,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
 import { sessionAtom } from '@/lib/atoms/session'
 import { Task } from '@/lib/db/schema'
 import { cn } from '@/lib/utils'
