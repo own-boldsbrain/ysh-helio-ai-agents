@@ -1,0 +1,90 @@
+{
+  "dashboard": {
+    "title": "Agent Performance by Type",
+    "uid": "agent-performance",
+    "timezone": "browser",
+    "schemaVersion": 30,
+    "panels": [
+      {
+        "id": 1,
+        "title": "Claude Agents Performance",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(agent_response_time_seconds{agent_type='claude'}[5m])",
+            "legendFormat": "{{agent_id}}"
+          }
+        ],
+        "gridPos": {
+          "x": 0,
+          "y": 0,
+          "w": 12,
+          "h": 8
+        }
+      },
+      {
+        "id": 2,
+        "title": "Ollama Agents Performance",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(agent_response_time_seconds{agent_type=~'ollama.*'}[5m])",
+            "legendFormat": "{{agent_id}}"
+          }
+        ],
+        "gridPos": {
+          "x": 12,
+          "y": 0,
+          "w": 12,
+          "h": 8
+        }
+      },
+      {
+        "id": 3,
+        "title": "Task Success Rate by Agent Type",
+        "type": "bargauge",
+        "targets": [
+          {
+            "expr": "sum(rate(agent_tasks_completed_total[5m])) by (agent_type) / sum(rate(agent_tasks_started_total[5m])) by (agent_type) * 100",
+            "legendFormat": "{{agent_type}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "max": 100
+          }
+        },
+        "gridPos": {
+          "x": 0,
+          "y": 8,
+          "w": 12,
+          "h": 8
+        }
+      },
+      {
+        "id": 4,
+        "title": "Average Response Time by Type",
+        "type": "bargauge",
+        "targets": [
+          {
+            "expr": "avg(agent_response_time_seconds) by (agent_type)",
+            "legendFormat": "{{agent_type}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s"
+          }
+        },
+        "gridPos": {
+          "x": 12,
+          "y": 8,
+          "w": 12,
+          "h": 8
+        }
+      }
+    ]
+  }
+}

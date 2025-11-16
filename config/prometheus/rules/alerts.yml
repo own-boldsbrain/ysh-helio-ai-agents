@@ -1,0 +1,170 @@
+# Multi-Agent System Alert Rules
+
+groups:
+  - name: agent_health
+    interval: 30s
+    rules:
+      - alert: AgentDown
+        expr: up{service="ai-agent"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Agent {{ $labels.instance }} is down"
+          description: "Agent {{ $labels.instance }} ({{ $labels.provider }}) has been down for more than 2 minutes."
+      
+      - alert: HighAgentResponseTime
+        expr: agent_response_time_seconds{service="ai-agent"} > 10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High response time on {{ $labels.instance }}"
+          description: "Agent {{ $labels.instance }} has response time > 10s for 5 minutes."
+      
+      - alert: AgentErrorRate
+        expr: rate(agent_errors_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High error rate on {{ $labels.instance }}"
+          description: "Agent {{ $labels.instance }} has error rate > 10% for 5 minutes."
+      
+      - alert: AllAgentsBusy
+        expr: count(agent_status{status="idle"}) == 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "All agents are busy"
+          description: "No idle agents available for 10 minutes. Consider scaling up."
+
+  - name: infrastructure
+    interval: 30s
+    rules:
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "Memory usage is above 90% for 5 minutes."
+      
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is above 80% for 10 minutes."
+      
+      - alert: PostgreSQLDown
+        expr: up{service="database",type="postgresql"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL is down"
+          description: "PostgreSQL database has been down for more than 1 minute."
+      
+      - alert: RedisDown
+        expr: up{service="cache",type="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redis is down"
+          description: "Redis cache has been down for more than 1 minute."
+      
+      - alert: RabbitMQDown
+        expr: up{service="message-queue",type="rabbitmq"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "RabbitMQ is down"
+          description: "RabbitMQ message queue has been down for more than 1 minute."
+
+  - name: ollama
+    interval: 30s
+    rules:
+      - alert: OllamaServerDown
+        expr: up{service="ollama"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Ollama server is down"
+          description: "Ollama local LLM server has been down for more than 2 minutes."
+      
+      - alert: OllamaHighMemory
+        expr: ollama_memory_usage_bytes / ollama_memory_limit_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Ollama high memory usage"
+          description: "Ollama server memory usage is above 90% for 5 minutes."
+      
+      - alert: OllamaModelLoadFailure
+        expr: increase(ollama_model_load_errors_total[5m]) > 3
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Ollama model load failures"
+          description: "Ollama has failed to load models more than 3 times in 5 minutes."
+
+  - name: cost_optimization
+    interval: 1h
+    rules:
+      - alert: HighAPISpending
+        expr: sum(increase(agent_cost_total{type="cloud"}[1h])) > 10
+        for: 1h
+        labels:
+          severity: info
+        annotations:
+          summary: "High API spending"
+          description: "Cloud API costs exceeded $10 in the last hour. Consider routing more tasks to Ollama."
+      
+      - alert: UnusedLocalAgents
+        expr: rate(agent_tasks_completed_total{provider="ollama"}[1h]) == 0
+        for: 2h
+        labels:
+          severity: info
+        annotations:
+          summary: "Unused local agents"
+          description: "Ollama agents have processed 0 tasks in 2 hours. Consider load balancing."
+
+  - name: performance
+    interval: 1m
+    rules:
+      - alert: HighP95ResponseTime
+        expr: histogram_quantile(0.95, rate(agent_response_time_seconds_bucket[5m])) > 5
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High P95 response time"
+          description: "95th percentile response time is above 5 seconds for 10 minutes."
+      
+      - alert: LowTaskThroughput
+        expr: sum(rate(agent_tasks_completed_total[5m])) < 1
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low task throughput"
+          description: "Task completion rate is less than 1 per second for 15 minutes."
+      
+      - alert: QueueBacklog
+        expr: rabbitmq_queue_messages{queue="agent_tasks"} > 100
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Large queue backlog"
+          description: "Task queue has more than 100 pending tasks for 10 minutes."

@@ -1,0 +1,48 @@
+# Rate Limiting Configuration
+global:
+  enabled: true
+  max_requests_per_minute: 1000
+  max_requests_per_hour: 50000
+
+endpoints:
+  agent_execute:
+    pattern: /api/agents/*/execute
+    max_requests_per_minute: 10
+    max_requests_per_hour: 500
+    burst_size: 5
+
+  agent_status:
+    pattern: /api/agents/*/status
+    max_requests_per_minute: 30
+    max_requests_per_hour: 1000
+    burst_size: 10
+
+  agent_list:
+    pattern: /api/agents
+    max_requests_per_minute: 20
+    max_requests_per_hour: 1000
+    burst_size: 5
+
+user:
+  free_tier:
+    max_requests_per_day: 1000
+    max_concurrent_tasks: 3
+
+  pro_tier:
+    max_requests_per_day: 10000
+    max_concurrent_tasks: 10
+
+  enterprise_tier:
+    max_requests_per_day: 100000
+    max_concurrent_tasks: 50
+
+circuit_breaker:
+  failure_threshold: 5
+  timeout: 30
+  success_threshold: 2
+
+retry:
+  max_attempts: 3
+  initial_delay_ms: 1000
+  max_delay_ms: 30000
+  backoff_multiplier: 2

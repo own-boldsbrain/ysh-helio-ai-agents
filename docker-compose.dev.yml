@@ -1,0 +1,56 @@
+# docker-compose.dev.yml - Extended development environment with app containers
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: coding-agent-postgres
+    environment:
+      POSTGRES_DB: coding_agent
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - coding-agent-network
+
+  # Optional: Development app container
+  # Uncomment to run the app in a container instead of directly in WSL
+  # app:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.dev
+  #   container_name: coding-agent-app
+  #   volumes:
+  #     - .:/app
+  #     - /app/node_modules
+  #     - /app/.next
+  #   ports:
+  #     - "3000:3000"
+  #     - "3001:3001"
+  #     - "3002:3002"
+  #   environment:
+  #     - NODE_ENV=development
+  #     - POSTGRES_URL=postgresql://postgres:password@postgres:5432/coding_agent
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   networks:
+  #     - coding-agent-network
+  #   command: pnpm dev
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  coding-agent-network:
+    driver: bridge

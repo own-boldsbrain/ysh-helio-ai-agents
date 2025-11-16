@@ -1,0 +1,34 @@
+# Dockerfile for Coding Agent Sandbox
+# Provides isolated development environment with Node.js, Python, and common tools
+
+FROM node:20-alpine
+
+# Install common development tools and configure workspace
+RUN apk add --no-cache \
+    bash \
+    curl \
+    g++ \
+    git \
+    make \
+    openssh \
+    py3-pip \
+    python3 \
+    && rm -rf /var/cache/apk/* \
+    && mkdir -p /workspace/project \
+    && git config --global init.defaultBranch main \
+    && git config --global --add safe.directory /workspace/project \
+    && npm install -g typescript tsx pnpm
+
+# Set working directory
+WORKDIR /workspace
+
+# Set up default environment
+ENV NODE_ENV=development
+ENV PNPM_HOME=/usr/local/share/pnpm
+ENV PATH=$PNPM_HOME:$PATH
+
+# Expose common development ports
+EXPOSE 3000 5173 8080 5000
+
+# Keep container running
+CMD ["tail", "-f", "/dev/null"]
