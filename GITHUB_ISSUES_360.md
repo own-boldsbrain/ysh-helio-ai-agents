@@ -16,6 +16,7 @@
 The system runs 32 concurrent Docker containers but has no centralized logging. Logs are lost when containers die, making debugging impossible.
 
 **Requirements**:
+
 - [ ] Add Loki container to docker-compose.yml
 - [ ] Configure Promtail for log shipping from all containers
 - [ ] Add Grafana Loki datasource
@@ -24,6 +25,7 @@ The system runs 32 concurrent Docker containers but has no centralized logging. 
 - [ ] Add documentation for log queries
 
 **Acceptance Criteria**:
+
 - ✅ All container logs visible in Grafana Explore
 - ✅ Can filter logs by container ID, service, level
 - ✅ Can search across all agents simultaneously
@@ -42,11 +44,13 @@ The system runs 32 concurrent Docker containers but has no centralized logging. 
 Current implementation violates AGENTS.md security rules by logging dynamic values that expose sensitive information.
 
 **Files to Fix**:
+
 - lib/sandbox/creation.ts (line 29, 42, 47)
 - lib/utils/task-logger.ts
 - All API routes using logger
 
 **Current Issues**:
+
 ```typescript
 ❌ await logger.info(`Task created: ${taskId}`)
 ❌ await logger.error(`Failed to process ${filename}`)
@@ -54,6 +58,7 @@ Current implementation violates AGENTS.md security rules by logging dynamic valu
 ```
 
 **Required Changes**:
+
 ```typescript
 ✅ await logger.info('Task created', { taskId })
 ✅ await logger.error('Failed to process file', { filename })
@@ -61,6 +66,7 @@ Current implementation violates AGENTS.md security rules by logging dynamic valu
 ```
 
 **Acceptance Criteria**:
+
 - ✅ Zero dynamic values in logger calls
 - ✅ All sensitive data in structured fields
 - ✅ Linter rule added to prevent regression
@@ -78,6 +84,7 @@ Current implementation violates AGENTS.md security rules by logging dynamic valu
 Docker containers run as root, creating privilege escalation vulnerability.
 
 **Changes Required**:
+
 ```dockerfile
 # In Dockerfile.sandbox and docker-compose images:
 RUN addgroup -g 1001 -S app && adduser -S -u 1001 app
@@ -88,6 +95,7 @@ RUN chown -R app:app /workspace
 ```
 
 **Acceptance Criteria**:
+
 - ✅ `docker run` shows container running as app user
 - ✅ Containers can still write to volumes
 - ✅ All existing tests pass
@@ -105,25 +113,27 @@ RUN chown -R app:app /workspace
 No health monitoring exists. Zombie containers accumulate and cause resource exhaustion.
 
 **Implementation**:
+
 ```yaml
 # docker-compose.yml
 services:
   postgres:
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 10s
       timeout: 5s
       retries: 5
-  
+
   app:
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/health']
       interval: 30s
       timeout: 10s
       retries: 3
 ```
 
 **Acceptance Criteria**:
+
 - ✅ All services have health checks
 - ✅ Unhealthy containers restart automatically
 - ✅ Health status visible in `docker ps`
@@ -139,12 +149,14 @@ services:
 
 **Description**:
 Containers killed abruptly without cleanup, causing:
+
 - Incomplete transactions
 - Orphaned processes
 - Data corruption risk
 - Resource leaks
 
 **Implementation**:
+
 ```typescript
 // In main app initialization
 process.on('SIGTERM', async () => {
@@ -161,6 +173,7 @@ timeout: N seconds wait SIGTERM
 ```
 
 **Acceptance Criteria**:
+
 - ✅ SIGTERM caught and handled
 - ✅ All connections closed properly
 - ✅ Tests verify graceful shutdown
@@ -178,6 +191,7 @@ timeout: N seconds wait SIGTERM
 Sandbox creation consistently fails with "Failed to clone repository" error.
 
 **Investigation Required**:
+
 - [ ] Verify Docker daemon connectivity
 - [ ] Check volume creation permissions
 - [ ] Validate network connectivity for git clone
@@ -185,6 +199,7 @@ Sandbox creation consistently fails with "Failed to clone repository" error.
 - [ ] Review git clone timeout settings
 
 **Debugging Steps**:
+
 ```bash
 # 1. Test Docker connectivity
 docker ps
@@ -204,12 +219,14 @@ ping github.com
 ```
 
 **Root Causes to Address**:
+
 - Network timeouts in sandbox creation
 - Git credential issues
 - Port binding conflicts
 - Insufficient disk space
 
 **Acceptance Criteria**:
+
 - ✅ Sandbox creates successfully 95%+ of attempts
 - ✅ Clear error messages on failures
 - ✅ Automatic cleanup on failure
@@ -227,6 +244,7 @@ ping github.com
 No distributed tracing across services. Impossible to trace requests through entire system.
 
 **Components to Add**:
+
 - [ ] OpenTelemetry SDK for Node.js
 - [ ] Auto-instrumentation for Express/Next.js
 - [ ] Jaeger backend for trace collection
@@ -234,6 +252,7 @@ No distributed tracing across services. Impossible to trace requests through ent
 - [ ] Jaeger UI deployment in docker-compose
 
 **Configuration**:
+
 ```typescript
 // lib/otel.ts
 import { NodeSDK } from '@opentelemetry/sdk-node'
@@ -249,6 +268,7 @@ const sdk = new NodeSDK({
 ```
 
 **Acceptance Criteria**:
+
 - ✅ All requests traced end-to-end
 - ✅ Traces visible in Jaeger UI
 - ✅ Trace IDs logged and correlated
@@ -266,6 +286,7 @@ const sdk = new NodeSDK({
 No integration tests verify sandbox creation pipeline end-to-end.
 
 **Test Scenarios**:
+
 ```typescript
 describe('Sandbox Creation', () => {
   ✅ test('creates container successfully')
@@ -286,6 +307,7 @@ describe('Sandbox Execution', () => {
 ```
 
 **Acceptance Criteria**:
+
 - ✅ 90%+ test coverage for sandbox module
 - ✅ All tests pass in CI/CD
 - ✅ Tests run in <5 minutes
@@ -305,6 +327,7 @@ describe('Sandbox Execution', () => {
 No metrics collection. Cannot monitor CPU, memory, request latency, or error rates.
 
 **Metrics to Collect**:
+
 - HTTP request duration (histogram)
 - Request count (counter)
 - Active connections (gauge)
@@ -326,6 +349,7 @@ No metrics collection. Cannot monitor CPU, memory, request latency, or error rat
 Prometheus data collected but no visualization.
 
 **Dashboards Required**:
+
 1. System Overview (CPU, Memory, Disk)
 2. Application Health (Error rate, Latency)
 3. Agent Performance (Utilization, Queue depth)
@@ -344,6 +368,7 @@ Prometheus data collected but no visualization.
 No backup strategy. Data loss would be catastrophic.
 
 **Requirements**:
+
 - [ ] Daily backups to S3/persistent storage
 - [ ] 30-day retention policy
 - [ ] Backup verification (restore test)
@@ -362,6 +387,7 @@ No backup strategy. Data loss would be catastrophic.
 Direct connections to PostgreSQL cause exhaustion under load.
 
 **Solution**:
+
 ```typescript
 // Use pgBouncer or pg module with pool:
 const pool = new Pool({
@@ -383,12 +409,14 @@ const pool = new Pool({
 Cascading failures when external APIs fail. No circuit breaker prevents resource exhaustion.
 
 **Services to Protect**:
+
 - GitHub API
 - Vercel API
 - LLM APIs (Anthropic, OpenAI, etc.)
 - Docker daemon
 
 **Implementation**:
+
 ```typescript
 // Use library like 'circuit-breaker-js'
 const breaker = new CircuitBreaker(githubApiCall, {
@@ -410,6 +438,7 @@ const breaker = new CircuitBreaker(githubApiCall, {
 No rate limiting. System vulnerable to DDoS and abuse.
 
 **Requirements**:
+
 - [ ] Per-IP rate limiting (100 req/min)
 - [ ] Per-user rate limiting (1000 req/hour)
 - [ ] Per-agent rate limiting
@@ -433,13 +462,15 @@ Environment variables not validated. Runtime errors when variables missing.
 // env.ts
 import { z } from 'zod'
 
-export const env = z.object({
-  DATABASE_URL: z.string().url(),
-  GITHUB_TOKEN: z.string().min(40),
-  VERCEL_TOKEN: z.string(),
-  AI_API_KEY: z.string(),
-  NODE_ENV: z.enum(['development', 'production', 'test']),
-}).parse(process.env)
+export const env = z
+  .object({
+    DATABASE_URL: z.string().url(),
+    GITHUB_TOKEN: z.string().min(40),
+    VERCEL_TOKEN: z.string(),
+    AI_API_KEY: z.string(),
+    NODE_ENV: z.enum(['development', 'production', 'test']),
+  })
+  .parse(process.env)
 ```
 
 **Effort**: 6h | **Priority**: High | **Labels**: `security,config`
@@ -454,6 +485,7 @@ export const env = z.object({
 Docker builds take 5+ minutes due to poor layer caching.
 
 **Optimization**:
+
 ```dockerfile
 # Current: Dependencies installed on every change
 COPY . .
@@ -503,6 +535,7 @@ return result
 No performance baselines. Cannot verify system handles 32 concurrent agents.
 
 **Load Test Scenarios**:
+
 - 32 concurrent sandbox creates
 - 1000 requests/sec API load
 - 10GB memory usage
@@ -521,6 +554,7 @@ No performance baselines. Cannot verify system handles 32 concurrent agents.
 Users unable to debug Docker issues.
 
 **Content**:
+
 - Common errors and causes
 - Diagnostic commands
 - Network troubleshooting
@@ -536,6 +570,7 @@ Users unable to debug Docker issues.
 **Title**: `[HIGH] Document architectural decisions for future reference`
 
 **Records Needed**:
+
 - ADR-001: Monorepo vs Microservices (Turbo chosen)
 - ADR-002: Docker Sandbox vs Vercel Sandbox
 - ADR-003: Next.js vs other frameworks
@@ -664,6 +699,7 @@ Users unable to debug Docker issues.
 **Title**: `[MEDIUM] Document operational procedures`
 
 **Runbooks Needed**:
+
 - Sandbox creation failures
 - Database connection issues
 - Memory exhaustion handling
@@ -750,13 +786,13 @@ Users unable to debug Docker issues.
 
 ## 📊 ISSUE STATISTICS
 
-| Priority | Count | Effort (Hours) | Phase |
-|----------|-------|---|---|
-| 🔴 Critical (P0) | 8 | 80 | Week 1 |
-| 🟠 High (P1) | 12 | 110 | Week 2-3 |
-| 🟡 Medium (P2) | 10 | 125 | Week 3-4 |
-| 🟢 Low (P3) | 5 | 56 | Ongoing |
-| **Total** | **35** | **371** | **~9 weeks** |
+| Priority         | Count  | Effort (Hours) | Phase        |
+| ---------------- | ------ | -------------- | ------------ |
+| 🔴 Critical (P0) | 8      | 80             | Week 1       |
+| 🟠 High (P1)     | 12     | 110            | Week 2-3     |
+| 🟡 Medium (P2)   | 10     | 125            | Week 3-4     |
+| 🟢 Low (P3)      | 5      | 56             | Ongoing      |
+| **Total**        | **35** | **371**        | **~9 weeks** |
 
 ---
 
@@ -797,6 +833,7 @@ Week 4: Security & Documentation
 ## ✅ DEFINITION OF DONE
 
 For each issue:
+
 - [ ] Code changes implemented
 - [ ] Tests written and passing
 - [ ] Code reviewed and approved

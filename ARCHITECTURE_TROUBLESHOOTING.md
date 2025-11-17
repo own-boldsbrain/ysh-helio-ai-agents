@@ -288,11 +288,13 @@ docker-compose ps
 ### Issue: Sandbox Creation Hangs
 
 **Symptoms**:
+
 - Request never completes
 - No error message
 - Container created but stuck
 
 **Diagnosis**:
+
 ```bash
 # 1. Check container logs
 docker logs <container-id>
@@ -311,6 +313,7 @@ docker exec <container-id> df -h
 ```
 
 **Solutions**:
+
 - Increase timeout: `config.timeout = '10m'`
 - Use shallow clone: `--depth 1`
 - Increase network timeout: `git config http.postBuffer 524288000`
@@ -322,11 +325,13 @@ docker exec <container-id> df -h
 ### Issue: Out of Memory (OOM)
 
 **Symptoms**:
+
 - Container crashes with OOM killer
 - Logs show "Killed"
 - System becomes unresponsive
 
 **Diagnosis**:
+
 ```bash
 # 1. Check memory usage
 docker stats <container-id>
@@ -342,6 +347,7 @@ docker exec <container-id> ps aux --sort=-%mem
 ```
 
 **Solutions**:
+
 - Increase container memory limit: `SANDBOX_MEMORY_LIMIT=4g`
 - Reduce concurrent sandboxes
 - Clear cache: `docker system prune -a`
@@ -353,11 +359,13 @@ docker exec <container-id> ps aux --sort=-%mem
 ### Issue: Port Conflicts
 
 **Symptoms**:
+
 - "Port already in use" error
 - Cannot start application
 - Multiple services competing for ports
 
 **Diagnosis**:
+
 ```bash
 # Find process using port
 lsof -i :3000
@@ -372,6 +380,7 @@ docker-compose ps
 ```
 
 **Solutions**:
+
 - Use dynamic port allocation
 - Change port in docker-compose.yml
 - Kill conflicting process: `kill -9 <pid>`
@@ -383,11 +392,13 @@ docker-compose ps
 ### Issue: Database Connection Errors
 
 **Symptoms**:
+
 - "Cannot connect to database" errors
 - "Too many connections" errors
 - Random connection timeouts
 
 **Diagnosis**:
+
 ```bash
 # Check PostgreSQL logs
 docker logs <postgres-container>
@@ -403,13 +414,14 @@ docker exec -it postgres psql -U postgres -c "SHOW max_connections;"
 ```
 
 **Solutions**:
+
 ```yaml
 # docker-compose.yml
 postgres:
   environment:
-    POSTGRES_INIT_ARGS: "-c max_connections=200"
+    POSTGRES_INIT_ARGS: '-c max_connections=200'
   healthcheck:
-    test: ["CMD-SHELL", "pg_isready -U postgres"]
+    test: ['CMD-SHELL', 'pg_isready -U postgres']
     interval: 10s
     timeout: 5s
     retries: 5
@@ -420,11 +432,13 @@ postgres:
 ### Issue: Network Issues
 
 **Symptoms**:
+
 - GitHub API errors
 - Timeout failures
 - DNS resolution issues
 
 **Diagnosis**:
+
 ```bash
 # Check Docker network
 docker network ls
@@ -441,6 +455,7 @@ iptables -L -n
 ```
 
 **Solutions**:
+
 - Configure custom DNS: `--dns 8.8.8.8`
 - Increase timeouts in code
 - Use VPN if behind corporate firewall
@@ -452,11 +467,13 @@ iptables -L -n
 ### Issue: High CPU Usage
 
 **Symptoms**:
+
 - System becomes slow
 - High load average
 - Services become unresponsive
 
 **Diagnosis**:
+
 ```bash
 # Check CPU-intensive processes
 top -b -n 1 | head -20
@@ -473,6 +490,7 @@ node --prof-process isolate-*.log > profile.txt
 ```
 
 **Solutions**:
+
 - Implement request rate limiting
 - Add connection pooling
 - Optimize database queries
@@ -484,11 +502,13 @@ node --prof-process isolate-*.log > profile.txt
 ### Issue: Persistent Data Loss
 
 **Symptoms**:
+
 - Data disappears after container restart
 - Volume not mounted
 - Database not persisted
 
 **Diagnosis**:
+
 ```bash
 # Check volumes
 docker volume ls
@@ -502,6 +522,7 @@ ls -la /var/lib/docker/volumes/<volume-name>/_data/
 ```
 
 **Solutions**:
+
 ```yaml
 # docker-compose.yml - ensure volumes are defined
 services:
@@ -520,6 +541,7 @@ volumes:
 ### Key Metrics to Monitor
 
 **System Metrics**:
+
 ```
 CPU Usage: docker_container_cpu_usage_seconds_total
 Memory: docker_container_memory_usage_bytes
@@ -528,6 +550,7 @@ Network: docker_container_network_{rx,tx}_bytes_total
 ```
 
 **Application Metrics**:
+
 ```
 HTTP Requests: http_requests_total
 Response Time: http_request_duration_seconds
@@ -538,6 +561,7 @@ Agent Utilization: app_agent_utilization
 ```
 
 **Database Metrics**:
+
 ```
 Query Latency: db_query_duration_seconds
 Connection Pool: db_connections_active
@@ -548,6 +572,7 @@ Cache Hit Rate: cache_hit_ratio
 ### Grafana Dashboard URLs
 
 After deployment:
+
 - System Overview: http://localhost:3001/d/system
 - Application Health: http://localhost:3001/d/app
 - Database Performance: http://localhost:3001/d/database
@@ -584,6 +609,7 @@ After deployment:
 ## 📈 PERFORMANCE OPTIMIZATION TIPS
 
 ### Database Performance
+
 ```sql
 -- Add indexes for common queries
 CREATE INDEX idx_tasks_user_id ON tasks(user_id);
@@ -595,6 +621,7 @@ SELECT * FROM pg_stat_statements ORDER BY total_time DESC LIMIT 10;
 ```
 
 ### Docker Performance
+
 ```dockerfile
 # Multi-stage builds reduce image size
 FROM node:22-alpine AS builder
@@ -609,6 +636,7 @@ CMD ["node", "dist/index.js"]
 ```
 
 ### Node.js Performance
+
 ```javascript
 // Enable clustering for multi-core utilization
 const cluster = require('cluster')

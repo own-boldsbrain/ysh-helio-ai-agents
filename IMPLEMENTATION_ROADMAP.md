@@ -44,6 +44,7 @@ datasources:
 ```
 
 **Acceptance**:
+
 - ✅ All container logs visible in Grafana Explore
 - ✅ Can filter logs by container, service, level
 - ✅ Query response time <100ms
@@ -59,6 +60,7 @@ datasources:
 **Task**: SEC-001 - Remove Dynamic Values from Logs
 
 **Files to Fix**:
+
 ```typescript
 // lib/sandbox/creation.ts
 ❌ await logger.info(`Task created: ${taskId}`)
@@ -74,6 +76,7 @@ datasources:
 ```
 
 **Script to Find Violations**:
+
 ```bash
 # Find all dynamic values in logger calls
 grep -r "logger\.\(info\|error\|command\)(\`.*\${" . --include="*.ts" --include="*.tsx"
@@ -83,6 +86,7 @@ grep -r "console\.\(log\|error\|warn\)(\`.*\${" . --include="*.ts" --include="*.
 ```
 
 **Linter Rule Addition**:
+
 ```javascript
 // eslint.config.mjs
 {
@@ -109,6 +113,7 @@ grep -r "console\.\(log\|error\|warn\)(\`.*\${" . --include="*.ts" --include="*.
 **Task**: SEC-002 - Non-Root User in Containers
 
 **Changes**:
+
 ```dockerfile
 # lib/sandbox/images/Dockerfile.nodejs
 FROM node:22-alpine
@@ -131,6 +136,7 @@ USER app
 ```
 
 **Verify**:
+
 ```bash
 # After rebuild, verify
 docker run -it <image> id
@@ -150,12 +156,13 @@ docker run -it -v test_vol:/workspace <image> ls -la /workspace
 **Task**: RES-001 & RES-002 - Health Checks + Graceful Shutdown
 
 **Health Checks**:
+
 ```yaml
 # docker-compose.yml
 services:
   postgres:
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -163,7 +170,7 @@ services:
 
   app:
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/health']
       interval: 30s
       timeout: 10s
       retries: 3
@@ -171,6 +178,7 @@ services:
 ```
 
 **Graceful Shutdown**:
+
 ```typescript
 // lib/server.ts
 import { createServer } from 'http'
@@ -180,24 +188,24 @@ let isShuttingDown = false
 process.on('SIGTERM', async () => {
   if (isShuttingDown) return
   isShuttingDown = true
-  
+
   console.log('SIGTERM received, graceful shutdown initiated')
-  
+
   try {
     // Close server (stop accepting new connections)
     await new Promise((resolve) => {
       server.close(resolve)
     })
-    
+
     // Close database connections
     await db.close()
-    
+
     // Close cache
     await redis.disconnect()
-    
+
     // Close queue
     await rabbitmq.close()
-    
+
     console.log('Graceful shutdown complete')
     process.exit(0)
   } catch (error) {
@@ -225,6 +233,7 @@ setTimeout(() => {
 **Task**: INF-002 - Fix Sandbox Creation Failures
 
 **Investigation Checklist**:
+
 ```bash
 # 1. Verify Docker daemon
 docker ps  # Should list all containers
@@ -244,6 +253,7 @@ docker run alpine wget -O- https://api.github.com
 ```
 
 **Add Comprehensive Logging**:
+
 ```typescript
 // lib/sandbox/creation.ts
 async function createSandbox(config, logger) {
@@ -251,24 +261,24 @@ async function createSandbox(config, logger) {
     // Log each step with timestamp
     const startTime = Date.now()
     await logger.info('Sandbox creation started')
-    
+
     // Step 1: Validation
     console.error('[DEBUG] Validating environment variables...')
     const validation = validateEnvironmentVariables(...)
     console.error(`[DEBUG] Validation took ${Date.now() - startTime}ms`)
-    
+
     // Step 2: Container creation
     console.error('[DEBUG] Creating Docker container...')
     const containerStart = Date.now()
     const container = await docker.createContainer(...)
     console.error(`[DEBUG] Container creation took ${Date.now() - containerStart}ms`)
-    
+
     // Step 3: Clone
     console.error('[DEBUG] Cloning repository...')
     const cloneStart = Date.now()
     const cloneResult = await runCommandInSandbox(...)
     console.error(`[DEBUG] Clone took ${Date.now() - cloneStart}ms`)
-    
+
   } catch (error) {
     console.error('[ERROR] Sandbox creation failed:', {
       message: error.message,
@@ -281,6 +291,7 @@ async function createSandbox(config, logger) {
 ```
 
 **Retry Logic**:
+
 ```typescript
 // lib/utils/retry.ts
 async function retryWithBackoff(
@@ -289,33 +300,27 @@ async function retryWithBackoff(
     maxAttempts: number
     initialDelayMs: number
     maxDelayMs: number
-  }
+  },
 ): Promise<T> {
   for (let attempt = 1; attempt <= options.maxAttempts; attempt++) {
     try {
       return await fn()
     } catch (error) {
       if (attempt === options.maxAttempts) throw error
-      
-      const delay = Math.min(
-        options.initialDelayMs * Math.pow(2, attempt - 1),
-        options.maxDelayMs
-      )
+
+      const delay = Math.min(options.initialDelayMs * Math.pow(2, attempt - 1), options.maxDelayMs)
       console.error(`Attempt ${attempt} failed, retrying in ${delay}ms:`, error.message)
-      await new Promise(resolve => setTimeout(resolve, delay))
+      await new Promise((resolve) => setTimeout(resolve, delay))
     }
   }
 }
 
 // Usage
-const result = await retryWithBackoff(
-  () => createSandbox(config, logger),
-  {
-    maxAttempts: 3,
-    initialDelayMs: 1000,
-    maxDelayMs: 10000
-  }
-)
+const result = await retryWithBackoff(() => createSandbox(config, logger), {
+  maxAttempts: 3,
+  initialDelayMs: 1000,
+  maxDelayMs: 10000,
+})
 ```
 
 **Owner**: DevOps/Backend Team  
@@ -328,6 +333,7 @@ const result = await retryWithBackoff(
 **Task**: OBS-001 - Implement Distributed Tracing
 
 **Setup**:
+
 ```bash
 # 1. Add dependencies
 npm install @opentelemetry/api @opentelemetry/sdk-node \
@@ -336,6 +342,7 @@ npm install @opentelemetry/api @opentelemetry/sdk-node \
 ```
 
 **Implementation**:
+
 ```typescript
 // lib/otel.ts
 import { NodeSDK } from '@opentelemetry/sdk-node'
@@ -359,7 +366,8 @@ const sdk = new NodeSDK({
 sdk.start()
 
 process.on('SIGTERM', () => {
-  sdk.shutdown()
+  sdk
+    .shutdown()
     .then(() => process.exit(0))
     .catch(() => process.exit(1))
 })
@@ -368,6 +376,7 @@ export { sdk }
 ```
 
 **Initialize in Entry Point**:
+
 ```typescript
 // app.ts or entry point - MUST be first import
 import './lib/otel'
@@ -376,15 +385,16 @@ import './lib/otel'
 ```
 
 **Add Jaeger to Docker Compose**:
+
 ```yaml
 jaeger:
   image: jaegertracing/all-in-one:latest
   ports:
-    - "6831:6831/udp"
-    - "16686:16686"
-    - "14250:14250"
+    - '6831:6831/udp'
+    - '16686:16686'
+    - '14250:14250'
   environment:
-    COLLECTOR_OTLP_GRPC_HOST_PORT: "0.0.0.0:14250"
+    COLLECTOR_OTLP_GRPC_HOST_PORT: '0.0.0.0:14250'
 ```
 
 **Owner**: Observability Team  
@@ -397,6 +407,7 @@ jaeger:
 **Task**: TEST-001 - Comprehensive Sandbox Tests
 
 **Test File Structure**:
+
 ```typescript
 // tests/sandbox/creation.test.ts
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
@@ -405,15 +416,15 @@ import { DockerSandbox } from '@/lib/sandbox/docker-sandbox'
 
 describe('Sandbox Creation', () => {
   let taskLogger: TaskLogger
-  
+
   beforeAll(() => {
     taskLogger = new TaskLogger('test-task')
   })
-  
+
   afterAll(async () => {
     // Cleanup
   })
-  
+
   it('should create a sandbox successfully', async () => {
     const config = {
       repoUrl: 'https://github.com/nextjs/next.js',
@@ -422,14 +433,14 @@ describe('Sandbox Creation', () => {
       githubToken: process.env.GITHUB_TOKEN!,
       apiKeys: {},
     }
-    
+
     const result = await createSandbox(config, taskLogger)
-    
+
     expect(result.success).toBe(true)
     expect(result.sandboxId).toBeDefined()
     expect(result.domain).toMatch(/localhost:\d+/)
   })
-  
+
   it('should handle timeout gracefully', async () => {
     const config = {
       repoUrl: 'https://github.com/linux/linux', // Large repo
@@ -438,13 +449,13 @@ describe('Sandbox Creation', () => {
       githubToken: process.env.GITHUB_TOKEN!,
       apiKeys: {},
     }
-    
+
     const result = await createSandbox(config, taskLogger)
-    
+
     expect(result.success).toBe(false)
     expect(result.error).toContain('timeout')
   })
-  
+
   it('should cleanup on failure', async () => {
     const config = {
       repoUrl: 'https://github.com/invalid/repo-that-does-not-exist',
@@ -453,11 +464,11 @@ describe('Sandbox Creation', () => {
       githubToken: process.env.GITHUB_TOKEN!,
       apiKeys: {},
     }
-    
+
     const result = await createSandbox(config, taskLogger)
-    
+
     expect(result.success).toBe(false)
-    
+
     // Verify container was cleaned up
     const containers = await exec('docker ps -a')
     expect(containers.stdout).not.toContain(result.sandboxId)
@@ -466,6 +477,7 @@ describe('Sandbox Creation', () => {
 ```
 
 **Run Tests**:
+
 ```bash
 npm run test:integration
 ```
@@ -480,6 +492,7 @@ npm run test:integration
 #### Monday: Prometheus Metrics (10h)
 
 **Add Metrics Collection**:
+
 ```typescript
 // lib/metrics.ts
 import promClient from 'prom-client'
@@ -514,14 +527,14 @@ const sandboxCreationDuration = new promClient.Histogram({
 export function metricsMiddleware(req, res, next) {
   const start = Date.now()
   activeConnections.inc()
-  
+
   res.on('finish', () => {
     const duration = (Date.now() - start) / 1000
     httpDuration.labels(req.method, req.path, res.statusCode).observe(duration)
     httpRequests.labels(req.method, req.path, res.statusCode).inc()
     activeConnections.dec()
   })
-  
+
   next()
 }
 
@@ -533,6 +546,7 @@ export async function metricsEndpoint(req, res) {
 ```
 
 **Add to Express**:
+
 ```typescript
 app.use('/metrics', metricsMiddleware)
 app.get('/metrics', metricsEndpoint)
@@ -546,6 +560,7 @@ app.get('/metrics', metricsEndpoint)
 #### Tuesday-Wednesday: Grafana Dashboards (8h)
 
 **Create Dashboards**:
+
 ```json
 {
   "dashboard": {
@@ -596,16 +611,16 @@ export class CircuitBreaker {
   private failureCount = 0
   private successCount = 0
   private lastFailureTime: number | null = null
-  
+
   constructor(
     private fn: Function,
     private options: {
       failureThreshold: number // % of failures to open
       successThreshold: number // successes before closing
       timeout: number // time in open state before half-open
-    }
+    },
   ) {}
-  
+
   async execute(...args: any[]): Promise<any> {
     if (this.state === 'open') {
       if (Date.now() - this.lastFailureTime! > this.options.timeout) {
@@ -614,7 +629,7 @@ export class CircuitBreaker {
         throw new Error('Circuit breaker is OPEN')
       }
     }
-    
+
     try {
       const result = await this.fn(...args)
       this.onSuccess()
@@ -624,7 +639,7 @@ export class CircuitBreaker {
       throw error
     }
   }
-  
+
   private onSuccess() {
     this.failureCount = 0
     if (this.state === 'half-open') {
@@ -635,12 +650,12 @@ export class CircuitBreaker {
       }
     }
   }
-  
+
   private onFailure() {
     this.lastFailureTime = Date.now()
     this.failureCount++
     const failureRate = (this.failureCount / 100) * 100
-    
+
     if (failureRate > this.options.failureThreshold) {
       this.state = 'open'
     }
@@ -652,7 +667,7 @@ const githubBreaker = new CircuitBreaker(
   async (owner: string, repo: string) => {
     return await github.repos.get({ owner, repo })
   },
-  { failureThreshold: 50, successThreshold: 2, timeout: 60000 }
+  { failureThreshold: 50, successThreshold: 2, timeout: 60000 },
 )
 ```
 
@@ -694,6 +709,7 @@ fi
 ```
 
 **Add Cron Job**:
+
 ```yaml
 # docker-compose.yml
 backup:
@@ -722,14 +738,14 @@ import { createClient } from 'redis'
 
 export class RateLimiter {
   private redis = createClient()
-  
+
   async isAllowed(key: string, limit: number, window: number): Promise<boolean> {
     const current = await this.redis.incr(key)
-    
+
     if (current === 1) {
       await this.redis.expire(key, window)
     }
-    
+
     return current <= limit
   }
 }
@@ -739,11 +755,11 @@ export const rateLimitMiddleware = (limiter: RateLimiter) => {
   return async (req, res, next) => {
     const key = `ratelimit:${req.ip}`
     const allowed = await limiter.isAllowed(key, 100, 60) // 100 req/min
-    
+
     if (!allowed) {
       return res.status(429).json({ error: 'Too many requests' })
     }
-    
+
     next()
   }
 }
@@ -766,32 +782,32 @@ export const envSchema = z.object({
   // Application
   NODE_ENV: z.enum(['development', 'production', 'test']),
   PORT: z.string().default('3000').transform(Number),
-  
+
   // Database
   DATABASE_URL: z.string().url(),
-  
+
   // Authentication
   GITHUB_CLIENT_ID: z.string(),
   GITHUB_CLIENT_SECRET: z.string(),
   GITHUB_TOKEN: z.string().min(40),
-  
+
   // AI APIs
   ANTHROPIC_API_KEY: z.string().optional(),
   OPENAI_API_KEY: z.string().optional(),
   GEMINI_API_KEY: z.string().optional(),
-  
+
   // External Services
   VERCEL_TOKEN: z.string(),
   VERCEL_TEAM_ID: z.string(),
   VERCEL_PROJECT_ID: z.string(),
-  
+
   // Sandbox
   SANDBOX_MEMORY_LIMIT: z.string().default('2g'),
   SANDBOX_CPU_LIMIT: z.string().default('2'),
-  
+
   // Redis
   REDIS_URL: z.string().default('redis://localhost:6379'),
-  
+
   // RabbitMQ
   RABBITMQ_URL: z.string().default('amqp://localhost'),
 })
@@ -807,6 +823,7 @@ if (!env.DATABASE_URL) {
 ```
 
 **Add to Entry Point**:
+
 ```typescript
 // Validate environment on startup
 import { env } from '@/lib/env'
@@ -824,6 +841,7 @@ console.log('Environment validation:', env.NODE_ENV)
 **Already Created**: `ARCHITECTURE_TROUBLESHOOTING.md`
 
 **Additional Tasks**:
+
 - [ ] Review and expand troubleshooting guide
 - [ ] Add screenshots for common issues
 - [ ] Create video walkthrough
@@ -839,25 +857,30 @@ console.log('Environment validation:', env.NODE_ENV)
 **Task**: DOC-002 - Document Architectural Decisions
 
 **Create ADRs**:
+
 ```markdown
 # ADR-001: Monorepo Architecture
 
 ## Decision
+
 Use Turbo-based monorepo with separate apps and packages.
 
 ## Rationale
+
 - Faster builds with incremental compilation
 - Shared dependencies reduce duplication
 - Easier code reuse across projects
 - Better for team collaboration
 
 ## Consequences
+
 - More complex CI/CD setup
 - Requires monorepo discipline
 - Larger initial learning curve
 ```
 
 **Repeat for**:
+
 - ADR-002: Docker Sandbox vs Vercel
 - ADR-003: Next.js framework choice
 - ADR-004: PostgreSQL selection
@@ -880,20 +903,21 @@ Use Turbo-based monorepo with separate apps and packages.
 
 ### Metrics for Success
 
-| Metric | Target | Current |
-|--------|--------|---------|
-| Sandbox Success Rate | 99% | 70% |
-| API Response Time (P99) | <500ms | ~2s |
-| System Availability | 99.9% | 95% |
-| Error Rate | <0.1% | 2-3% |
-| Test Coverage | 80%+ | 40% |
-| Security Vulnerabilities | 0 | 7 |
+| Metric                   | Target | Current |
+| ------------------------ | ------ | ------- |
+| Sandbox Success Rate     | 99%    | 70%     |
+| API Response Time (P99)  | <500ms | ~2s     |
+| System Availability      | 99.9%  | 95%     |
+| Error Rate               | <0.1%  | 2-3%    |
+| Test Coverage            | 80%+   | 40%     |
+| Security Vulnerabilities | 0      | 7       |
 
 ---
 
 ## 📋 EXECUTION CHECKLIST
 
 ### Before Starting
+
 - [ ] All team members reviewed CODE-REVIEW-360.md
 - [ ] GitHub issues created for all tasks
 - [ ] Assign owners to each task
@@ -901,6 +925,7 @@ Use Turbo-based monorepo with separate apps and packages.
 - [ ] Establish code review process
 
 ### During Execution
+
 - [ ] Daily standup (15 min)
 - [ ] Weekly sprint review
 - [ ] Code reviews before merge
@@ -908,6 +933,7 @@ Use Turbo-based monorepo with separate apps and packages.
 - [ ] Documentation kept up-to-date
 
 ### After Each Sprint
+
 - [ ] Retrospective (30 min)
 - [ ] Update burndown chart
 - [ ] Mark completed items
@@ -919,16 +945,19 @@ Use Turbo-based monorepo with separate apps and packages.
 ## 📞 SUPPORT & ESCALATION
 
 **Questions about Tasks**:
+
 - Review GITHUB_ISSUES_360.md for detailed requirements
 - Check CODE-REVIEW-360.md for context
 - Ask in team slack channel
 
 **Blocker Issues**:
+
 - Ping architecture lead immediately
 - Consider task re-estimation
 - Request help from other team members
 
 **Production Issues**:
+
 - Escalate to on-call engineer
 - Follow incident response procedure
 - Document in post-mortem

@@ -2,7 +2,7 @@
 
 **Generated**: November 17, 2025, 16:21 UTC  
 **Analysis Scope**: Complete codebase review + Docker architecture + OSS stack  
-**Version**: 2.0.0  
+**Version**: 2.0.0
 
 ---
 
@@ -11,6 +11,7 @@
 ### Current State: FUNCTIONAL BUT NOT PRODUCTION-READY (6/10)
 
 The **Coding Agent Template** is a well-architected monorepo with:
+
 - ✅ Modern tech stack (Next.js 16, React 19, TypeScript)
 - ✅ Multi-agent AI system (19 concurrent agents)
 - ✅ Docker-based sandbox execution
@@ -18,6 +19,7 @@ The **Coding Agent Template** is a well-architected monorepo with:
 - ❌ Missing observability, resilience, and security hardening
 
 ### Key Finding: Sandbox Creation Failures
+
 - **Root Cause**: Docker daemon connectivity issues during Git clone
 - **Impact**: System cannot reliably create development environments
 - **Status**: Requires immediate debugging and retry logic
@@ -28,15 +30,15 @@ The **Coding Agent Template** is a well-architected monorepo with:
 
 ### By Category
 
-| Category | Score | Status | Priority |
-|----------|-------|--------|----------|
-| Architecture | 7/10 | ✅ Good | — |
-| Infrastructure | 5/10 | ⚠️ Partial | P0 |
-| Security | 4/10 | 🔴 Poor | P0 |
-| Testing | 4/10 | 🔴 Insufficient | P1 |
-| Observability | 3/10 | 🔴 Missing | P0 |
-| Performance | 6/10 | ⚠️ Decent | P1 |
-| Documentation | 7/10 | ✅ Good | — |
+| Category       | Score | Status          | Priority |
+| -------------- | ----- | --------------- | -------- |
+| Architecture   | 7/10  | ✅ Good         | —        |
+| Infrastructure | 5/10  | ⚠️ Partial      | P0       |
+| Security       | 4/10  | 🔴 Poor         | P0       |
+| Testing        | 4/10  | 🔴 Insufficient | P1       |
+| Observability  | 3/10  | 🔴 Missing      | P0       |
+| Performance    | 6/10  | ⚠️ Decent       | P1       |
+| Documentation  | 7/10  | ✅ Good         | —        |
 
 ### What's Working Well ✅
 
@@ -122,6 +124,7 @@ The **Coding Agent Template** is a well-architected monorepo with:
 ### Failure Analysis
 
 **Error Pattern**:
+
 ```
 Sandbox creation started
   ↓
@@ -137,6 +140,7 @@ Git clone attempted: TIMEOUT/FAILURE ← BLOCKER HERE
 ```
 
 **Root Causes Identified**:
+
 1. Network latency to GitHub
 2. Git protocol timeout too short
 3. No retry with exponential backoff
@@ -144,6 +148,7 @@ Git clone attempted: TIMEOUT/FAILURE ← BLOCKER HERE
 5. Insufficient logging for debugging
 
 ### Fix Priority
+
 1. Add retry logic (3 attempts, exponential backoff)
 2. Increase git timeout (10min → 30min for large repos)
 3. Add comprehensive logging
@@ -157,32 +162,39 @@ Git clone attempted: TIMEOUT/FAILURE ← BLOCKER HERE
 ### Critical Vulnerabilities Found
 
 #### 1. Dynamic Values in Logs 🔴
+
 **Severity**: Critical  
-**Files**: lib/sandbox/creation.ts, lib/utils/task-logger.ts, app/api/*  
+**Files**: lib/sandbox/creation.ts, lib/utils/task-logger.ts, app/api/\*  
 **Example**:
+
 ```typescript
 // BAD - Exposes sensitive data
 await logger.info(`Task created: ${taskId}`)
 ```
+
 **Impact**: User IDs, file paths, credentials could leak to UI  
 **Fix**: Use static strings with structured fields
 
 #### 2. Containers Run as Root 🔴
+
 **Severity**: Critical  
 **Impact**: Privilege escalation if container escapes  
 **Fix**: Add non-root user in Dockerfile
 
 #### 3. No Rate Limiting 🔴
+
 **Severity**: High  
 **Impact**: DDoS vulnerability  
 **Fix**: Implement per-IP, per-user rate limiting
 
 #### 4. No Input Validation 🔴
+
 **Severity**: High  
 **Impact**: SQL injection, XSS possible  
 **Fix**: Add Zod validation to all endpoints
 
 #### 5. Environment Variable Exposure 🟡
+
 **Severity**: High  
 **Impact**: Missing variables cause runtime errors  
 **Fix**: Use type-safe env validation
@@ -200,10 +212,12 @@ await logger.info(`Task created: ${taskId}`)
 ### Docker Compose Services
 
 **Active** (docker-compose.yml):
+
 - ✅ PostgreSQL 15 (database)
 - ⚠️ Minimal config (no health checks)
 
 **Missing** (CRITICAL):
+
 - ❌ Loki (log aggregation)
 - ❌ Promtail (log shipping)
 - ❌ Prometheus (metrics)
@@ -214,6 +228,7 @@ await logger.info(`Task created: ${taskId}`)
 - ❌ PostgreSQL exporter
 
 **Alternative Compose Files**:
+
 - docker-compose.dev.yml (for development)
 - docker-compose.multi-agent.yml (for 32 agents)
 
@@ -275,12 +290,12 @@ Security Tests:      0%
 
 ### Coverage Targets
 
-| Level | Target | Current | Gap |
-|-------|--------|---------|-----|
-| Unit | 80% | 40% | -40% |
-| Integration | 60% | 0% | -60% |
-| E2E | 40% | 5% | -35% |
-| **Total** | **70%** | **22%** | **-48%** |
+| Level       | Target  | Current | Gap      |
+| ----------- | ------- | ------- | -------- |
+| Unit        | 80%     | 40%     | -40%     |
+| Integration | 60%     | 0%      | -60%     |
+| E2E         | 40%     | 5%      | -35%     |
+| **Total**   | **70%** | **22%** | **-48%** |
 
 ---
 
@@ -336,12 +351,14 @@ Security Tests:      0%
 ### Skills Assessment
 
 **Strong Areas**:
+
 - ✅ Next.js/React development
 - ✅ TypeScript
 - ✅ Docker basics
 - ✅ Database design
 
 **Weak Areas**:
+
 - ⚠️ Kubernetes/Container orchestration
 - ⚠️ Observability tools (Prometheus, Grafana, Loki)
 - ⚠️ Distributed systems
@@ -351,12 +368,14 @@ Security Tests:      0%
 ### Training Needs
 
 **High Priority**:
+
 - [ ] Docker best practices
 - [ ] Observability tools (Loki, Prometheus, Grafana)
 - [ ] Distributed tracing (Jaeger, OpenTelemetry)
 - [ ] Security hardening
 
 **Medium Priority**:
+
 - [ ] Load testing tools
 - [ ] CI/CD pipeline design
 - [ ] Database optimization
@@ -368,19 +387,19 @@ Security Tests:      0%
 
 ### Total Effort to Production-Ready
 
-| Phase | Tasks | Hours | Weeks | Priority |
-|-------|-------|-------|-------|----------|
-| Phase 1: Foundation | 8 | 80 | 1 | P0 |
-| Phase 2: Observability | 12 | 110 | 2 | P0-P1 |
-| Phase 3: Resilience | 10 | 125 | 2 | P1 |
-| Phase 4: Hardening | 5 | 56 | 1 | P2 |
+| Phase                  | Tasks | Hours | Weeks | Priority |
+| ---------------------- | ----- | ----- | ----- | -------- |
+| Phase 1: Foundation    | 8     | 80    | 1     | P0       |
+| Phase 2: Observability | 12    | 110   | 2     | P0-P1    |
+| Phase 3: Resilience    | 10    | 125   | 2     | P1       |
+| Phase 4: Hardening     | 5     | 56    | 1     | P2       |
 
 **Total**: ~35 tasks, ~370 hours, ~9 weeks (assuming 40h/week)
 
 ### Resource Allocation Recommendation
 
 - 2 DevOps Engineers
-- 2 Backend Engineers  
+- 2 Backend Engineers
 - 1 Security Engineer
 - 1 QA Engineer
 - 1 Documentation Lead
@@ -416,6 +435,7 @@ Security Tests:      0%
 ### Minimum Viable Production Setup (MVP)
 
 **Must Have**:
+
 - ✅ Sandbox reliability >95%
 - ✅ Centralized logging
 - ✅ Health checks
@@ -424,6 +444,7 @@ Security Tests:      0%
 - ✅ Error handling + retry logic
 
 **Nice to Have** (Phase 2):
+
 - ⚠️ Full OpenTelemetry integration
 - ⚠️ Advanced circuit breakers
 - ⚠️ Comprehensive e2e tests
@@ -510,6 +531,7 @@ Plus this status report.
 ## 🎯 CONCLUSION
 
 The **Coding Agent Template** has:
+
 - ✅ Solid architectural foundation
 - ✅ Modern technology stack
 - ✅ Good code organization
@@ -518,8 +540,9 @@ The **Coding Agent Template** has:
 **Recommendation**: **NOT PRODUCTION-READY** - Requires 9 weeks of focused work on infrastructure, observability, and security.
 
 **Path Forward**:
+
 1. Implement Phase 1 (critical fixes) - 1 week
-2. Implement Phase 2 (observability) - 2 weeks  
+2. Implement Phase 2 (observability) - 2 weeks
 3. Implement Phase 3 (resilience) - 2 weeks
 4. Implement Phase 4 (hardening) - 1 week
 5. Full testing + validation - 2 weeks

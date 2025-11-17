@@ -8,21 +8,22 @@
 
 ## 📊 QUICK ASSESSMENT
 
-| Metric | Score | Status |
-|--------|-------|--------|
-| **Architecture** | 7/10 | ✅ Good monorepo |
-| **Infrastructure** | 5/10 | ⚠️ Partial services |
-| **Security** | 4/10 | 🔴 Critical gaps |
-| **Testing** | 4/10 | 🔴 Insufficient |
-| **Observability** | 3/10 | 🔴 Missing |
-| **Performance** | 6/10 | ⚠️ Acceptable |
-| **Documentation** | 7/10 | ✅ Comprehensive |
+| Metric             | Score | Status              |
+| ------------------ | ----- | ------------------- |
+| **Architecture**   | 7/10  | ✅ Good monorepo    |
+| **Infrastructure** | 5/10  | ⚠️ Partial services |
+| **Security**       | 4/10  | 🔴 Critical gaps    |
+| **Testing**        | 4/10  | 🔴 Insufficient     |
+| **Observability**  | 3/10  | 🔴 Missing          |
+| **Performance**    | 6/10  | ⚠️ Acceptable       |
+| **Documentation**  | 7/10  | ✅ Comprehensive    |
 
 ---
 
 ## 🚨 CRITICAL FINDINGS
 
 ### 1. Sandbox Creation Failures (🔴 BLOCKER)
+
 - **Issue**: 30% of sandbox creates fail with "Failed to clone repository"
 - **Root Cause**: Docker/network timeout during git clone
 - **Impact**: Core feature broken
@@ -30,6 +31,7 @@
 - **Reference**: See ARCHITECTURE_TROUBLESHOOTING.md
 
 ### 2. Security Violations (🔴 BLOCKER)
+
 - **Issue**: Dynamic values in logs (violates AGENTS.md)
 - **Examples**: `logger.info(\`Task: ${taskId}\`)` exposing sensitive data
 - **Risk**: Data leak to users
@@ -37,6 +39,7 @@
 - **Reference**: See CODE-REVIEW-360.md (SEC-001)
 
 ### 3. Missing Observability (🔴 BLOCKER)
+
 - **Issue**: No centralized logging, no metrics, no tracing
 - **Impact**: Impossible to debug multi-agent system
 - **Components Missing**: Loki, Prometheus, Grafana, Jaeger
@@ -44,11 +47,13 @@
 - **Reference**: See GITHUB_ISSUES_360.md (INF-001, OBS-001)
 
 ### 4. Containers Run as Root (🔴 SECURITY)
+
 - **Issue**: Privilege escalation vulnerability
 - **Fix Time**: 1 day
 - **Reference**: See CODE-REVIEW-360.md (SEC-002)
 
 ### 5. No Health Monitoring (🔴 RELIABILITY)
+
 - **Issue**: No container health checks, no graceful shutdown
 - **Impact**: Zombie containers, data loss
 - **Fix Time**: 1 day
@@ -59,7 +64,9 @@
 ## 📁 GENERATED DOCUMENTATION
 
 ### 1. **CODE-REVIEW-360.md** (14KB)
+
 Complete technical review covering:
+
 - ✅ Monorepo architecture analysis
 - ✅ Docker sandbox architecture review
 - ✅ OSS stack evaluation
@@ -73,7 +80,9 @@ Complete technical review covering:
 ---
 
 ### 2. **GITHUB_ISSUES_360.md** (20KB)
+
 Comprehensive issue tracking with:
+
 - ✅ 35 GitHub issues (P0-P3)
 - ✅ Critical: 8 issues (P0)
 - ✅ High: 12 issues (P1)
@@ -88,7 +97,9 @@ Comprehensive issue tracking with:
 ---
 
 ### 3. **ARCHITECTURE_TROUBLESHOOTING.md** (18KB)
+
 Operational guide with:
+
 - ✅ System architecture diagrams
 - ✅ Component descriptions
 - ✅ Database schema
@@ -103,7 +114,9 @@ Operational guide with:
 ---
 
 ### 4. **IMPLEMENTATION_ROADMAP.md** (22KB)
+
 Week-by-week execution plan:
+
 - ✅ 4-week sprint breakdown
 - ✅ Day-by-day tasks
 - ✅ Code examples for each task
@@ -116,7 +129,9 @@ Week-by-week execution plan:
 ---
 
 ### 5. **CURRENT_STATUS_REPORT.md**
+
 Executive summary with:
+
 - ✅ Current metrics by category
 - ✅ What's working well
 - ✅ What needs work
@@ -132,23 +147,27 @@ Executive summary with:
 ### WEEK 1: CRITICAL FOUNDATION (40h)
 
 **Monday-Tuesday**: Fix Sandbox Creation (16h)
+
 - [ ] Add retry logic (3 attempts, exponential backoff)
 - [ ] Increase git timeout to 30 minutes
 - [ ] Add comprehensive debugging logs
 - [ ] Test with large repos (Linux kernel)
 
 **Wednesday**: Security Fix - Remove Dynamic Logging (8h)
+
 - [ ] Find all logger calls with `${}`
 - [ ] Replace with static strings + structured fields
 - [ ] Add ESLint rule to prevent regression
 - [ ] All tests passing
 
 **Thursday**: Docker Security (4h)
+
 - [ ] Add non-root user to Dockerfile
 - [ ] Test volume permissions
 - [ ] Verify container runs as app user
 
 **Friday**: Health & Shutdown (6h each)
+
 - [ ] Add health checks to docker-compose
 - [ ] Implement SIGTERM handlers
 - [ ] Verify graceful shutdown
@@ -161,18 +180,21 @@ Executive summary with:
 ### WEEK 2: OBSERVABILITY (40h)
 
 **Monday-Tuesday**: Centralized Logging (16h)
+
 - [ ] Add Loki to docker-compose
 - [ ] Configure Promtail for all containers
 - [ ] Add Grafana Loki datasource
 - [ ] Verify logs visible in Grafana
 
 **Wednesday-Thursday**: Distributed Tracing (12h)
+
 - [ ] Add OpenTelemetry to app
 - [ ] Deploy Jaeger container
 - [ ] Configure trace propagation
 - [ ] Verify traces in Jaeger UI
 
 **Friday**: Monitoring Dashboards (12h)
+
 - [ ] Create Prometheus dashboards
 - [ ] Add metrics collection middleware
 - [ ] Configure alert rules
@@ -185,18 +207,22 @@ Executive summary with:
 ## 💾 EFFORT SUMMARY
 
 ### Phase 1: Foundation (Week 1)
+
 - 8 tasks, 80 hours → ~6 days with 3 engineers
 - Result: Sandbox reliability >95%, security fixed
 
 ### Phase 2: Observability (Weeks 2-3)
+
 - 12 tasks, 110 hours → ~6 days with 3 engineers
 - Result: Full logging, metrics, tracing
 
 ### Phase 3: Resilience (Weeks 3-4)
+
 - 10 tasks, 125 hours → ~8 days with 3 engineers
 - Result: Circuit breakers, backups, rate limiting
 
 ### Phase 4: Hardening (Week 4)
+
 - 5 tasks, 56 hours → ~4 days with 2 engineers
 - Result: Security audit pass, full test coverage
 
@@ -234,32 +260,35 @@ Executive summary with:
 
 ### Target for MVP Launch
 
-| Metric | Target | Current | Gap |
-|--------|--------|---------|-----|
-| Sandbox Success Rate | 99% | 70% | -29% |
-| Error Rate | <0.5% | 2-3% | -2.5% |
-| P99 Latency | <2s | ~2s | —— |
-| Availability | 99% | 95% | -4% |
-| Security Issues | 0 | 5 | -5 |
-| Test Coverage | 40% | 22% | -18% |
+| Metric               | Target | Current | Gap   |
+| -------------------- | ------ | ------- | ----- |
+| Sandbox Success Rate | 99%    | 70%     | -29%  |
+| Error Rate           | <0.5%  | 2-3%    | -2.5% |
+| P99 Latency          | <2s    | ~2s     | ——    |
+| Availability         | 99%    | 95%     | -4%   |
+| Security Issues      | 0      | 5       | -5    |
+| Test Coverage        | 40%    | 22%     | -18%  |
 
 ---
 
 ## 🎓 KNOWLEDGE BASE
 
 ### Architecture
+
 - Monorepo (Turbo) ✅
 - Next.js 16 + React 19 ✅
 - Docker sandboxes ⚠️
 - Multi-agent orchestration ⚠️
 
 ### Gaps to Learn
+
 - Kubernetes basics ❌
 - Observability stack (Loki, Prometheus) ❌
 - Distributed tracing (Jaeger) ❌
 - Load testing ❌
 
 ### Recommendations
+
 - [ ] Schedule architecture workshop (4h)
 - [ ] Setup lab environment with Loki/Prometheus (1d)
 - [ ] Practice OpenTelemetry integration (1d)
@@ -270,26 +299,31 @@ Executive summary with:
 ## 🔧 HOW TO USE THIS REVIEW
 
 ### Step 1: Understand Current State (1h)
+
 - Read this summary
 - Review CODE-REVIEW-360.md
 - Check CURRENT_STATUS_REPORT.md
 
 ### Step 2: Plan Implementation (2h)
+
 - Review GITHUB_ISSUES_360.md (35 tasks)
 - Discuss IMPLEMENTATION_ROADMAP.md with team
 - Assign owners to Phase 1 tasks
 
 ### Step 3: Create GitHub Issues (1h)
+
 - Use GITHUB_ISSUES_360.md as template
 - Create all 35 issues in GitHub
 - Set Phase 1 as Sprint 1
 
 ### Step 4: Start Execution (Day 1)
+
 - Team standup on Phase 1
 - Assign tasks
 - Begin day-by-day plan in IMPLEMENTATION_ROADMAP.md
 
 ### Step 5: Debug as Needed (Ongoing)
+
 - Use ARCHITECTURE_TROUBLESHOOTING.md
 - Reference CODE-REVIEW-360.md
 - Check GITHUB_ISSUES_360.md for solutions
@@ -300,15 +334,15 @@ Executive summary with:
 
 ### Quick Reference
 
-| Problem | Document | Section |
-|---------|----------|---------|
+| Problem              | Document                        | Section                |
+| -------------------- | ------------------------------- | ---------------------- |
 | Sandbox not creating | ARCHITECTURE_TROUBLESHOOTING.md | Sandbox Creation Hangs |
-| Logs missing | ARCHITECTURE_TROUBLESHOOTING.md | Centralized Logging |
-| High memory | ARCHITECTURE_TROUBLESHOOTING.md | OOM Errors |
-| Port conflicts | ARCHITECTURE_TROUBLESHOOTING.md | Port Conflicts |
-| Security question | CODE-REVIEW-360.md | Security Review |
-| Task breakdown | GITHUB_ISSUES_360.md | Any issue section |
-| Week plan | IMPLEMENTATION_ROADMAP.md | Weekly sprints |
+| Logs missing         | ARCHITECTURE_TROUBLESHOOTING.md | Centralized Logging    |
+| High memory          | ARCHITECTURE_TROUBLESHOOTING.md | OOM Errors             |
+| Port conflicts       | ARCHITECTURE_TROUBLESHOOTING.md | Port Conflicts         |
+| Security question    | CODE-REVIEW-360.md              | Security Review        |
+| Task breakdown       | GITHUB_ISSUES_360.md            | Any issue section      |
+| Week plan            | IMPLEMENTATION_ROADMAP.md       | Weekly sprints         |
 
 ---
 
@@ -317,6 +351,7 @@ Executive summary with:
 **Phase 1 Completion Target**: November 24, 2025 (1 week)
 
 **Deliverables**:
+
 - [ ] Sandbox success rate: >95%
 - [ ] All logging: static strings only
 - [ ] All containers: non-root
@@ -325,6 +360,7 @@ Executive summary with:
 - [ ] 5 PRs approved and merged
 
 **Team Assignment**:
+
 - DevOps Lead: Sandbox fixes + Docker
 - Backend Lead: Logging + error handling
 - Security: Non-root + validation
@@ -386,6 +422,7 @@ The **Coding Agent Template** is **well-architected but not production-ready**. 
 ---
 
 **Questions?** See the full documentation:
+
 - CODE-REVIEW-360.md (technical details)
 - IMPLEMENTATION_ROADMAP.md (execution plan)
 - ARCHITECTURE_TROUBLESHOOTING.md (debugging)

@@ -2,13 +2,14 @@
 
 **Date**: November 17, 2025  
 **Repository**: Coding Agent Template v2.0.0  
-**Analysis Focus**: Docker Sandbox Architecture, OSS Stack, Production Readiness  
+**Analysis Focus**: Docker Sandbox Architecture, OSS Stack, Production Readiness
 
 ---
 
 ## 📊 EXECUTIVE SUMMARY
 
 ### Current Status
+
 - ✅ **Architecture**: Monorepo (Turbo) with Next.js 16 + React 19
 - ✅ **Infrastructure**: Docker-based sandbox creation + Multi-agent orchestration
 - ✅ **AI Stack**: Claude, GPT-4, Gemini, Groq, Ollama (7 providers)
@@ -16,6 +17,7 @@
 - ⚠️ **Sandbox Implementation**: Partially working - Docker execution layer needs hardening
 
 ### Key Metrics
+
 - **Lines of Code**: ~50K+ (with lib/, app/, api/)
 - **Docker Services**: 5 core (postgres, redis, rabbitmq, nginx, prometheus)
 - **Concurrent Agents**: 19 theoretical, tested at 12
@@ -41,6 +43,7 @@ coding-agent-template/
 ```
 
 **Assessment**: Good separation of concerns. However:
+
 - ⚠️ Both `api/` and `app/api/` exist - unclear routing
 - ⚠️ No clear API versioning strategy
 - ✅ Turbo configuration properly set up for parallel builds
@@ -67,6 +70,7 @@ coding-agent-template/
 **Critical Issues**:
 
 1. **Security Context**
+
    ```typescript
    // Current: Running as root inside container
    // Risk: Privilege escalation if sandbox escapes
@@ -74,12 +78,14 @@ coding-agent-template/
    ```
 
 2. **Resource Limits**
+
    ```typescript
    const memoryLimit = process.env.SANDBOX_MEMORY_LIMIT || '2g' // Hardcoded fallback
-   const cpuLimit = process.env.SANDBOX_CPU_LIMIT || '2'       // Low for build tasks
+   const cpuLimit = process.env.SANDBOX_CPU_LIMIT || '2' // Low for build tasks
    ```
 
 3. **Timeout Handling**
+
    ```typescript
    // No graceful shutdown - just kills container
    // Risk: Incomplete operations, data corruption
@@ -96,6 +102,7 @@ coding-agent-template/
 ### 3. **Agent Orchestration** ⚠️
 
 **Multi-Agent System**:
+
 - 19 concurrent agents configured
 - Load balancing: Nginx (least-connection)
 - Message Queue: RabbitMQ
@@ -103,6 +110,7 @@ coding-agent-template/
 - Monitoring: Prometheus + Grafana
 
 **Issues**:
+
 - ⚠️ No circuit breaker for failing agents
 - ⚠️ No rate limiting per agent
 - ⚠️ Message queue not persisted to disk
@@ -116,6 +124,7 @@ coding-agent-template/
 ### Current Dependencies (v2.0.0)
 
 **Frontend**:
+
 ```json
 ✅ "next": "16.0.0"           // Latest, excellent
 ✅ "react": "19.1.0"          // Latest, excellent
@@ -125,6 +134,7 @@ coding-agent-template/
 ```
 
 **Backend**:
+
 ```json
 ✅ "drizzle-orm": "^0.36.4"    // Type-safe ORM
 ✅ "@neondatabase/serverless" // Edge PostgreSQL
@@ -134,6 +144,7 @@ coding-agent-template/
 ```
 
 **AI/LLM**:
+
 ```json
 ✅ "arctic": "^3.7.0"          // Routing framework for LLMs
 ✅ "@vercel/sdk": "^1.13.9"    // Provider integrations
@@ -143,6 +154,7 @@ coding-agent-template/
 ```
 
 **DevOps/Monitoring**:
+
 ```json
 ✅ "turbo": "^2.3.3"           // Monorepo task runner
 ✅ "prettier": "^3.6.2"        // Code formatting
@@ -163,17 +175,17 @@ coding-agent-template/
   "@opentelemetry/auto-instrumentations-node": "^0.48.0",
   "pino": "^9.0.0",
   "pino-http": "^8.7.0",
-  
+
   "// Resilience": "",
   "circuit-breaker-js": "^1.0.0",
   "bullmq": "^5.0.0",
   "retry-as-promised": "^7.0.0",
-  
+
   "// Security": "",
   "helmet": "^7.1.0",
   "rate-limit": "^0.1.2",
   "@snyk/protect": "^1.1232.0",
-  
+
   "// Type Safety": "",
   "t3-env": "^0.10.0",
   "zod": "^4.1.11"
@@ -187,6 +199,7 @@ coding-agent-template/
 ### High-Risk Issues
 
 #### 1. **Logging Security** 🔴
+
 **Finding**: Dynamic values in logs (violates AGENTS.md rule)
 
 ```typescript
@@ -197,6 +210,7 @@ console.log(`User ${userId} logged in`)
 ```
 
 **Fix**: Use static strings with IDs in structured fields
+
 ```typescript
 // ✅ CORRECT:
 await logger.info('Task created', { taskId })
@@ -204,14 +218,16 @@ await logger.error('Failed to process file', { filename })
 ```
 
 #### 2. **Environment Variable Exposure** 🔴
+
 **Risk**: Credentials in error responses
 
 ```typescript
 // Risk in creation.ts line 71:
-throw new Error(envValidation.error!)  // Could expose credential names
+throw new Error(envValidation.error!) // Could expose credential names
 ```
 
 #### 3. **Docker Sandbox Privilege Escalation** 🔴
+
 **Issue**: Containers run as root
 
 ```dockerfile
@@ -225,13 +241,16 @@ USER app
 ```
 
 #### 4. **No Secret Rotation** 🔴
-**Missing**: 
+
+**Missing**:
+
 - Vercel token rotation
 - GitHub token rotation
 - Database password rotation
 - JWE_SECRET rotation
 
 #### 5. **Git Credentials in URLs** 🟡
+
 **Issue**: Hardcoding tokens in repo URLs
 
 ```typescript
@@ -256,6 +275,7 @@ const url = `https://${token}@github.com/...`
 ```
 
 **Fixes Needed**:
+
 ```typescript
 // 1. Add connection pool
 const pool = new Pool({
@@ -285,6 +305,7 @@ Target:
 ```
 
 **Bottlenecks**:
+
 1. Docker API calls (network latency)
 2. Git clone operations (network I/O)
 3. npm/pnpm install (disk I/O)
@@ -306,6 +327,7 @@ Target:
 ```
 
 ### Test Files Found
+
 ```
 tests/
 e2e/
@@ -316,6 +338,7 @@ playwright.config.ts
 ### Critical Test Gaps
 
 1. **Sandbox Creation**
+
    ```typescript
    ❌ Test timeout handling
    ❌ Test resource exhaustion
@@ -324,6 +347,7 @@ playwright.config.ts
    ```
 
 2. **API Routes**
+
    ```typescript
    ❌ Test error responses
    ❌ Test rate limiting
@@ -346,6 +370,7 @@ playwright.config.ts
 ### docker-compose.yml Review
 
 **Current Services**:
+
 ```yaml
 postgres:15-alpine         # ✅ Good choice
 # Missing services:
@@ -358,11 +383,11 @@ postgres:15-alpine         # ✅ Good choice
 ```
 
 **Issues**:
+
 ```yaml
 # 1. No restart policy
 postgres:
   # Missing: restart: unless-stopped
-
 # 2. No health checks
 # Missing: healthcheck:
 
@@ -380,6 +405,7 @@ postgres:
 ```
 
 **What's Missing**:
+
 - [ ] Multi-stage build optimization
 - [ ] Non-root user
 - [ ] Health checks
@@ -393,18 +419,21 @@ postgres:
 ### Blocker #1: Sandbox Creation Failures 🔴
 
 **Current Error** (from logs):
+
 ```
 Sandbox creation failed
 Failed to clone repository
 ```
 
 **Root Causes**:
+
 1. ⚠️ Docker daemon connection issues
 2. ⚠️ Network connectivity (git clone)
 3. ⚠️ Port conflicts (all 3000+ taken)
 4. ⚠️ Volume creation failures
 
 **Investigation Steps**:
+
 ```bash
 # 1. Check Docker daemon
 docker ps
@@ -427,6 +456,7 @@ df -h
 **Impact**: Impossible to debug issues across 32 agents
 
 **Missing Components**:
+
 - Loki log aggregation
 - Promtail log shipper
 - Structured logging in app code
@@ -436,6 +466,7 @@ df -h
 ### Blocker #3: No Health Monitoring 🟡
 
 **Missing**:
+
 - Container health probes
 - Agent health checks
 - Database connection monitoring
@@ -450,6 +481,7 @@ df -h
 ### Blocker #5: No Graceful Degradation 🔴
 
 **Missing**:
+
 - Circuit breakers
 - Fallback agents
 - Queue backpressure
@@ -461,6 +493,7 @@ df -h
 ## 📈 RECOMMENDATIONS (Prioritized)
 
 ### Phase 1: Critical (Week 1)
+
 - [ ] **INF-001**: Add Loki + Promtail (centralized logging)
 - [ ] **SEC-001**: Fix logging to never expose dynamic values
 - [ ] **SEC-002**: Add non-root user to Docker containers
@@ -468,6 +501,7 @@ df -h
 - [ ] **RES-002**: Add graceful shutdown handlers
 
 ### Phase 2: High (Week 2-3)
+
 - [ ] **OBS-001**: Add OpenTelemetry tracing
 - [ ] **OBS-002**: Implement metrics collection (Prometheus)
 - [ ] **OBS-003**: Add Grafana dashboards
@@ -475,6 +509,7 @@ df -h
 - [ ] **TEST-001**: Add integration tests for sandbox
 
 ### Phase 3: Medium (Week 3-4)
+
 - [ ] **DB-001**: Implement automated backups
 - [ ] **DB-002**: Add connection pooling
 - [ ] **PERF-001**: Optimize Docker layer caching
@@ -482,6 +517,7 @@ df -h
 - [ ] **TEST-002**: Add load testing suite
 
 ### Phase 4: Low (Ongoing)
+
 - [ ] **DOC-001**: Update architecture documentation
 - [ ] **DOC-002**: Add runbook for common issues
 - [ ] **PERF-002**: Optimize API response times
@@ -492,6 +528,7 @@ df -h
 ## 🔧 IMPLEMENTATION ROADMAP
 
 ### Week 1: Foundation
+
 ```
 Day 1-2:  Add Loki + centralized logging
 Day 3:    Fix logging security violations
@@ -500,6 +537,7 @@ Day 5:    Fix Docker privilege issues
 ```
 
 ### Week 2: Observability
+
 ```
 Day 1-3:  Integrate OpenTelemetry
 Day 4:    Add Prometheus metrics
@@ -507,6 +545,7 @@ Day 5:    Create Grafana dashboards
 ```
 
 ### Week 3: Resilience
+
 ```
 Day 1-2:  Implement circuit breakers
 Day 3:    Add queue management
@@ -515,6 +554,7 @@ Day 5:    Add integration tests
 ```
 
 ### Week 4: Hardening
+
 ```
 Day 1-2:  Database backup automation
 Day 3:    Performance optimization
@@ -527,6 +567,7 @@ Day 5:    Load testing
 ## 📚 DOCUMENTATION STATUS
 
 ### Existing Documentation ✅
+
 - ✅ AGENTS.md (guidelines + rules)
 - ✅ QUICK_START.md (basic setup)
 - ✅ README.md (overview)
@@ -534,6 +575,7 @@ Day 5:    Load testing
 - ✅ SKILLS_CAPABILITIES_TOOLS.md (features)
 
 ### Missing Documentation ❌
+
 - ❌ Architecture deep-dive
 - ❌ Sandbox creation troubleshooting guide
 - ❌ Docker setup guide
@@ -565,19 +607,20 @@ Day 5:    Load testing
 
 **Overall Assessment**: 6/10 - Functional but Not Production-Ready
 
-| Category | Score | Status |
-|----------|-------|--------|
-| Architecture | 7/10 | ✅ Good monorepo structure |
-| Docker/Infra | 5/10 | ⚠️ Missing key services |
-| Security | 4/10 | 🔴 Multiple vulnerabilities |
-| Testing | 4/10 | 🔴 Insufficient coverage |
-| Observability | 3/10 | 🔴 No centralized logging |
-| Performance | 6/10 | ⚠️ Needs optimization |
-| Documentation | 7/10 | ✅ Good coverage |
+| Category      | Score | Status                      |
+| ------------- | ----- | --------------------------- |
+| Architecture  | 7/10  | ✅ Good monorepo structure  |
+| Docker/Infra  | 5/10  | ⚠️ Missing key services     |
+| Security      | 4/10  | 🔴 Multiple vulnerabilities |
+| Testing       | 4/10  | 🔴 Insufficient coverage    |
+| Observability | 3/10  | 🔴 No centralized logging   |
+| Performance   | 6/10  | ⚠️ Needs optimization       |
+| Documentation | 7/10  | ✅ Good coverage            |
 
 **Recommendation**: Address Phase 1 items before production deployment.
 
 **Next Steps**:
+
 1. Create tickets for all Phase 1 items
 2. Assign owners to each ticket
 3. Set up automated compliance checks
