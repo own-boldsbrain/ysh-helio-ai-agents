@@ -1,24 +1,40 @@
-import { jwtDecrypt, base64url } from 'jose'
+import { jwtDecrypt, EncryptJWT } from 'jose'
 
-export async function decryptJWE<T extends string | object = string | object>(
-  cyphertext: string,
-  secret: string | undefined = process.env.JWE_SECRET,
-): Promise<T | undefined> {
-  if (!secret) {
-    throw new Error('Missing JWE secret')
-  }
+const secret = new TextEncoder().encode(
+  process.env.JWE_SECRET || 'fallback-jwe-secret-change-in-production'
+)
 
-  if (typeof cyphertext !== 'string') return
-
+/**
+ * Decrypts a JWE (JSON Web Encryption) token
+ * 
+ * @param jwe The encrypted token to decrypt
+ * @returns The decrypted payload, or null if decryption fails
+ */
+export async function decryptJWE<T = any>(jwe: string): Promise<T | null> {
   try {
-    const { payload } = await jwtDecrypt(cyphertext, base64url.decode(secret))
-    const decoded = payload as T
-    if (typeof decoded === 'object' && decoded !== null) {
-      delete (decoded as Record<string, unknown>).iat
-      delete (decoded as Record<string, unknown>).exp
-    }
-    return decoded
-  } catch {
-    // Do nothing
+    const { payload } = await jwtDecrypt(jwe, secret)
+    return payload as T
+  } catch (error) {
+    console.error('JWE decryption failed:', error)
+    return null
+  }
+}
+
+/**
+ * Encrypts data using JWE (JSON Web Encryption)
+ * 
+ * @param data The data to encrypt
+ * @returns The encrypted JWE token, or null if encryption fails
+ */
+export async function encryptJWE<T = any>(data: T): Promise<string | null> {
+  try {
+    const jwe = await new EncryptJWT(data as any)
+      .setProtectedHeader({ alg: 'dir', enc: 'A256GCM' })
+      .encrypt(secret)
+    
+    return jwe
+  } catch (error) {
+    console.error('JWE encryption failed:', error)
+    return null
   }
 }

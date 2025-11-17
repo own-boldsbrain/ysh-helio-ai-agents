@@ -1,8 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import type { NextRequest } from 'next/server'
 import { eq, and } from 'drizzle-orm'
-import { getUserGitHubToken } from '../../lib/github/user-token'
 import { decrypt } from '../../lib/crypto'
-import { db } from '../../lib/db/client'
+let db: any
+let mockDb: any
+let getUserGitHubToken: any
+import { createMockDb } from '../utils/mock-db'
 import { users, accounts } from '../../lib/db/schema'
 import { getServerSession } from '../../lib/session/get-server-session'
 import { getSessionFromReq } from '../../lib/session/server'
@@ -12,14 +15,11 @@ vi.mock('@/lib/crypto', () => ({
   decrypt: vi.fn(),
 }))
 
-vi.mock('@/lib/db/client', () => ({
-  db: {
-    select: vi.fn().mockReturnThis(),
-    from: vi.fn().mockReturnThis(),
-    where: vi.fn().mockReturnThis(),
-    limit: vi.fn(() => Promise.resolve([])),
-  },
-}))
+vi.mock('@/lib/db/client', async () => {
+  const mod = await vi.importActual('../utils/mock-db')
+  const instance = mod.createMockDb()
+  return { db: instance, __mockDb: instance }
+})
 
 vi.mock('@/lib/session/get-server-session', () => ({
   getServerSession: vi.fn(),
@@ -39,8 +39,14 @@ vi.mock('drizzle-orm', async () => {
 })
 
 describe('GitHub User Token', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    vi.resetModules()
     vi.resetAllMocks()
+    const mod = await import('../../lib/github/user-token')
+    getUserGitHubToken = mod.getUserGitHubToken
+    const client = await import('../../lib/db/client')
+    db = client.db
+    mockDb = client.__mockDb
   })
 
   afterEach(() => {
@@ -48,7 +54,7 @@ describe('GitHub User Token', () => {
   })
 
   it('should return null when no session exists', async () => {
-    vi.mocked(getServerSession).mockResolvedValue(null)
+    vi.mocked(getServerSession).mockResolvedValue(undefined)
 
     const result = await getUserGitHubToken()
 
@@ -57,7 +63,11 @@ describe('GitHub User Token', () => {
   })
 
   it('should return null when session user id does not exist', async () => {
-    vi.mocked(getServerSession).mockResolvedValue({ user: {} as any })
+    vi.mocked(getServerSession).mockResolvedValue({
+      user: undefined as any,
+      created: Date.now(),
+      authProvider: 'github',
+    })
 
     const result = await getUserGitHubToken()
 
@@ -66,36 +76,54 @@ describe('GitHub User Token', () => {
   })
 
   it('should return GitHub token from connected account', async () => {
-    const mockSession = { user: { id: 'user-123' } }
+    const mockSession = {
+      user: {
+        id: 'user-123',
+        username: 'testuser',
+        email: 'test@example.com',
+        avatar: 'https://example.com/avatar.jpg',
+      },
+      created: Date.now(),
+      authProvider: 'github' as const,
+    }
     const mockAccessToken = 'encrypted-token'
     const decryptedToken = 'decrypted-github-token'
 
     vi.mocked(getServerSession).mockResolvedValue(mockSession)
-    vi.mocked(db.select).mockReturnThis()
-    vi.mocked(db.from).mockReturnThis()
-    vi.mocked(db.where).mockReturnThis()
-    vi.mocked(db.limit).mockResolvedValue([{ accessToken: mockAccessToken }])
+    vi.mocked(mockDb.select).mockReturnThis()
+    vi.mocked(mockDb.from).mockReturnThis()
+    vi.mocked(mockDb.where).mockReturnThis()
+    vi.mocked(mockDb.limit).mockResolvedValue([{ accessToken: mockAccessToken }])
     vi.mocked(decrypt).mockReturnValue(decryptedToken)
     vi.mocked(eq).mockImplementation(() => 'eq-condition' as any)
     vi.mocked(and).mockImplementation(() => 'and-condition' as any)
 
     const result = await getUserGitHubToken()
 
-    expect(db.select).toHaveBeenCalled()
-    expect(db.where).toHaveBeenCalledWith('and-condition')
+    expect(mockDb.select).toHaveBeenCalled()
+    expect(mockDb.where).toHaveBeenCalledWith('and-condition')
     expect(decrypt).toHaveBeenCalledWith(mockAccessToken)
     expect(result).toBe(decryptedToken)
   })
 
   it('should return GitHub token from primary user account as fallback', async () => {
-    const mockSession = { user: { id: 'user-123' } }
+    const mockSession = {
+      user: {
+        id: 'user-123',
+        username: 'testuser',
+        email: 'test@example.com',
+        avatar: 'https://example.com/avatar.jpg',
+      },
+      created: Date.now(),
+      authProvider: 'github' as const,
+    }
     const mockUserToken = 'encrypted-user-token'
     const decryptedToken = 'decrypted-user-token'
 
     // First call (for accounts) returns empty array
     // Second call (for users) returns token
     let callCount = 0
-    vi.mocked(db.limit).mockImplementation(() => {
+    vi.mocked(mockDb.limit).mockImplementation(() => {
       callCount++
       if (callCount === 1) {
         return Promise.resolve([]) // No connected account found
@@ -104,9 +132,9 @@ describe('GitHub User Token', () => {
     })
 
     vi.mocked(getServerSession).mockResolvedValue(mockSession)
-    vi.mocked(db.select).mockReturnThis()
-    vi.mocked(db.from).mockReturnThis()
-    vi.mocked(db.where).mockReturnThis()
+    vi.mocked(mockDb.select).mockReturnThis()
+    vi.mocked(mockDb.from).mockReturnThis()
+    vi.mocked(mockDb.where).mockReturnThis()
     vi.mocked(decrypt).mockReturnValue(decryptedToken)
     vi.mocked(eq).mockImplementation(() => 'eq-condition' as any)
     vi.mocked(and).mockImplementation(() => 'and-condition' as any)
@@ -118,13 +146,22 @@ describe('GitHub User Token', () => {
   })
 
   it('should return null when no GitHub account is connected', async () => {
-    const mockSession = { user: { id: 'user-123' } }
+    const mockSession = {
+      user: {
+        id: 'user-123',
+        username: 'testuser',
+        email: 'test@example.com',
+        avatar: 'https://example.com/avatar.jpg',
+      },
+      created: Date.now(),
+      authProvider: 'github' as const,
+    }
 
     vi.mocked(getServerSession).mockResolvedValue(mockSession)
-    vi.mocked(db.select).mockReturnThis()
-    vi.mocked(db.from).mockReturnThis()
-    vi.mocked(db.where).mockReturnThis()
-    vi.mocked(db.limit).mockResolvedValue([])
+    vi.mocked(mockDb.select).mockReturnThis()
+    vi.mocked(mockDb.from).mockReturnThis()
+    vi.mocked(mockDb.where).mockReturnThis()
+    vi.mocked(mockDb.limit).mockResolvedValue([])
     vi.mocked(eq).mockImplementation(() => 'eq-condition' as any)
     vi.mocked(and).mockImplementation(() => 'and-condition' as any)
 
@@ -134,11 +171,20 @@ describe('GitHub User Token', () => {
   })
 
   it('should return null when database query throws an error', async () => {
-    const mockSession = { user: { id: 'user-123' } }
+    const mockSession = {
+      user: {
+        id: 'user-123',
+        username: 'testuser',
+        email: 'test@example.com',
+        avatar: 'https://example.com/avatar.jpg',
+      },
+      created: Date.now(),
+      authProvider: 'github' as const,
+    }
 
     vi.mocked(getServerSession).mockResolvedValue(mockSession)
-    vi.mocked(db.select).mockReturnThis()
-    vi.mocked(db.from).mockImplementation(() => {
+    vi.mocked(mockDb.select).mockReturnThis()
+    vi.mocked(mockDb.from).mockImplementation(() => {
       throw new Error('Database error')
     })
 
@@ -149,20 +195,29 @@ describe('GitHub User Token', () => {
 
   it('should use request session when provided', async () => {
     const mockReq = { headers: new Headers() } as Request
-    const mockSession = { user: { id: 'user-123' } }
+    const mockSession = {
+      user: {
+        id: 'user-123',
+        username: 'testuser',
+        email: 'test@example.com',
+        avatar: 'https://example.com/avatar.jpg',
+      },
+      created: Date.now(),
+      authProvider: 'github' as const,
+    }
     const mockAccessToken = 'encrypted-token'
     const decryptedToken = 'decrypted-github-token'
 
     vi.mocked(getSessionFromReq).mockResolvedValue(mockSession)
-    vi.mocked(db.select).mockReturnThis()
-    vi.mocked(db.from).mockReturnThis()
-    vi.mocked(db.where).mockReturnThis()
-    vi.mocked(db.limit).mockResolvedValue([{ accessToken: mockAccessToken }])
+    vi.mocked(mockDb.select).mockReturnThis()
+    vi.mocked(mockDb.from).mockReturnThis()
+    vi.mocked(mockDb.where).mockReturnThis()
+    vi.mocked(mockDb.limit).mockResolvedValue([{ accessToken: mockAccessToken }])
     vi.mocked(decrypt).mockReturnValue(decryptedToken)
     vi.mocked(eq).mockImplementation(() => 'eq-condition' as any)
     vi.mocked(and).mockImplementation(() => 'and-condition' as any)
 
-    const result = await getUserGitHubToken(mockReq)
+    const result = await getUserGitHubToken(mockReq as unknown as NextRequest)
 
     expect(getSessionFromReq).toHaveBeenCalledWith(mockReq)
     expect(result).toBe(decryptedToken)

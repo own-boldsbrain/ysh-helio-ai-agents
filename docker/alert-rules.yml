@@ -1,0 +1,47 @@
+groups:
+  - name: coding-agent-alerts
+    rules:
+      - alert: ServiceDown
+        expr: up{job="coding-agent"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Service {{ $labels.instance }} is down"
+          description: "Service {{ $labels.instance }} has been down for more than 1 minute."
+
+      - alert: HighErrorRate
+        expr: rate(app_errors_total[5m]) > 0.5
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High error rate on {{ $labels.instance }}"
+          description: "Error rate is above 0.5 errors per second on {{ $labels.instance }}."
+
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is above 80% on {{ $labels.instance }}."
+
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemFree_bytes) / node_memory_MemTotal_bytes * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "Memory usage is above 85% on {{ $labels.instance }}."
+
+      - alert: DiskSpaceLow
+        expr: (node_filesystem_size_bytes - node_filesystem_free_bytes) / node_filesystem_size_bytes * 100 > 90
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Disk space low on {{ $labels.instance }}:{{ $labels.mountpoint }}"
+          description: "Disk usage is above 90% on {{ $labels.instance }}:{{ $labels.mountpoint }}."

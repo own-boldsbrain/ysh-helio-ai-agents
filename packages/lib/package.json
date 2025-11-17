@@ -1,0 +1,50 @@
+{
+  "name": "@repo/lib",
+  "version": "1.0.0",
+  "description": "Shared utilities and libraries",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./env": {
+      "import": "./src/env.ts",
+      "types": "./src/env.ts"
+    },
+    "./logger": {
+      "import": "./src/logger.ts",
+      "types": "./src/logger.ts"
+    },
+    "./performance": {
+      "import": "./src/performance.ts",
+      "types": "./src/performance.ts"
+    },
+    "./accessibility": {
+      "import": "./src/accessibility.ts",
+      "types": "./src/accessibility.ts"
+    },
+    "./db-pool": {
+      "import": "./src/db-pool.ts",
+      "types": "./src/db-pool.ts"
+    },
+    "./error-tracking": {
+      "import": "./src/error-tracking.ts",
+      "types": "./src/error-tracking.ts"
+    },
+    "./graceful-shutdown": {
+      "import": "./src/graceful-shutdown.ts",
+      "types": "./src/graceful-shutdown.ts"
+    }
+  },
+  "scripts": {
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "pg": "^8.11.3",
+    "web-vitals": "^5.1.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.1",
+    "@types/pg": "^8.15.6",
+    "typescript": "^5.7.2"
+  }
+}

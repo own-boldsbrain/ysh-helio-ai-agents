@@ -1,0 +1,85 @@
+version: '3.9'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    container_name: coding-agent-web
+    restart: always
+    ports:
+      - '3000:3000'
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:${DB_PASSWORD}@postgres:5432/coding_agent
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/api/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    resources:
+      limits:
+        cpus: '1'
+        memory: 1024M
+      reservations:
+        cpus: '0.5'
+        memory: 512M
+    networks:
+      - coding-agent
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: coding-agent-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: coding_agent
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    resources:
+      limits:
+        cpus: '2'
+        memory: 1024M
+      reservations:
+        cpus: '1'
+        memory: 512M
+    networks:
+      - coding-agent
+
+  redis:
+    image: redis:7-alpine
+    container_name: coding-agent-redis
+    restart: always
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    resources:
+      limits:
+        cpus: '0.5'
+        memory: 256M
+    networks:
+      - coding-agent
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  coding-agent:
+    driver: bridge

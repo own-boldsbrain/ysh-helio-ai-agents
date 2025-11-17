@@ -1,0 +1,46 @@
+# Stage 1: Builder
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+COPY turbo.json ./
+COPY packages packages
+COPY apps apps
+
+RUN npm install -g pnpm
+RUN pnpm install --frozen-lockfile
+
+# Create empty .env.local to prevent build error
+RUN touch apps/web/.env.local
+
+# Build all apps
+RUN cd apps/web && pnpm build
+
+# Stage 2: Runtime
+FROM node:20-alpine
+
+# Security: Create non-root user
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nextjs -u 1001
+
+WORKDIR /app
+
+# Copy only production dependencies
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/apps/web/.next ./apps/web/.next
+COPY --from=builder /app/apps/web/public ./apps/web/public
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/pnpm-workspace.yaml ./
+COPY --from=builder /app/apps/web/package.json ./apps/web/
+
+# Security: Use non-root user
+USER nextjs
+
+EXPOSE 3000
+ENV NODE_ENV=production
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/api/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
+
+CMD ["pnpm", "--filter=@repo/web", "start"]

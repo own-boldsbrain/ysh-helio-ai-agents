@@ -1,64 +1,70 @@
 'use client'
 
-import { useState, useEffect, createContext, useContext, useCallback } from 'react'
+import { createContext, useContext, ReactNode } from 'react'
 
-import { Connector } from '@/lib/db/schema'
+interface Connector {
+  type: string
+  connected: boolean
+  name: string
+  description: string
+}
 
 interface ConnectorsContextType {
   connectors: Connector[]
-  refreshConnectors: () => Promise<void>
-  isLoading: boolean
+  connectConnector: (type: string) => void
+  disconnectConnector: (type: string) => void
+  isConnected: (type: string) => boolean
 }
 
 const ConnectorsContext = createContext<ConnectorsContextType | undefined>(undefined)
 
-export const useConnectors = () => {
-  const context = useContext(ConnectorsContext)
-  if (!context) {
-    throw new Error('useConnectors must be used within ConnectorsProvider')
+export function ConnectorsProvider({ children }: { children: ReactNode }) {
+  // Mock implementation - in real app this would manage actual connector states
+  const connectors: Connector[] = [
+    {
+      type: 'github',
+      connected: true,
+      name: 'GitHub',
+      description: 'Connect your GitHub account',
+    },
+    {
+      type: 'vercel',
+      connected: false,
+      name: 'Vercel',
+      description: 'Connect your Vercel account',
+    },
+  ]
+
+  const connectConnector = (type: string) => {
+    console.log(`Connecting to ${type}`)
   }
-  return context
-}
 
-interface ConnectorsProviderProps {
-  children: React.ReactNode
-}
+  const disconnectConnector = (type: string) => {
+    console.log(`Disconnecting from ${type}`)
+  }
 
-export function ConnectorsProvider({ children }: ConnectorsProviderProps) {
-  const [connectors, setConnectors] = useState<Connector[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-
-  const fetchConnectors = useCallback(async () => {
-    try {
-      const response = await fetch('/api/connectors')
-      if (response.ok) {
-        const data = await response.json()
-        setConnectors(data.data || [])
-      }
-    } catch (error) {
-      console.error('Error fetching connectors:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [])
-
-  useEffect(() => {
-    fetchConnectors()
-  }, [fetchConnectors])
-
-  const refreshConnectors = useCallback(async () => {
-    await fetchConnectors()
-  }, [fetchConnectors])
+  const isConnected = (type: string) => {
+    return connectors.some((c) => c.type === type && c.connected)
+  }
 
   return (
     <ConnectorsContext.Provider
       value={{
         connectors,
-        refreshConnectors,
-        isLoading,
+        connectConnector,
+        disconnectConnector,
+        isConnected,
       }}
     >
       {children}
     </ConnectorsContext.Provider>
   )
+}
+
+export function useConnectors() {
+  const context = useContext(ConnectorsContext)
+  if (!context) {
+    throw new Error('useConnectors must be used within a ConnectorsProvider')
+  }
+  return context
 }

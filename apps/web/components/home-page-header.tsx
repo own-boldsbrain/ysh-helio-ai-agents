@@ -7,7 +7,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 
 import { useTasks } from '@/components/app-layout'
-import { useTasks as useTasksContext } from '@/components/tasks-context'
+import { useTasks as useTasksContext } from '@/components/app-layout'
 import { User } from '@/components/auth/user'
 import { GitHubStarsButton } from '@/components/github-stars-button'
 import { GitHubIcon } from '@/components/icons/github-icon'

@@ -1,0 +1,106 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Coding Agent Application Dashboard",
+    "tags": ["coding-agent", "app"],
+    "style": "dark",
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Requests Overview",
+        "type": "graph",
+        "gridPos": {
+          "x": 0,
+          "y": 0,
+          "w": 12,
+          "h": 8
+        },
+        "targets": [
+          {
+            "expr": "rate(app_requests_total[5m])",
+            "legendFormat": "Requests per second"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "Requests/sec",
+            "show": true
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Error Rate",
+        "type": "graph",
+        "gridPos": {
+          "x": 12,
+          "y": 0,
+          "w": 12,
+          "h": 8
+        },
+        "targets": [
+          {
+            "expr": "rate(app_errors_total[5m])",
+            "legendFormat": "Errors per second"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "Errors/sec",
+            "show": true
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Application Uptime",
+        "type": "singlestat",
+        "gridPos": {
+          "x": 0,
+          "y": 8,
+          "w": 6,
+          "h": 6
+        },
+        "targets": [
+          {
+            "expr": "app_uptime_seconds",
+            "legendFormat": "Uptime (seconds)"
+          }
+        ],
+        "format": "dtdurations",
+        "valueName": "current"
+      },
+      {
+        "id": 4,
+        "title": "Memory Usage",
+        "type": "graph",
+        "gridPos": {
+          "x": 6,
+          "y": 8,
+          "w": 6,
+          "h": 6
+        },
+        "targets": [
+          {
+            "expr": "app_memory_heap_bytes",
+            "legendFormat": "Heap Memory"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "Bytes",
+            "show": true
+          }
+        ]
+      }
+    ],
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "refresh": "5s"
+  },
+  "folderId": 0,
+  "overwrite": false
+}

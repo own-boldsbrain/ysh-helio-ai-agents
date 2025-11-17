@@ -3,23 +3,24 @@
 .gitignore
 .gitattributes
 
-# Ignore node modules
+# Ignore node modules (critical for build speed)
 node_modules
 .pnpm
 .pnpm-store
 
-# Ignore build artifacts
+# Ignore build artifacts from development
 .next
 .turbo
 dist
 build
 out
 
-# Ignore environment files
+# Ignore environment files (except example file)
 .env
 .env.local
 .env.production
 .env.development
+.env.test
 
 # Ignore logs
 *.log
@@ -40,27 +41,38 @@ Thumbs.db
 *.swp
 *.swo
 *~
+.vscode-test
 
-# Ignore test coverage
+# Ignore test coverage and test files
 coverage
 .nyc_output
+test/
+tests/
+__tests__/
+**/__snapshots__/
 
-# Ignore Docker files (when building images)
+# Ignore Docker files (when building images) except production
 Dockerfile*
+!Dockerfile.prod
 docker-compose*.yml
+!docker-compose.prod.yml
 .dockerignore
 
-# Ignore documentation
-docs
+# Ignore documentation (for build context size)
+docs/
 *.md
 !README.md
 
 # Ignore scripts (not needed in container)
-scripts
+scripts/
+*.sh
+*.ps1
+*.bat
 
 # Ignore database files
 *.sqlite
 *.db
+prisma/
 
 # Ignore TypeScript build info
 *.tsbuildinfo
@@ -70,3 +82,45 @@ scripts
 
 # Ignore Husky
 .husky
+
+# Ignore development and testing files
+*.test.*
+*.spec.*
+jest.config.*
+vitest.config.*
+jest.*
+playwright.config.*
+playwright/
+e2e/
+
+# Ignore IDE settings and local configs
+*.code-workspace
+.idea/
+.vscode/
+.settings/
+project.workspace
+project.userprefs
+
+# Ignore temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+.DS_Store
+*.bak
+*~
+
+# Ignore lock files that are not needed for runtime (if pnpm is used)
+package-lock.json
+yarn.lock
+
+# Configuration files not needed in production
+.eslint*
+.prettier*
+.stylelint*
+.editorconfig
+.czrc
+.commitlintrc
+
+# Ignore other monorepo specific files not needed
+turbo.json

@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
+import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -41,7 +42,13 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': '/home/rookie/projects/coding-agent-template',
+      // Map `@` to the web app package for tests that run in `apps/web`
+      '@': path.resolve(__dirname, 'apps/web'),
+      // Provide a root alias in case other tests/modules need to import from repo root
+      '@root': path.resolve(__dirname),
+      // Mock Next.js server-only import for test environment
+      'server-only': path.resolve(__dirname, 'apps/web/test/mocks/server-only.ts'),
+      'next/server': path.resolve(__dirname, 'apps/web/test/mocks/next-server.ts'),
     },
   },
 })

@@ -37,7 +37,7 @@ function createMockResponse(
       }
       return JSON.stringify(data)
     },
-  } as Response
+  } as unknown as Response
 }
 
 describe('JSON Parsing Utilities', () => {
@@ -169,7 +169,7 @@ describe('JSON Parsing Utilities', () => {
         status: 500,
         statusText: 'Internal Server Error',
         ok: false,
-      } as Response
+      } as unknown as Response
 
       const result = await getErrorMessage(mockResponse)
       expect(result).toBe('Error: 500 Internal Server Error')

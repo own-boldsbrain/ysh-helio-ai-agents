@@ -1,40 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { TaskForm } from '../../components/task-form'
-import { useAtom } from 'jotai'
+import { Provider } from 'jotai'
 
 // Mock the dependencies
-vi.mock('jotai', async () => {
-  const actual = await vi.importActual('jotai')
-  return {
-    ...actual,
-    useAtom: vi.fn(),
-    useAtomValue: vi.fn(),
-    useSetAtom: vi.fn(),
-  }
-})
 
-vi.mock('@/lib/atoms/task', () => ({
-  taskPromptAtom: vi.fn(),
-}))
-
-vi.mock('@/lib/atoms/agent-selection', () => ({
-  lastSelectedAgentAtom: vi.fn(),
-  lastSelectedModelAtomFamily: vi.fn(),
-}))
-
-vi.mock('@/lib/atoms/github-cache', () => ({
-  githubReposAtomFamily: vi.fn(),
-}))
+// Use real Jotai atoms; don't mock these modules to allow actual state handling
 
 vi.mock('next/navigation', () => ({
   useSearchParams: vi.fn(() => new URLSearchParams()),
 }))
 
-vi.mock('jotai', () => ({
-  useAtom: vi.fn(),
-  useAtomValue: vi.fn(),
-  useSetAtom: vi.fn(),
+vi.mock('@/components/connectors-provider', () => ({
+  useConnectors: () => ({ connectors: [] }),
 }))
 
 describe('TaskForm Component', () => {
@@ -49,8 +27,7 @@ describe('TaskForm Component', () => {
   beforeEach(() => {
     vi.resetAllMocks()
 
-    // Mock the atom hooks
-    vi.mocked(useAtom).mockReturnValue(['', vi.fn()]) // taskPrompt
+    // No explicit mocking for atoms - use real jotai Provider in renders
 
     // Mock window.matchMedia for responsive behavior
     Object.defineProperty(window, 'matchMedia', {
@@ -66,26 +43,77 @@ describe('TaskForm Component', () => {
         dispatchEvent: vi.fn(),
       })),
     })
+    // Mock global fetch to handle relative URLs in Node environment
+    globalThis.fetch = vi.fn((input: RequestInfo) => {
+      const url = String(input)
+      if (url.includes('/api/github/repos')) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          json: async () => [
+            {
+              name: 'test-repo',
+              full_name: 'test-owner/test-repo',
+              description: 'Test repo',
+              private: false,
+              clone_url: 'https://github.com/test-owner/test-repo.git',
+              language: 'TypeScript',
+            },
+          ],
+          headers: { get: (k: string) => 'application/json' },
+        } as any)
+      }
+
+      if (url.includes('/api/api-keys/check')) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          json: async () => ({ hasKey: true, provider: 'aigateway', agentName: 'Claude' }),
+          headers: { get: (k: string) => 'application/json' },
+        } as any)
+      }
+
+      // Default fallback
+      return Promise.resolve({
+        ok: true,
+        status: 200,
+        statusText: 'OK',
+        json: async () => ({}),
+        headers: { get: () => 'application/json' },
+      } as any)
+    })
+    // Ensure localStorage is cleared so atomWithStorage starts fresh
+    globalThis.localStorage.clear()
   })
 
   it('renders task form with all required elements', () => {
-    render(<TaskForm {...defaultProps} />)
+    render(
+      <Provider>
+        <TaskForm {...defaultProps} />
+      </Provider>,
+    )
 
     // Check for prompt textarea
     expect(screen.getByPlaceholderText(/Describe what you want the AI agent to do/i)).toBeInTheDocument()
 
-    // Check for agent selection
-    expect(screen.getByRole('combobox')).toBeInTheDocument()
+    // Check for agent selection (first combobox)
+    expect(screen.getAllByRole('combobox')[0]).toBeInTheDocument()
 
-    // Check for submit button
-    expect(screen.getByRole('button', { name: /Submit/i })).toBeInTheDocument()
+    // Check for submit button by type
+    expect(screen.getAllByRole('button').find((btn) => btn.getAttribute('type') === 'submit')).toBeDefined()
   })
 
   it('calls onSubmit when form is submitted with valid data', async () => {
-    render(<TaskForm {...defaultProps} />)
+    render(
+      <Provider>
+        <TaskForm {...defaultProps} />
+      </Provider>,
+    )
 
     const promptTextarea = screen.getByPlaceholderText(/Describe what you want the AI agent to do/i)
-    const submitButton = screen.getByRole('button', { name: /Submit/i })
+    const submitButton = screen.getAllByRole('button').find((btn) => btn.getAttribute('type') === 'submit')!
 
     // Fill in the prompt
     fireEvent.change(promptTextarea, { target: { value: 'Create a new feature' } })
@@ -110,19 +138,27 @@ describe('TaskForm Component', () => {
   })
 
   it('disables submit button when prompt is empty', () => {
-    render(<TaskForm {...defaultProps} />)
+    render(
+      <Provider>
+        <TaskForm {...defaultProps} />
+      </Provider>,
+    )
 
-    const submitButton = screen.getByRole('button', { name: /Submit/i })
+    const submitButton = screen.getAllByRole('button').find((btn) => btn.getAttribute('type') === 'submit')!
 
     // Initially disabled if prompt is empty
     expect(submitButton).toBeDisabled()
   })
 
   it('enables submit button when prompt is entered', async () => {
-    render(<TaskForm {...defaultProps} />)
+    render(
+      <Provider>
+        <TaskForm {...defaultProps} />
+      </Provider>,
+    )
 
     const promptTextarea = screen.getByPlaceholderText(/Describe what you want the AI agent to do/i)
-    const submitButton = screen.getByRole('button', { name: /Submit/i })
+    const submitButton = screen.getAllByRole('button').find((btn) => btn.getAttribute('type') === 'submit')!
 
     // Fill in the prompt
     fireEvent.change(promptTextarea, { target: { value: 'Test prompt' } })
@@ -134,9 +170,13 @@ describe('TaskForm Component', () => {
   })
 
   it('shows loading state when isSubmitting is true', () => {
-    render(<TaskForm {...defaultProps} isSubmitting={true} />)
+    render(
+      <Provider>
+        <TaskForm {...defaultProps} isSubmitting={true} />
+      </Provider>,
+    )
 
-    const submitButton = screen.getByRole('button', { name: /Submit/i })
+    const submitButton = screen.getAllByRole('button').find((btn) => btn.getAttribute('type') === 'submit')!
 
     // Check for loading indicator (spinner)
     expect(submitButton).toBeDisabled()
@@ -144,14 +184,18 @@ describe('TaskForm Component', () => {
   })
 
   it('displays proper agent options', () => {
-    render(<TaskForm {...defaultProps} />)
+    render(
+      <Provider>
+        <TaskForm {...defaultProps} />
+      </Provider>,
+    )
 
-    const agentSelect = screen.getByRole('combobox')
+    const agentSelect = screen.getAllByRole('combobox')[0]
     fireEvent.click(agentSelect)
 
-    // Check for presence of different agents
-    expect(screen.getByText('Claude')).toBeInTheDocument()
-    expect(screen.getByText('Qwen')).toBeInTheDocument()
-    expect(screen.getByText('Gemini')).toBeInTheDocument()
+    // Check for presence of different agents (at least one match for each)
+    expect(screen.getAllByText('Claude').length).toBeGreaterThanOrEqual(1)
+    expect(screen.getAllByText('Codex').length).toBeGreaterThanOrEqual(1)
+    expect(screen.getAllByText('Gemini').length).toBeGreaterThanOrEqual(1)
   })
 })

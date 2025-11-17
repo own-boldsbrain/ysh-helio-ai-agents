@@ -7,5 +7,6 @@ import { getSessionFromCookie } from './server'
 export const getServerSession = cache(async () => {
   const store = await cookies()
   const cookieValue = store.get(SESSION_COOKIE_NAME)?.value
-  return getSessionFromCookie(cookieValue)
+  const session = await getSessionFromCookie(cookieValue)
+  return session ?? null
 })

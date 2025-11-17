@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { NextRequest, NextResponse } from 'next/server'
 import { GET as getUser } from '../../../app/api/github/user/route'
-import { getUserGitHubToken } from '../../../lib/github/user-token'
+import { getUserGitHubToken } from '@/lib/github/user-token'
 
 // Mock the dependencies
 vi.mock('@/lib/github/user-token', () => ({
@@ -32,7 +32,8 @@ describe('GitHub API Routes - Integration Tests', () => {
       const mockFetchResponse = {
         ok: true,
         json: () => Promise.resolve(mockGithubUser),
-      } as Response
+        headers: new Headers({ 'content-type': 'application/json' }),
+      } as unknown as Response
 
       const mockFetch = vi.mocked(fetch)
       mockFetch.mockResolvedValue(mockFetchResponse)
@@ -93,7 +94,8 @@ describe('GitHub API Routes - Integration Tests', () => {
         ok: false,
         status: 500,
         statusText: 'Internal Server Error',
-      } as Response
+        headers: new Headers({ 'content-type': 'application/json' }),
+      } as unknown as Response
 
       const mockFetch = vi.mocked(fetch)
       mockFetch.mockResolvedValue(mockFetchResponse)
@@ -123,7 +125,8 @@ describe('GitHub API Routes - Integration Tests', () => {
         status: 401,
         statusText: 'Unauthorized',
         json: () => Promise.resolve(mockGithubError),
-      } as Response
+        headers: new Headers({ 'content-type': 'application/json' }),
+      } as unknown as Response
 
       const mockFetch = vi.mocked(fetch)
       mockFetch.mockResolvedValue(mockFetchResponse)

@@ -18,11 +18,11 @@ vi.mock('next/headers', () => ({
   cookies: vi.fn(),
 }))
 
-vi.mock('@/lib/session/constants', () => ({
+vi.mock('../../lib/session/constants', () => ({
   SESSION_COOKIE_NAME: 'session',
 }))
 
-vi.mock('@/lib/session/server', () => ({
+vi.mock('../../lib/session/server', () => ({
   getSessionFromCookie: vi.fn(),
 }))
 
@@ -35,7 +35,16 @@ describe('Server Session', () => {
     const mockCookieStore = {
       get: vi.fn(() => ({ value: 'session-value' })),
     }
-    const mockSession = { user: { id: 'user-123' } }
+    const mockSession = {
+      user: {
+        id: 'user-123',
+        username: 'testuser',
+        email: 'test@example.com',
+        avatar: 'https://example.com/avatar.jpg',
+      },
+      created: Date.now(),
+      authProvider: 'github' as const,
+    }
 
     vi.mocked(cookies).mockResolvedValue(mockCookieStore as any)
     vi.mocked(getSessionFromCookie).mockResolvedValue(mockSession)
@@ -54,7 +63,7 @@ describe('Server Session', () => {
     }
 
     vi.mocked(cookies).mockResolvedValue(mockCookieStore as any)
-    vi.mocked(getSessionFromCookie).mockResolvedValue(null)
+    vi.mocked(getSessionFromCookie).mockResolvedValue(undefined)
 
     const result = await getServerSession()
 
@@ -70,7 +79,7 @@ describe('Server Session', () => {
     }
 
     vi.mocked(cookies).mockResolvedValue(mockCookieStore as any)
-    vi.mocked(getSessionFromCookie).mockResolvedValue(null)
+    vi.mocked(getSessionFromCookie).mockResolvedValue(undefined)
 
     const result = await getServerSession()
 

@@ -5,6 +5,7 @@
 
 import { setTimeout } from 'timers/promises'
 import { bench, describe } from 'vitest'
+import { parseJsonResponse, safeJson } from '@/lib/utils/fetch-json'
 
 interface LoadTestConfig {
   concurrentUsers: number
@@ -73,9 +74,7 @@ describe('Load Testing: Production-like Scenarios', () => {
         targetEndpoint: '/api/github/user', // Example endpoint
       }
 
-      const results = await runLoadTest(config)
-      // In a real scenario, you'd assert on results here
-      return results
+      await runLoadTest(config)
     },
     { time: 6000 },
   ) // Adjust timeout for this benchmark
@@ -89,8 +88,7 @@ describe('Load Testing: Production-like Scenarios', () => {
         targetEndpoint: '/api/github/user', // Example endpoint
       }
 
-      const results = await runLoadTest(config)
-      return results
+      await runLoadTest(config)
     },
     { time: 12000 },
   )
