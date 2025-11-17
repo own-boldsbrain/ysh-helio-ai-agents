@@ -10,10 +10,7 @@ const DEFAULT_POOL_CONFIG = {
   maxUses: 7500, // maximum number of times a connection can be used
 }
 
-export function getConnectionPool(
-  connectionString: string,
-  config = DEFAULT_POOL_CONFIG
-): Pool {
+export function getConnectionPool(connectionString: string, config = DEFAULT_POOL_CONFIG): Pool {
   if (!pool) {
     pool = new Pool({
       connectionString,
@@ -58,10 +55,7 @@ export async function closePool(): Promise<void> {
   }
 }
 
-export async function executeQuery<T>(
-  query: string,
-  params: unknown[] = []
-): Promise<T[]> {
+export async function executeQuery<T>(query: string, params: unknown[] = []): Promise<T[]> {
   const client = await getClient()
 
   try {
@@ -72,10 +66,7 @@ export async function executeQuery<T>(
   }
 }
 
-export async function executeQuerySingle<T>(
-  query: string,
-  params: unknown[] = []
-): Promise<T | null> {
+export async function executeQuerySingle<T>(query: string, params: unknown[] = []): Promise<T | null> {
   const results = await executeQuery<T>(query, params)
   return results.length > 0 ? results[0] : null
 }

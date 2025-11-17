@@ -7,6 +7,7 @@ A comprehensive, production-ready template for building multi-agent AI systems o
 ## 🏆 Key Achievements
 
 ### Infrastructure Score: **10/10** ✅
+
 ### Architecture Score: **9/10** ✅
 
 **Status:** ✅ FULLY PRODUCTION READY
@@ -136,24 +137,29 @@ docker-compose -f docker-compose.prod.yml up -d
 ## 📊 Monitoring & Observability
 
 ### Health Check
+
 - Endpoint: `http://localhost:3000/api/health`
 - Returns: Service status, uptime, version, and dependencies
 
 ### Metrics Endpoint
+
 - Endpoint: `http://localhost:3000/api/metrics`
 - Format: Prometheus-compatible plain text
 - Metrics: Requests, errors, uptime, memory usage
 
 ### Full Monitoring Stack
+
 - **Prometheus**: Metrics collection and storage
 - **Grafana**: Dashboard visualization
-- **Loki**: Centralized logging aggregation  
+- **Loki**: Centralized logging aggregation
 - **Jaeger**: Distributed tracing (optional)
 
 ## 🔧 Production Features
 
 ### Security Headers
+
 All responses include security headers:
+
 - Content Security Policy
 - X-Content-Type-Options
 - X-Frame-Options
@@ -162,11 +168,13 @@ All responses include security headers:
 - Permissions-Policy
 
 ### Environment Validation
+
 - Zod-based validation at startup
 - Clear error messages for missing variables
 - Type-safe environment access
 
 ### Structured Logging
+
 - JSON format in production
 - Readable format in development
 - Contextual information with all logs
@@ -200,16 +208,19 @@ pnpm format
 ## 📦 Shared Packages
 
 ### @repo/api-types
+
 - API contracts and type definitions
 - Entity types (User, Sandbox, Task)
 - Request/Response interfaces
 
 ### @repo/constants
+
 - API endpoint constants
 - App configuration defaults
 - Error code definitions
 
 ### @repo/lib
+
 - Environment validation with Zod
 - Structured logging utilities
 - Performance monitoring tools
@@ -218,7 +229,9 @@ pnpm format
 ## 🚀 Production Deployment
 
 ### Docker Production Build
+
 The `Dockerfile.prod` includes:
+
 - Multi-stage build with separate build/runtime stages
 - Non-root user execution
 - Health checks
@@ -226,7 +239,9 @@ The `Dockerfile.prod` includes:
 - Optimized layer caching
 
 ### CI/CD Pipeline
+
 The `.github/workflows/deploy.yml` includes:
+
 - Testing and type checking
 - Security scanning (Trivy)
 - Docker image building and scanning

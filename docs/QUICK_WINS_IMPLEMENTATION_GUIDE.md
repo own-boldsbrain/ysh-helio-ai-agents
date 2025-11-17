@@ -1,7 +1,7 @@
 # 🚀 10 Quick Wins Implementation Guide
 
 **Objective**: Bring application from 7.5/10 → 10/10 in ~19 hours  
-**Target**: Full production readiness with monitoring, health checks, and optimized Docker  
+**Target**: Full production readiness with monitoring, health checks, and optimized Docker
 
 ---
 
@@ -29,7 +29,7 @@ export async function GET() {
         uptime: process.uptime(),
         environment: process.env.NODE_ENV || 'unknown',
       },
-      { status: 200 }
+      { status: 200 },
     )
   } catch (error) {
     console.error('Health check error:', error)
@@ -51,6 +51,7 @@ web:
 ```
 
 **Validation**:
+
 ```bash
 curl http://localhost:3000/api/health
 # Should return: {"status":"ok","timestamp":"...","uptime":123.45,...}
@@ -125,6 +126,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 ```
 
 **Validation**:
+
 ```bash
 # Should validate on startup
 cd apps/web && npm run build
@@ -177,6 +179,7 @@ logger.error('Failed to process file')
 ```
 
 **Validation**:
+
 ```bash
 # All logs should be static strings only
 grep -r "console\." apps/web/app --include="*.ts" --include="*.tsx" | grep -v ".next" | wc -l
@@ -213,7 +216,7 @@ export async function GET() {
         checks,
         responseTime: Date.now() - startTime,
       },
-      { status: 200 }
+      { status: 200 },
     )
   } catch (error) {
     console.error('Status check error:', error)
@@ -241,6 +244,7 @@ function checkMemory(): object {
 ```
 
 **Validation**:
+
 ```bash
 curl http://localhost:3000/api/status
 ```
@@ -283,7 +287,7 @@ export async function POST(request: NextRequest) {
     try {
       // Create container
       const { stdout } = await execAsync(
-        `docker run -d --memory="${memory}" --name="${sandboxId}" coding-agent:sandbox-${language} sleep ${timeout}`
+        `docker run -d --memory="${memory}" --name="${sandboxId}" coding-agent:sandbox-${language} sleep ${timeout}`,
       )
 
       return NextResponse.json(
@@ -294,7 +298,7 @@ export async function POST(request: NextRequest) {
           memory,
           timeout,
         },
-        { status: 201 }
+        { status: 201 },
       )
     } catch (error) {
       console.error('Container creation error:', error)
@@ -349,6 +353,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
 ```
 
 **Validation**:
+
 ```bash
 # Create sandbox
 curl -X POST http://localhost:3000/api/sandbox/create \
@@ -447,6 +452,7 @@ coverage
 ```
 
 **Validation**:
+
 ```bash
 # Build and check size
 docker build -f Dockerfile.prod -t coding-agent:optimized .
@@ -531,6 +537,7 @@ restart: unless-stopped
 ```
 
 **Validation**:
+
 ```bash
 docker-compose up -d
 docker stats
@@ -600,9 +607,10 @@ class MetricsCollector {
 
     lines.push('# HELP request_duration_ms HTTP request duration')
     lines.push('# TYPE request_duration_ms histogram')
-    const avg = m.request_duration_ms.length > 0
-      ? m.request_duration_ms.reduce((a, b) => a + b, 0) / m.request_duration_ms.length
-      : 0
+    const avg =
+      m.request_duration_ms.length > 0
+        ? m.request_duration_ms.reduce((a, b) => a + b, 0) / m.request_duration_ms.length
+        : 0
     lines.push(`request_duration_ms_avg ${avg.toFixed(2)}`)
 
     lines.push('# HELP sandbox_count Active sandboxes')
@@ -654,6 +662,7 @@ scrape_configs:
 ```
 
 **Validation**:
+
 ```bash
 curl http://localhost:3000/api/metrics
 # Should return Prometheus format metrics
@@ -673,7 +682,7 @@ export class AppError extends Error {
     public code: string,
     public statusCode: number,
     message: string,
-    public details?: unknown
+    public details?: unknown,
   ) {
     super(message)
     this.name = 'AppError'
@@ -745,6 +754,7 @@ export default function Error({ error, reset }: { error: Error; reset: () => voi
 ```
 
 **Validation**:
+
 ```typescript
 // Usage example
 import { ValidationError } from '@repo/lib/errors'
@@ -764,7 +774,7 @@ try {
 
 **File 1**: Update `README.md`
 
-```markdown
+````markdown
 # 🤖 Coding Agent Template
 
 **Status**: ✅ Production Ready (10/10)
@@ -772,6 +782,7 @@ try {
 ## Quick Start
 
 ### Prerequisites
+
 - Docker 20.10+
 - Docker Compose 2.0+
 - 4GB RAM minimum
@@ -792,16 +803,19 @@ docker-compose up -d
 # Verify health
 curl http://localhost:3000/api/health
 ```
+````
 
 ## API Documentation
 
 ### Health Check
+
 ```
 GET /api/health
 Response: { status: 'ok', uptime: 123.45, ... }
 ```
 
 ### Sandbox Management
+
 ```
 POST   /api/sandbox/create     - Create sandbox
 GET    /api/sandbox/:id        - Get sandbox status
@@ -809,6 +823,7 @@ DELETE /api/sandbox/:id        - Delete sandbox
 ```
 
 ### System Status
+
 ```
 GET /api/status - System health and metrics
 GET /api/metrics - Prometheus metrics
@@ -821,7 +836,8 @@ GET /api/metrics - Prometheus metrics
 ## Deployment
 
 [See DEPLOYMENT.md](./docs/DEPLOYMENT.md)
-```
+
+````
 
 **File 2**: Create `docs/ARCHITECTURE.md`
 
@@ -854,38 +870,45 @@ GET /api/metrics - Prometheus metrics
                   [Services]
                        ↓
                   [Logging/Metrics]
-```
+````
 
 **File 3**: Create `docs/DEPLOYMENT.md`
 
-```markdown
+````markdown
 # Deployment Guide
 
 ## Production Deployment
 
 ### Docker Compose
+
 ```bash
 docker-compose -f docker-compose.prod.yml up -d
 ```
+````
 
 ### Kubernetes (Optional)
+
 ```bash
 kubectl apply -f K8S_DEPLOYMENT.template.yaml
 ```
 
 ### Environment Variables
+
 See `.env.example` for full list
 
 ### Monitoring
+
 - Health: GET /api/health
 - Metrics: GET /api/metrics
 - Status: GET /api/status
 
 ### Backup
+
 ```bash
 docker-compose exec postgres pg_dump > backup.sql
 ```
-```
+
+````
 
 **File 4**: Create `docs/API.md`
 
@@ -913,33 +936,34 @@ All endpoints use JSON with `Content-Type: application/json`
   "error": "ERROR_CODE",
   "message": "Human readable message"
 }
-```
-```
+````
+
+````
 
 **Validation**:
 ```bash
 # Verify all docs created
 ls -la docs/
 # Should show: ARCHITECTURE.md, DEPLOYMENT.md, API.md
-```
+````
 
 ---
 
 ## 🎯 Implementation Order & Time Estimates
 
-| # | Task | Duration | Priority | Status |
-|---|------|----------|----------|--------|
-| 1 | Health Check Endpoint | 30 min | CRITICAL | ⏳ TODO |
-| 2 | Environment Validation | 1 hour | CRITICAL | ⏳ TODO |
-| 3 | Structured Logging | 1 hour | CRITICAL | ⏳ TODO |
-| 4 | API Status Endpoint | 45 min | HIGH | ⏳ TODO |
-| 5 | Sandbox API | 1.5 hours | HIGH | ⏳ TODO |
-| 6 | Docker Optimization | 1 hour | HIGH | ⏳ TODO |
-| 7 | Resource Limits | 1 hour | HIGH | ⏳ TODO |
-| 8 | Prometheus Metrics | 1.5 hours | MEDIUM | ⏳ TODO |
-| 9 | Error Handling | 1 hour | MEDIUM | ⏳ TODO |
-| 10 | Documentation | 1 hour | MEDIUM | ⏳ TODO |
-| | **TOTAL** | **~11 hours** | | |
+| #   | Task                   | Duration      | Priority | Status  |
+| --- | ---------------------- | ------------- | -------- | ------- |
+| 1   | Health Check Endpoint  | 30 min        | CRITICAL | ⏳ TODO |
+| 2   | Environment Validation | 1 hour        | CRITICAL | ⏳ TODO |
+| 3   | Structured Logging     | 1 hour        | CRITICAL | ⏳ TODO |
+| 4   | API Status Endpoint    | 45 min        | HIGH     | ⏳ TODO |
+| 5   | Sandbox API            | 1.5 hours     | HIGH     | ⏳ TODO |
+| 6   | Docker Optimization    | 1 hour        | HIGH     | ⏳ TODO |
+| 7   | Resource Limits        | 1 hour        | HIGH     | ⏳ TODO |
+| 8   | Prometheus Metrics     | 1.5 hours     | MEDIUM   | ⏳ TODO |
+| 9   | Error Handling         | 1 hour        | MEDIUM   | ⏳ TODO |
+| 10  | Documentation          | 1 hour        | MEDIUM   | ⏳ TODO |
+|     | **TOTAL**              | **~11 hours** |          |         |
 
 ---
 

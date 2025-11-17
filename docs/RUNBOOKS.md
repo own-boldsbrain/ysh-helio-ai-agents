@@ -22,10 +22,11 @@ This document contains runbooks for common operational procedures for the Coding
    - Review application logs: `docker logs coding-agent-web --tail 50`
 
 2. **Service Restart (10 minutes)**
+
    ```bash
    # Restart the web service
    docker-compose -f docker-compose.prod.yml restart web
-   
+
    # Wait 30 seconds before proceeding
    sleep 30
    ```
@@ -47,6 +48,7 @@ This document contains runbooks for common operational procedures for the Coding
    - Document root cause and resolution for post-incident review
 
 **Rollback Steps:**
+
 ```bash
 # If using Docker
 docker-compose -f docker-compose.prod.yml down
@@ -94,25 +96,28 @@ docker-compose -f docker-compose.prod.yml up -d
 **Steps:**
 
 1. **Verify Database Status (5 minutes)**
+
    ```bash
    # Check if database container is running
    docker-compose -f docker-compose.prod.yml ps postgres
-   
+
    # Check database logs
    docker logs coding-agent-postgres --tail 50
    ```
 
 2. **Test Connectivity (5 minutes)**
+
    ```bash
    # Connect directly to database
    docker exec -it coding-agent-postgres pg_isready
    ```
 
 3. **Basic Remediation (10 minutes)**
+
    ```bash
    # Restart database service
    docker-compose -f docker-compose.prod.yml restart postgres
-   
+
    # Wait for full startup (2-3 minutes)
    sleep 180
    ```
@@ -218,6 +223,7 @@ docker-compose -f docker-compose.prod.yml up -d
 ### 1. Standard Deployment
 
 **Pre-requisites:**
+
 - Staging environment successfully tested
 - All automated tests passing
 - Rollback plan prepared
@@ -225,19 +231,21 @@ docker-compose -f docker-compose.prod.yml up -d
 **Steps:**
 
 1. **Pre-deployment Checks (5 minutes)**
+
    ```bash
    # Verify current system status
    curl -f http://localhost:3000/api/health
-   
+
    # Backup current configuration
    docker-compose -f docker-compose.prod.yml config > backup-config-$(date +%Y%m%d).yml
    ```
 
 2. **Deploy New Version (10 minutes)**
+
    ```bash
    # Build new image (if needed)
    docker build -f Dockerfile.prod -t coding-agent:latest .
-   
+
    # Deploy with zero-downtime
    docker-compose -f docker-compose.prod.yml up -d --no-deps --build web
    ```
@@ -265,6 +273,7 @@ docker-compose -f docker-compose.prod.yml up -d
    - Prepare rollback command
 
 2. **Execute Rollback (10 minutes)**
+
    ```bash
    # If using Docker images with tags
    docker-compose -f docker-compose.prod.yml down
@@ -291,10 +300,11 @@ docker-compose -f docker-compose.prod.yml up -d
 **Steps:**
 
 1. **Manual Backup (15 minutes)**
+
    ```bash
    # Create backup
    docker exec coding-agent-postgres pg_dump -U postgres coding_agent > backup_$(date +%Y%m%d_%H%M%S).sql
-   
+
    # Verify backup integrity
    head -20 backup_*.sql  # Check that backup started properly
    ```
@@ -314,6 +324,7 @@ docker-compose -f docker-compose.prod.yml up -d
    - Identify correct backup file
 
 2. **Perform Restoration (30 minutes)**
+
    ```bash
    # Restore from backup
    docker exec -i coding-agent-postgres psql -U postgres -d coding_agent < backup_file.sql
@@ -377,6 +388,7 @@ docker-compose -f docker-compose.prod.yml up -d
 ## Communication Templates
 
 ### 1. Incident Status Update
+
 ```
 Incident ID: INC-<number>
 Status: <Investigating|Identified|Monitoring|Resolved>
@@ -397,6 +409,7 @@ ETA to Resolution:
 ```
 
 ### 2. Maintenance Notification
+
 ```
 Maintenance Window: <Start time> to <End time>
 Expected Impact: <Service degradation|Outage|Performance impact>

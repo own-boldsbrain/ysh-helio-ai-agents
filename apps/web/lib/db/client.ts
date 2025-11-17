@@ -11,7 +11,7 @@ export const db = new Proxy({} as ReturnType<typeof drizzle>, {
       if (!process.env.POSTGRES_URL) {
         throw new Error('POSTGRES_URL environment variable is required')
       }
-      
+
       // Configure PostgreSQL client with connection pooling
       const client = postgres(process.env.POSTGRES_URL, {
         // Connection pool configuration
@@ -20,8 +20,8 @@ export const db = new Proxy({} as ReturnType<typeof drizzle>, {
         connect_timeout: 10, // Time to wait for connection before timing out
         prepare: false, // Disable prepared statements if not needed
       })
-      
-      _db = drizzle(client, { 
+
+      _db = drizzle(client, {
         schema,
         logger: process.env.NODE_ENV === 'development', // Enable query logging in development
       })

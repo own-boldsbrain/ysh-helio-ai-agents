@@ -5,7 +5,7 @@ const KEY = Buffer.from(process.env.ENCRYPTION_KEY || '0123456789abcdef012345678
 
 /**
  * Encrypts a string value
- * 
+ *
  * @param text The text to encrypt
  * @returns The encrypted string in format "iv:encrypted"
  */
@@ -15,7 +15,7 @@ export function encrypt(text: string): string {
     const cipher = createCipheriv(ALGORITHM, KEY, iv)
     let encrypted = cipher.update(text, 'utf8', 'hex')
     encrypted += cipher.final('hex')
-    
+
     // Return IV and encrypted data
     return `${iv.toString('hex')}:${encrypted}`
   } catch (error) {
@@ -26,23 +26,23 @@ export function encrypt(text: string): string {
 
 /**
  * Decrypts an encrypted string
- * 
+ *
  * @param encryptedText The encrypted text in format "iv:encrypted"
  * @returns The decrypted string
  */
 export function decrypt(encryptedText: string): string {
   try {
     const [ivHex, encrypted] = encryptedText.split(':')
-    
+
     if (!ivHex || !encrypted) {
       throw new Error('Invalid encrypted text format')
     }
-    
+
     const iv = Buffer.from(ivHex, 'hex')
     const decipher = createDecipheriv(ALGORITHM, KEY, iv)
     let decrypted = decipher.update(encrypted, 'hex', 'utf8')
     decrypted += decipher.final('utf8')
-    
+
     return decrypted
   } catch (error) {
     console.error('Decryption failed:', error)

@@ -9,12 +9,14 @@ The Coding Agent Template provides a RESTful API for managing coding agents, tas
 Most API endpoints require authentication using session cookies. The authentication system uses encrypted session tokens stored in cookies.
 
 ### Session Token
+
 - Sessions are stored in cookies named `session`
 - Session tokens are encrypted using JWE
 - Sessions expire after a configurable time period
 - API requests must include the session cookie for authentication
 
 ## Base URL
+
 All API endpoints are relative to the base URL of your deployment.
 
 Production: `https://yourdomain.com/api`
@@ -23,14 +25,18 @@ Development: `http://localhost:3000/api`
 ## Common Response Format
 
 Successful responses follow this format:
+
 ```json
 {
   "success": true,
-  "data": { /* response data */ }
+  "data": {
+    /* response data */
+  }
 }
 ```
 
 Error responses follow this format:
+
 ```json
 {
   "success": false,
@@ -46,9 +52,11 @@ Error responses follow this format:
 ### Health Check
 
 #### GET /health
+
 Check the health status of the application.
 
 **Response:**
+
 ```json
 {
   "status": "healthy",
@@ -65,9 +73,11 @@ Check the health status of the application.
 ### Metrics
 
 #### GET /metrics
+
 Get application metrics in Prometheus format.
 
 **Response:**
+
 ```
 # HELP app_requests_total Total number of requests
 # TYPE app_requests_total counter
@@ -85,9 +95,11 @@ app_uptime_seconds 3600.12
 ### Authentication
 
 #### POST /auth/login
+
 Authenticate a user and create a session.
 
 **Request:**
+
 ```json
 {
   "email": "user@example.com",
@@ -96,6 +108,7 @@ Authenticate a user and create a session.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -110,9 +123,11 @@ Authenticate a user and create a session.
 ```
 
 #### GET /auth/session
+
 Get current user session information.
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -128,9 +143,11 @@ Get current user session information.
 ```
 
 #### POST /auth/logout
+
 Log out the current user.
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -143,14 +160,17 @@ Log out the current user.
 ### Tasks
 
 #### GET /tasks
+
 Get a list of tasks for the current user.
 
 **Query Parameters:**
+
 - `limit` (optional): Number of tasks to return (default: 20, max: 100)
 - `offset` (optional): Number of tasks to skip (default: 0)
 - `status` (optional): Filter by task status (pending, running, completed, failed)
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -176,9 +196,11 @@ Get a list of tasks for the current user.
 ```
 
 #### POST /tasks
+
 Create a new task.
 
 **Request:**
+
 ```json
 {
   "title": "Create new feature",
@@ -193,6 +215,7 @@ Create a new task.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -210,12 +233,15 @@ Create a new task.
 ```
 
 #### GET /tasks/{id}
+
 Get details of a specific task.
 
 **Path Parameters:**
+
 - `id`: Task ID
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -247,12 +273,15 @@ Get details of a specific task.
 ```
 
 #### PUT /tasks/{id}
+
 Update a specific task.
 
 **Path Parameters:**
+
 - `id`: Task ID
 
 **Request:**
+
 ```json
 {
   "keepAlive": true
@@ -260,6 +289,7 @@ Update a specific task.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -273,9 +303,11 @@ Update a specific task.
 ### Sandboxes
 
 #### GET /sandboxes
+
 Get a list of sandboxes for the current user.
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -296,9 +328,11 @@ Get a list of sandboxes for the current user.
 ```
 
 #### POST /sandboxes
+
 Create a new sandbox.
 
 **Request:**
+
 ```json
 {
   "name": "My New Sandbox",
@@ -309,6 +343,7 @@ Create a new sandbox.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -325,12 +360,15 @@ Create a new sandbox.
 ```
 
 #### GET /sandboxes/{id}
+
 Get details of a specific sandbox.
 
 **Path Parameters:**
+
 - `id`: Sandbox ID
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -347,12 +385,15 @@ Get details of a specific sandbox.
 ```
 
 #### POST /sandboxes/{id}/execute
+
 Execute a command in the sandbox.
 
 **Path Parameters:**
+
 - `id`: Sandbox ID
 
 **Request:**
+
 ```json
 {
   "command": "npm run build",
@@ -362,6 +403,7 @@ Execute a command in the sandbox.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -376,12 +418,15 @@ Execute a command in the sandbox.
 ### GitHub Integration
 
 #### GET /github/repos
+
 Get repositories for the authenticated user.
 
 **Query Parameters:**
+
 - `owner` (optional): GitHub username/organization to filter by
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -399,9 +444,11 @@ Get repositories for the authenticated user.
 ```
 
 #### GET /github/user
+
 Get GitHub user information.
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -419,23 +466,25 @@ Get GitHub user information.
 
 The API uses the following error codes:
 
-| Code | Description |
-|------|-------------|
-| UNAUTHORIZED | Authentication required or invalid |
-| FORBIDDEN | Access to resource is forbidden |
-| VALIDATION_ERROR | Request validation failed |
-| RESOURCE_NOT_FOUND | Requested resource does not exist |
-| INTERNAL_ERROR | Internal server error occurred |
-| TIMEOUT_ERROR | Request timed out |
-| GITHUB_API_ERROR | Error communicating with GitHub API |
+| Code               | Description                         |
+| ------------------ | ----------------------------------- |
+| UNAUTHORIZED       | Authentication required or invalid  |
+| FORBIDDEN          | Access to resource is forbidden     |
+| VALIDATION_ERROR   | Request validation failed           |
+| RESOURCE_NOT_FOUND | Requested resource does not exist   |
+| INTERNAL_ERROR     | Internal server error occurred      |
+| TIMEOUT_ERROR      | Request timed out                   |
+| GITHUB_API_ERROR   | Error communicating with GitHub API |
 
 ## Rate Limiting
 
 All API endpoints are subject to rate limiting:
+
 - Authenticated users: 100 requests per minute
 - Unauthenticated users: 10 requests per minute
 
 Rate-limited responses include the following headers:
+
 - `X-RateLimit-Limit`: The maximum number of requests allowed
 - `X-RateLimit-Remaining`: The number of requests remaining
 - `X-RateLimit-Reset`: The time when the rate limit resets
@@ -468,10 +517,13 @@ The API is versioned as part of the application version. Breaking changes will b
 ## Security
 
 ### Data Validation
+
 All input data is validated before processing. Invalid data will result in a `VALIDATION_ERROR`.
 
 ### Sanitization
+
 All output data is properly sanitized to prevent injection attacks.
 
 ### HTTPS
+
 All API requests should use HTTPS in production environments.

@@ -9,18 +9,18 @@
 
 ## 📊 Executive Summary
 
-| Dimension | Score | Status | Comments |
-|-----------|-------|--------|----------|
-| **Architecture** | 8/10 | ✅ Good | Solid monorepo with Turbo, good separation of concerns |
-| **Infrastructure** | 6/10 | ⚠️ Partial | Docker setup exists but needs optimization for prod |
-| **Code Quality** | 7/10 | ⚠️ Good | Proper tooling (ESLint, Prettier, TypeScript) implemented |
-| **Testing** | 5/10 | ⚠️ Limited | Unit/E2E exists but needs coverage expansion |
-| **Documentation** | 8/10 | ✅ Good | Comprehensive docs, some outdated references |
-| **Security** | 7/10 | ⚠️ Good | Env vars handled, needs credential redaction audit |
-| **Performance** | 6/10 | ⚠️ Needs Work | Missing optimization layer, health checks |
-| **DevOps/Deployment** | 5/10 | ⚠️ Limited | Docker compose works, K8s templates exist but unused |
-| **Monitoring** | 4/10 | ❌ Missing | No Prometheus/Grafana integration, basic logging |
-| **Production Readiness** | 6/10 | ⚠️ Partial | Deployment templates exist but not validated |
+| Dimension                | Score | Status        | Comments                                                  |
+| ------------------------ | ----- | ------------- | --------------------------------------------------------- |
+| **Architecture**         | 8/10  | ✅ Good       | Solid monorepo with Turbo, good separation of concerns    |
+| **Infrastructure**       | 6/10  | ⚠️ Partial    | Docker setup exists but needs optimization for prod       |
+| **Code Quality**         | 7/10  | ⚠️ Good       | Proper tooling (ESLint, Prettier, TypeScript) implemented |
+| **Testing**              | 5/10  | ⚠️ Limited    | Unit/E2E exists but needs coverage expansion              |
+| **Documentation**        | 8/10  | ✅ Good       | Comprehensive docs, some outdated references              |
+| **Security**             | 7/10  | ⚠️ Good       | Env vars handled, needs credential redaction audit        |
+| **Performance**          | 6/10  | ⚠️ Needs Work | Missing optimization layer, health checks                 |
+| **DevOps/Deployment**    | 5/10  | ⚠️ Limited    | Docker compose works, K8s templates exist but unused      |
+| **Monitoring**           | 4/10  | ❌ Missing    | No Prometheus/Grafana integration, basic logging          |
+| **Production Readiness** | 6/10  | ⚠️ Partial    | Deployment templates exist but not validated              |
 
 **Overall Grade: 7.5/10** → **Target: 10/10 (Production Ready)**
 
@@ -95,6 +95,7 @@ K8S_DEPLOYMENT.template.yaml    ❌ Template only (not validated)
 ### ⚠️ Critical Issues
 
 1. **Sandbox Integration Missing**
+
    ```
    - Docker images created (Java/Node/Python)
    - No sandbox lifecycle management
@@ -124,7 +125,7 @@ K8S_DEPLOYMENT.template.yaml    ❌ Template only (not validated)
 
 ### ✅ Implemented
 
-- [x] Environment variable separation (NEXT_PUBLIC_ prefix)
+- [x] Environment variable separation (NEXT*PUBLIC* prefix)
 - [x] Non-root Docker user
 - [x] PostgreSQL connection pooling ready
 - [x] CORS configuration present
@@ -143,7 +144,9 @@ K8S_DEPLOYMENT.template.yaml    ❌ Template only (not validated)
 - [ ] API key scoping not documented
 
 ### Recommendation
+
 Run security audit on logging statements:
+
 ```bash
 grep -r "console\.\(log\|error\|warn\)(\`.*\$\{" apps/ lib/ --include="*.ts" --include="*.tsx"
 grep -r "logger\.\(info\|error\|success\)(\`.*\$\{" apps/ lib/ --include="*.ts" --include="*.tsx"
@@ -156,24 +159,28 @@ grep -r "logger\.\(info\|error\|success\)(\`.*\$\{" apps/ lib/ --include="*.ts" 
 ### Phase 1: Foundation (2-3 hours)
 
 **1. Health Check Endpoint** ⏱️ 30 min
+
 - [ ] Create `/api/health/route.ts`
 - [ ] Return: status, uptime, version, environment
 - [ ] Add Docker compose health check config
 - **Files**: `apps/web/app/api/health/route.ts`, `docker-compose.yml`
 
 **2. Environment Validation** ⏱️ 1 hour
+
 - [ ] Create `packages/lib/src/env.ts` with Zod schema
 - [ ] Centralize all env var definitions
 - [ ] Add startup validation in app layout
 - **Files**: `packages/lib/src/env.ts`, `apps/web/app/layout.tsx`
 
 **3. Structured Logging** ⏱️ 1 hour
+
 - [ ] Create logger utility with static-only messages
 - [ ] Audit codebase for dynamic values in logs
 - [ ] Replace all dynamic log statements
 - **Files**: `packages/lib/src/logger.ts`, app files
 
 **4. API Health Monitoring** ⏱️ 45 min
+
 - [ ] Add `/api/status/route.ts` with system metrics
 - [ ] Implement basic uptime tracking
 - [ ] Add Docker probe integration
@@ -182,18 +189,21 @@ grep -r "logger\.\(info\|error\|success\)(\`.*\$\{" apps/ lib/ --include="*.ts" 
 ### Phase 2: Integration (3-4 hours)
 
 **5. Sandbox Lifecycle API** ⏱️ 1.5 hours
+
 - [ ] Create `/api/sandbox/create` endpoint
 - [ ] Implement Docker container orchestration
 - [ ] Add cleanup/destroy operations
 - **Files**: `apps/web/app/api/sandbox/[id]/route.ts`
 
 **6. Production Docker Optimization** ⏱️ 1 hour
+
 - [ ] Optimize multi-stage build cache
 - [ ] Add build arguments for flexibility
 - [ ] Implement secrets management
 - **Files**: `Dockerfile.prod`, `.dockerignore`
 
 **7. Resource Limits & Autoscaling** ⏱️ 1 hour
+
 - [ ] Configure memory/CPU limits in all compose files
 - [ ] Add restart policies
 - [ ] Implement graceful shutdown handlers
@@ -202,18 +212,21 @@ grep -r "logger\.\(info\|error\|success\)(\`.*\$\{" apps/ lib/ --include="*.ts" 
 ### Phase 3: Monitoring & Observability (2-3 hours)
 
 **8. Prometheus Integration** ⏱️ 1.5 hours
+
 - [ ] Add prometheus client library
 - [ ] Create metrics for: requests, latency, errors, sandbox usage
 - [ ] Export metrics on `/metrics` endpoint
 - **Files**: `packages/lib/src/metrics.ts`, `apps/web/app/api/metrics/route.ts`
 
 **9. Structured Error Handling** ⏱️ 1 hour
+
 - [ ] Create error boundary component
 - [ ] Implement error type hierarchy
 - [ ] Add error tracking/reporting
 - **Files**: `packages/lib/src/errors.ts`, `apps/web/app/error.tsx`
 
 **10. Documentation Cleanup** ⏱️ 1 hour
+
 - [ ] Update README with current URLs
 - [ ] Create ARCHITECTURE.md with component diagrams
 - [ ] Document all API endpoints
@@ -225,6 +238,7 @@ grep -r "logger\.\(info\|error\|success\)(\`.*\$\{" apps/ lib/ --include="*.ts" 
 ## 📋 Code Quality Checklist
 
 ### TypeScript & Linting
+
 - [x] TypeScript strict mode configured
 - [x] ESLint rules defined
 - [x] Prettier formatting configured
@@ -233,14 +247,16 @@ grep -r "logger\.\(info\|error\|success\)(\`.*\$\{" apps/ lib/ --include="*.ts" 
 - [ ] No unused imports
 
 ### Testing
+
 - [x] Vitest configured
 - [x] Playwright E2E setup
-- [ ] >70% code coverage target
+- [ ] > 70% code coverage target
 - [ ] Component tests for Radix UI
 - [ ] Integration tests for APIs
 - [ ] Sandbox creation/destruction tested
 
 ### Documentation
+
 - [x] README.md exists
 - [ ] Component documentation
 - [ ] API documentation (OpenAPI)
@@ -248,6 +264,7 @@ grep -r "logger\.\(info\|error\|success\)(\`.*\$\{" apps/ lib/ --include="*.ts" 
 - [ ] Architecture decision records (ADRs)
 
 ### Performance
+
 - [ ] Bundle size tracking (rollup visualizer ready)
 - [ ] Image optimization
 - [ ] API response times tracked
@@ -319,33 +336,37 @@ grep -r "logger\.\(info\|error\|success\)(\`.*\$\{" apps/ lib/ --include="*.ts" 
 ## 📊 Metrics & KPIs
 
 ### Current State
-| Metric | Value | Target | Status |
-|--------|-------|--------|--------|
-| **Build Time** | ~2 min | <1 min | ⚠️ Needs optimization |
-| **Test Coverage** | ~45% | >70% | ❌ Below target |
-| **Lighthouse Score** | Unknown | >90 | ⚠️ Needs check |
-| **API Response Time** | Unknown | <200ms | ⚠️ Needs monitoring |
-| **Uptime** | N/A | 99.9% | ❌ Not measured |
-| **Error Rate** | Unknown | <0.1% | ⚠️ Needs tracking |
-| **Bundle Size** | ~150KB | <100KB | ⚠️ Needs analysis |
+
+| Metric                | Value   | Target | Status                |
+| --------------------- | ------- | ------ | --------------------- |
+| **Build Time**        | ~2 min  | <1 min | ⚠️ Needs optimization |
+| **Test Coverage**     | ~45%    | >70%   | ❌ Below target       |
+| **Lighthouse Score**  | Unknown | >90    | ⚠️ Needs check        |
+| **API Response Time** | Unknown | <200ms | ⚠️ Needs monitoring   |
+| **Uptime**            | N/A     | 99.9%  | ❌ Not measured       |
+| **Error Rate**        | Unknown | <0.1%  | ⚠️ Needs tracking     |
+| **Bundle Size**       | ~150KB  | <100KB | ⚠️ Needs analysis     |
 
 ---
 
 ## 🔧 Technical Debt
 
 ### High Priority
+
 - [ ] Sandbox integration incomplete
 - [ ] No centralized error handling
 - [ ] Logging security audit needed
 - [ ] Health checks missing
 
 ### Medium Priority
+
 - [ ] Test coverage below target
 - [ ] Docker optimization opportunities
 - [ ] API documentation missing
 - [ ] Performance monitoring absent
 
 ### Low Priority
+
 - [ ] Code comments sparse but acceptable
 - [ ] Some duplicate configs in compose files
 - [ ] Dev/prod parity not enforced
@@ -370,18 +391,21 @@ grep -r "logger\.\(info\|error\|success\)(\`.*\$\{" apps/ lib/ --include="*.ts" 
 ## 🚀 Next Steps (Recommended Order)
 
 ### Week 1: Foundation
+
 1. Fix logging security issue (2 hours)
 2. Add health check endpoint (1 hour)
 3. Environment validation (2 hours)
 4. **Total**: 5 hours
 
 ### Week 2: Integration
+
 1. Sandbox API integration (3 hours)
 2. Prometheus metrics (2 hours)
 3. Docker optimization (1 hour)
 4. **Total**: 6 hours
 
 ### Week 3: Polish
+
 1. Test coverage expansion (4 hours)
 2. API documentation (2 hours)
 3. Deployment validation (2 hours)

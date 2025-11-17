@@ -10,16 +10,14 @@ import type { Request } from 'next/server'
 
 /**
  * Gets the GitHub token for the current user session
- * 
+ *
  * @param req Optional request object to get session from
  * @returns GitHub token if available, null otherwise
  */
 export async function getUserGitHubToken(req?: Request): Promise<string | null> {
   try {
     // Get session from either request (if provided) or server session
-    const session: Session | null = req 
-      ? await getSessionFromReq(req as unknown as Request) 
-      : await getServerSession()
+    const session: Session | null = req ? await getSessionFromReq(req as unknown as Request) : await getServerSession()
 
     if (!session?.user?.id) {
       return null
@@ -29,12 +27,7 @@ export async function getUserGitHubToken(req?: Request): Promise<string | null> 
     const connectedAccountResult = await db
       .select({ accessToken: accounts.accessToken })
       .from(accounts)
-      .where(
-        and(
-          eq(accounts.userId, session.user.id),
-          eq(accounts.provider, 'github')
-        )
-      )
+      .where(and(eq(accounts.userId, session.user.id), eq(accounts.provider, 'github')))
       .limit(1)
 
     if (connectedAccountResult.length > 0 && connectedAccountResult[0]?.accessToken) {

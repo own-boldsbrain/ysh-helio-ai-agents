@@ -3,7 +3,7 @@
 **Date**: 2025-11-17 17:08 UTC  
 **Status**: ✅ READY FOR IMMEDIATE EXECUTION  
 **Duration**: ~3.25 hours  
-**Team Size**: 1-2 developers  
+**Team Size**: 1-2 developers
 
 ---
 
@@ -39,6 +39,7 @@ git branch                  # Confirm on correct branch
 **🎯 Objective**: Enable Docker/K8s health monitoring
 
 **Step 1.1**: Create API route
+
 ```bash
 # Create file
 mkdir -p apps/web/app/api/health
@@ -67,11 +68,13 @@ EOF
 ```
 
 **Step 1.2**: Verify file created
+
 ```bash
 cat apps/web/app/api/health/route.ts  # Should show the content
 ```
 
 **Step 1.3**: Update docker-compose files
+
 ```bash
 # Edit docker-compose.prod.yml - add healthcheck to web service:
 # Find the web service section and add after 'ports':
@@ -85,6 +88,7 @@ healthcheck:
 ```
 
 **Step 1.4**: Code quality check
+
 ```bash
 pnpm format                 # Format the file
 pnpm type-check            # Check TypeScript
@@ -92,6 +96,7 @@ pnpm lint                  # Check ESLint
 ```
 
 **✅ Validation**:
+
 ```bash
 # Build the app
 pnpm build
@@ -111,6 +116,7 @@ curl http://localhost:3000/api/health
 **🎯 Objective**: Centralized, type-safe environment configuration
 
 **Step 2.1**: Create environment validation module
+
 ```bash
 cat > packages/lib/src/env.ts << 'EOF'
 import { z } from 'zod'
@@ -147,6 +153,7 @@ EOF
 ```
 
 **Step 2.2**: Update package exports
+
 ```bash
 # Edit packages/lib/package.json - add to exports:
 # Find "exports" section and add:
@@ -154,6 +161,7 @@ EOF
 ```
 
 **Step 2.3**: Add validation to app startup
+
 ```bash
 cat > apps/web/app/layout-env-check.tsx << 'EOF'
 // Add this to the TOP of apps/web/app/layout.tsx:
@@ -167,6 +175,7 @@ EOF
 ```
 
 **Step 2.4**: Code quality
+
 ```bash
 pnpm format
 pnpm type-check
@@ -174,6 +183,7 @@ pnpm lint
 ```
 
 **✅ Validation**:
+
 ```bash
 # Build should validate env
 pnpm build
@@ -192,6 +202,7 @@ node -e "require('@repo/lib/env').env"
 **🎯 Objective**: Static-only log messages (security per AGENTS.md)
 
 **Step 3.1**: Create logger utility
+
 ```bash
 cat > packages/lib/src/logger.ts << 'EOF'
 export const logger = {
@@ -213,9 +224,10 @@ EOF
 ```
 
 **Step 3.2**: Audit existing logs for security issues
+
 ```bash
 # CRITICAL SECURITY CHECK - Search for dynamic log values
-echo "=== Checking for dynamic log values (SECURITY RISK) ===" 
+echo "=== Checking for dynamic log values (SECURITY RISK) ==="
 grep -r "console\.\(log\|error\|warn\)(\`.*\$\{" apps/web/app --include="*.ts" --include="*.tsx" || echo "✅ No dynamic console logs found"
 grep -r "logger\.\(info\|error\|success\)(\`.*\$\{" apps/web/app --include="*.ts" --include="*.tsx" || echo "✅ No dynamic logger calls found"
 
@@ -223,12 +235,14 @@ grep -r "logger\.\(info\|error\|success\)(\`.*\$\{" apps/web/app --include="*.ts
 ```
 
 **Step 3.3**: Export logger in package
+
 ```bash
 # Edit packages/lib/package.json exports:
 # Add: "\"./logger\": \"./src/logger.ts\","
 ```
 
 **Step 3.4**: Code quality
+
 ```bash
 pnpm format
 pnpm type-check
@@ -236,6 +250,7 @@ pnpm lint
 ```
 
 **✅ Validation**:
+
 ```bash
 # Verify logger works
 node -e "const {logger} = require('@repo/lib/logger'); logger.info('Test message')"
@@ -252,6 +267,7 @@ node -e "const {logger} = require('@repo/lib/logger'); logger.info('Test message
 **🎯 Objective**: Comprehensive system health and metrics
 
 **Step 4.1**: Create status endpoint
+
 ```bash
 mkdir -p apps/web/app/api/status
 cat > apps/web/app/api/status/route.ts << 'EOF'
@@ -291,12 +307,14 @@ EOF
 ```
 
 **Step 4.2**: Verify files
+
 ```bash
 ls -la apps/web/app/api/status/
 ls -la apps/web/app/api/health/
 ```
 
 **Step 4.3**: Format and lint
+
 ```bash
 pnpm format
 pnpm type-check
@@ -304,6 +322,7 @@ pnpm lint
 ```
 
 **✅ Validation**:
+
 ```bash
 # After building and running, test:
 curl http://localhost:3000/api/health
@@ -318,6 +337,7 @@ curl http://localhost:3000/api/status
 ## ✅ PHASE 1 FINAL VALIDATION
 
 ### Build & Type Check
+
 ```bash
 # Clean build
 rm -rf .turbo
@@ -327,6 +347,7 @@ pnpm lint            # Should pass
 ```
 
 ### Git Commit
+
 ```bash
 git add -A
 git commit -m "feat: Phase 1 - Health checks, env validation, logging
@@ -341,6 +362,7 @@ Closes #foundation"
 ```
 
 ### Manual Testing
+
 ```bash
 # Start services
 docker-compose up -d
@@ -361,29 +383,34 @@ docker-compose logs web | grep -E "(HEALTH|STATUS|uptime)"
 ## 📊 Phase 1 Checklist
 
 ### Documentation
+
 - [ ] All 4 new files created
 - [ ] All imports updated
 - [ ] All exports configured
 - [ ] No breaking changes
 
 ### Code Quality
+
 - [ ] `pnpm format` passed
 - [ ] `pnpm type-check` passed
 - [ ] `pnpm lint` passed
 - [ ] `pnpm build` successful
 
 ### Testing
+
 - [ ] Health endpoint responds
 - [ ] Status endpoint responds
 - [ ] Env validation works
 - [ ] Logger outputs correct format
 
 ### Git
+
 - [ ] Changes committed
 - [ ] Commit message descriptive
 - [ ] Remote pushed (if applicable)
 
 ### Security
+
 - [ ] No dynamic log values found
 - [ ] No credentials in logs
 - [ ] Environment properly validated
@@ -413,6 +440,7 @@ Phase 1 is **COMPLETE** when:
 ## 📞 Troubleshooting
 
 ### Build fails
+
 ```bash
 # Clear cache and try again
 rm -rf .turbo node_modules
@@ -421,6 +449,7 @@ pnpm build
 ```
 
 ### Type errors
+
 ```bash
 # Check TypeScript version
 pnpm list typescript
@@ -430,6 +459,7 @@ pnpm type-check
 ```
 
 ### Endpoint not responding
+
 ```bash
 # Check app is running
 docker-compose ps
@@ -442,6 +472,7 @@ netstat -an | grep 3000
 ```
 
 ### Lint errors
+
 ```bash
 # Auto-fix what can be fixed
 pnpm lint --fix
@@ -454,29 +485,32 @@ pnpm lint
 
 ## 📈 Progress Tracking
 
-| Task | Status | Time Est | Time Used | % Complete |
-|------|--------|----------|-----------|-----------|
-| 1. Health Endpoint | ⏳ Ready | 30 min | - | 0% |
-| 2. Env Validation | ⏳ Ready | 1 hour | - | 0% |
-| 3. Logging | ⏳ Ready | 1 hour | - | 0% |
-| 4. Status Endpoint | ⏳ Ready | 45 min | - | 0% |
-| **PHASE 1 TOTAL** | ⏳ Ready | 3.25 h | - | **0%** |
+| Task               | Status   | Time Est | Time Used | % Complete |
+| ------------------ | -------- | -------- | --------- | ---------- |
+| 1. Health Endpoint | ⏳ Ready | 30 min   | -         | 0%         |
+| 2. Env Validation  | ⏳ Ready | 1 hour   | -         | 0%         |
+| 3. Logging         | ⏳ Ready | 1 hour   | -         | 0%         |
+| 4. Status Endpoint | ⏳ Ready | 45 min   | -         | 0%         |
+| **PHASE 1 TOTAL**  | ⏳ Ready | 3.25 h   | -         | **0%**     |
 
 ---
 
 ## 🚀 After Phase 1
 
 ### Immediate Next Steps (Day 2)
+
 1. Start Phase 2: Sandbox API integration
 2. Complete security audit (2 hours)
 3. Expand test coverage (4 hours)
 
 ### Then Phase 3
+
 1. Prometheus monitoring
 2. Error handling framework
 3. Documentation polish
 
 ### Final Steps
+
 1. Production deployment
 2. Load testing
 3. Go-live

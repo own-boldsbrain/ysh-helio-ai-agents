@@ -14,7 +14,7 @@ interface ConnectorDialogProps {
 export function ConnectorDialog({ open, onOpenChange, connectorType }: ConnectorDialogProps) {
   const { connectors, connectConnector, disconnectConnector } = useConnectors()
 
-  const connector = connectors.find(c => c.type === connectorType)
+  const connector = connectors.find((c) => c.type === connectorType)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -22,7 +22,7 @@ export function ConnectorDialog({ open, onOpenChange, connectorType }: Connector
         <DialogHeader>
           <DialogTitle>Manage {connectorType} Connection</DialogTitle>
         </DialogHeader>
-        
+
         <div className="py-4">
           {connector ? (
             <div className="flex items-center gap-2">
@@ -42,21 +42,14 @@ export function ConnectorDialog({ open, onOpenChange, connectorType }: Connector
             <p>Connector not found</p>
           )}
         </div>
-        
+
         <DialogFooter>
           {connector?.connected ? (
-            <Button 
-              variant="outline" 
-              onClick={() => disconnectConnector(connectorType)}
-            >
+            <Button variant="outline" onClick={() => disconnectConnector(connectorType)}>
               Disconnect
             </Button>
           ) : (
-            <Button 
-              onClick={() => connectConnector(connectorType)}
-            >
-              Connect
-            </Button>
+            <Button onClick={() => connectConnector(connectorType)}>Connect</Button>
           )}
         </DialogFooter>
       </DialogContent>

@@ -7,6 +7,7 @@ This guide describes the monitoring and observability setup for the Coding Agent
 ## Architecture
 
 ### Monitoring Stack
+
 ```
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
 │   Application   │    │   Monitoring     │    │   Visualization │
@@ -23,6 +24,7 @@ This guide describes the monitoring and observability setup for the Coding Agent
 ### Application Metrics
 
 #### Built-in Metrics
+
 The application exposes the following metrics at `/api/metrics`:
 
 - `app_requests_total` - Total number of requests (counter)
@@ -33,11 +35,13 @@ The application exposes the following metrics at `/api/metrics`:
 - `app_nodejs_version_info` - Node.js version info (gauge)
 
 #### Custom Metrics
+
 Additional metrics can be added by extending the metrics endpoint in `apps/web/app/api/metrics/route.ts`.
 
 ### Prometheus Configuration
 
 #### Scraping Configuration
+
 Prometheus is configured to scrape metrics from the application every 15 seconds:
 
 ```yaml
@@ -56,6 +60,7 @@ scrape_configs:
 ```
 
 #### Alerting Rules
+
 Alerting rules are defined in `docker/alert-rules.yml`:
 
 - **ServiceDown**: Triggers when service is down for more than 1 minute
@@ -67,6 +72,7 @@ Alerting rules are defined in `docker/alert-rules.yml`:
 ## Logging
 
 ### Structured Logging
+
 The application uses structured JSON logging implemented in `@repo/lib/src/logger.ts`. All logs follow this format:
 
 ```json
@@ -80,12 +86,14 @@ The application uses structured JSON logging implemented in `@repo/lib/src/logge
 ```
 
 ### Log Levels
+
 - `debug`: Detailed diagnostic information
 - `info`: General information about application flow
 - `warn`: Potential issues that don't affect operation
 - `error`: Errors that occurred during operation
 
 ### Log Aggregation
+
 Logs are aggregated using Loki with the following configuration in `docker/loki-config.yml`:
 
 ```yaml
@@ -98,6 +106,7 @@ server:
 ## Distributed Tracing
 
 ### Jaeger Integration
+
 Distributed tracing is set up with Jaeger for tracking requests across services:
 
 - Jaeger UI: `http://localhost:16686`
@@ -105,7 +114,9 @@ Distributed tracing is set up with Jaeger for tracking requests across services:
 - OTLP HTTP endpoint: `http://jaeger:4318`
 
 ### Tracing Setup
+
 To enable distributed tracing:
+
 1. Configure your services to export traces to Jaeger
 2. Use standard trace context propagation
 3. Implement custom spans for critical operations
@@ -113,6 +124,7 @@ To enable distributed tracing:
 ## Dashboard Configuration
 
 ### Grafana Dashboards
+
 Grafana dashboards are defined in `docker/app-metrics-dashboard.json` and include:
 
 - **Requests Overview**: Displays request rate over time
@@ -121,7 +133,9 @@ Grafana dashboards are defined in `docker/app-metrics-dashboard.json` and includ
 - **Memory Usage**: Heap memory usage over time
 
 ### Custom Dashboards
+
 To create custom dashboards:
+
 1. Access Grafana at `http://localhost:3000`
 2. Use the dashboard editor to create new visualizations
 3. Use Prometheus as the data source
@@ -130,12 +144,16 @@ To create custom dashboards:
 ## Alerting
 
 ### Alert Configuration
+
 Alerts are configured in `docker/alert-rules.yml` with different severity levels:
+
 - `critical`: Immediate action required
 - `warning`: Monitor and investigate
 
 ### Alert Notification
+
 Alerts are sent to AlertManager which can forward notifications to:
+
 - Email
 - Slack
 - PagerDuty
@@ -144,7 +162,9 @@ Alerts are sent to AlertManager which can forward notifications to:
 ## Monitoring Procedures
 
 ### Daily Monitoring Tasks
+
 1. **Check service health**:
+
    ```bash
    curl -f http://localhost:3000/api/health
    ```
@@ -160,6 +180,7 @@ Alerts are sent to AlertManager which can forward notifications to:
    - Verify log volume is normal
 
 ### Weekly Monitoring Tasks
+
 1. **Performance analysis**:
    - Review slow queries
    - Analyze response time trends
@@ -176,6 +197,7 @@ Alerts are sent to AlertManager which can forward notifications to:
    - Verify backup of monitoring data
 
 ### Monthly Monitoring Tasks
+
 1. **Capacity planning**:
    - Analyze growth trends
    - Plan resource scaling
@@ -191,21 +213,25 @@ Alerts are sent to AlertManager which can forward notifications to:
 ### Common Monitoring Issues
 
 #### Metrics Not Appearing
+
 - Verify the `/api/metrics` endpoint is accessible
 - Check Prometheus target status in the UI
 - Ensure the application is properly exposing metrics
 
 #### High Memory Usage
+
 - Check for memory leaks in the application
 - Monitor garbage collection metrics
 - Review application logs for memory-intensive operations
 
 #### Missing Logs
+
 - Verify Loki is running and accessible
 - Check log configuration in the application
 - Ensure proper log format and structure
 
 #### High Error Rates
+
 - Check application logs for error details
 - Review error patterns and common causes
 - Verify external dependencies are available
@@ -213,16 +239,19 @@ Alerts are sent to AlertManager which can forward notifications to:
 ### Diagnostic Commands
 
 #### Check Application Metrics Endpoint
+
 ```bash
 curl http://localhost:3000/api/metrics
 ```
 
 #### Check Prometheus Targets
+
 ```bash
 curl http://localhost:9090/api/v1/targets
 ```
 
 #### View Recent Logs in Loki
+
 ```bash
 # Using Grafana Loki API
 curl -G "http://localhost:3100/loki/api/v1/query_range" \
@@ -233,11 +262,13 @@ curl -G "http://localhost:3100/loki/api/v1/query_range" \
 ## Performance Tuning
 
 ### Monitoring Performance
+
 - Adjust scrape intervals based on metric importance
 - Implement metric retention policies
 - Use Prometheus federation for large deployments
 
 ### Alert Optimization
+
 - Set appropriate alert thresholds
 - Implement alert grouping and aggregation
 - Use recording rules for complex queries
@@ -245,11 +276,13 @@ curl -G "http://localhost:3100/loki/api/v1/query_range" \
 ## Security Considerations
 
 ### Metrics Security
+
 - Secure metrics endpoints in production
 - Implement authentication and authorization
 - Use HTTPS for metric transmission
 
 ### Log Security
+
 - Encrypt logs in transit and at rest
 - Implement retention and deletion policies
 - Sanitize sensitive information from logs
@@ -257,14 +290,18 @@ curl -G "http://localhost:3100/loki/api/v1/query_range" \
 ## Integration
 
 ### Adding New Metrics
+
 To add new metrics:
+
 1. Add metric collection to your code
 2. Update the metrics endpoint to include your metrics
 3. Add visualization to Grafana dashboard
 4. Create alert rules if necessary
 
 ### Adding New Logs
+
 To add new logs:
+
 1. Use the structured logger in `@repo/lib/src/logger.ts`
 2. Include relevant context information
 3. Use appropriate log levels
@@ -273,12 +310,14 @@ To add new logs:
 ## Best Practices
 
 ### Monitoring Best Practices
+
 - Monitor both application and infrastructure metrics
 - Set up alerts for important metrics
 - Regularly review and update dashboards
 - Document the meaning of key metrics
 
 ### Logging Best Practices
+
 - Use structured logging with JSON format
 - Include sufficient context for debugging
 - Never log sensitive information

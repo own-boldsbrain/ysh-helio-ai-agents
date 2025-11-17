@@ -1,4 +1,5 @@
 # 🚀 QUICK WINS IMPLEMENTATION GUIDE
+
 **10 Infrastructure Improvements (7.5 hours)**
 
 **Status:** ✅ Ready to Implement  
@@ -43,6 +44,7 @@ web:
 ```
 
 **Validation:**
+
 - [ ] Health endpoint returns 200 status
 - [ ] Uptime increases over time
 - [ ] Docker health status shows healthy
@@ -55,6 +57,7 @@ web:
 ### ✓ Status: IMPLEMENTED
 
 **Files:**
+
 - `packages/lib/src/env.ts` - Environment schema validation
 - `packages/lib/package.json` - Package configuration
 
@@ -70,6 +73,7 @@ console.log(env.DATABASE_URL) // string | undefined
 ```
 
 **Validation:**
+
 - [ ] Application starts without env errors
 - [ ] Invalid values are caught early
 - [ ] Error messages are clear
@@ -84,6 +88,7 @@ console.log(env.DATABASE_URL) // string | undefined
 **File:** `Dockerfile.prod`
 
 Multi-stage production build with:
+
 - Minimal image size
 - Non-root user for security
 - Health check configured
@@ -98,6 +103,7 @@ docker-compose -f docker-compose.prod.yml up
 ```
 
 **Validation:**
+
 - [ ] Docker image builds without errors
 - [ ] Image size < 500MB
 - [ ] Container runs as non-root user (nextjs:1001)
@@ -113,6 +119,7 @@ docker-compose -f docker-compose.prod.yml up
 **File:** `docker-compose.prod.yml`
 
 Production-ready docker-compose with:
+
 - Resource limits (CPU/Memory)
 - Health checks
 - Proper networking
@@ -131,6 +138,7 @@ docker-compose -f docker-compose.prod.yml logs -f
 ```
 
 **Validation:**
+
 - [ ] All services start successfully
 - [ ] Health checks pass
 - [ ] Database volume persists
@@ -144,6 +152,7 @@ docker-compose -f docker-compose.prod.yml logs -f
 ### ✓ Status: IMPLEMENTED (in docker-compose.prod.yml)
 
 **Configuration:**
+
 ```yaml
 deploy:
   resources:
@@ -156,11 +165,13 @@ deploy:
 ```
 
 **Prevents:**
+
 - Runaway containers consuming all resources
 - OOMKilled processes
 - Cascading system failures
 
 **Validation:**
+
 - [ ] Container respects CPU limits
 - [ ] Memory usage monitored
 - [ ] No OOMKilled errors
@@ -175,6 +186,7 @@ deploy:
 **File:** `packages/lib/src/graceful-shutdown.ts`
 
 Ensures clean shutdown:
+
 - Closes database connections
 - Completes in-flight requests
 - Timeout-based hard shutdown (30s)
@@ -190,6 +202,7 @@ setupGracefulShutdown()
 ```
 
 **Validation:**
+
 - [ ] SIGTERM handled gracefully
 - [ ] In-flight requests complete
 - [ ] Database connections closed
@@ -204,6 +217,7 @@ setupGracefulShutdown()
 **File:** `apps/web/app/middleware.ts`
 
 Adds critical security headers:
+
 - X-Content-Type-Options: nosniff
 - X-Frame-Options: DENY
 - X-XSS-Protection: 1; mode=block
@@ -222,6 +236,7 @@ curl -I http://localhost:3000
 ```
 
 **Validation:**
+
 - [ ] Headers present in all responses
 - [ ] HSTS only in production
 - [ ] No CSP errors in console
@@ -236,6 +251,7 @@ curl -I http://localhost:3000
 **File:** `packages/lib/src/db-pool.ts`
 
 Connection pooling improves:
+
 - Database query performance
 - Connection reuse
 - Memory efficiency
@@ -254,12 +270,14 @@ await closePool()
 ```
 
 **Configuration (default):**
+
 - Min connections: 4
 - Max connections: 20
 - Idle timeout: 30s
 - Connection timeout: 2s
 
 **Validation:**
+
 - [ ] Connection pool initializes
 - [ ] Multiple queries work in parallel
 - [ ] Idle connections close after 30s
@@ -274,16 +292,19 @@ await closePool()
 **File:** `scripts/validate-credentials.ts`
 
 Validates required secrets before CI/CD runs:
+
 ```bash
 pnpm test:credentials
 ```
 
 Checks:
+
 - GITHUB_TOKEN present
 - DATABASE_URL format (if provided)
 - Sensitive data not exposed
 
 **Integration in GitHub Actions:**
+
 ```yaml
 - name: Validate credentials
   run: pnpm test:credentials
@@ -292,6 +313,7 @@ Checks:
 ```
 
 **Validation:**
+
 - [ ] Script runs without errors
 - [ ] Missing secrets caught
 - [ ] Error messages are clear
@@ -306,6 +328,7 @@ Checks:
 **File:** `packages/lib/src/error-tracking.ts`
 
 Centralized error tracking:
+
 - Captures unhandled exceptions
 - Reports to Sentry/similar (when configured)
 - Fallback to console logging
@@ -319,11 +342,7 @@ import { errorTracker } from '@repo/lib/error-tracking'
 try {
   // some operation
 } catch (error) {
-  errorTracker.captureError(
-    error as Error,
-    'error',
-    { taskId: '123', action: 'process' }
-  )
+  errorTracker.captureError(error as Error, 'error', { taskId: '123', action: 'process' })
 }
 
 // Capture messages
@@ -331,11 +350,13 @@ errorTracker.captureMessage('Critical operation started', 'info')
 ```
 
 **Configuration (optional):**
+
 ```env
 ERROR_TRACKING_DSN=https://key@sentry.io/project
 ```
 
 **Validation:**
+
 - [ ] Errors captured to console in dev
 - [ ] Ready for Sentry integration
 - [ ] Context information preserved
@@ -346,12 +367,14 @@ ERROR_TRACKING_DSN=https://key@sentry.io/project
 ## 🔧 Implementation Checklist
 
 ### Setup Phase (15 min)
+
 - [x] Create `packages/lib` structure
 - [x] Add all utility files
 - [x] Configure exports in package.json
 - [x] Update TypeScript config
 
 ### Docker Phase (2 hours)
+
 - [x] Create production Dockerfile
 - [x] Create docker-compose.prod.yml
 - [x] Add resource limits
@@ -359,18 +382,21 @@ ERROR_TRACKING_DSN=https://key@sentry.io/project
 - [x] Set up logging
 
 ### Application Phase (1.5 hours)
+
 - [x] Add health endpoint
 - [x] Add middleware (security headers)
 - [x] Implement environment validation
 - [x] Add error tracking
 
 ### CI/CD Phase (1.5 hours)
+
 - [x] Create production workflow
 - [x] Add secret validation
 - [x] Configure Docker image build
 - [x] Add deployment stages
 
 ### Testing Phase (1.5 hours)
+
 - [ ] Test health endpoint locally
 - [ ] Test Docker image build
 - [ ] Test docker-compose stack
@@ -382,19 +408,19 @@ ERROR_TRACKING_DSN=https://key@sentry.io/project
 
 ## 📊 Progress Tracking
 
-| Win | Status | File | Time | Complete |
-|-----|--------|------|------|----------|
-| 1. Health Check | ✅ DONE | `apps/web/app/api/health/route.ts` | 30m | ✅ |
-| 2. Env Validation | ✅ DONE | `packages/lib/src/env.ts` | 1h | ✅ |
-| 3. Prod Dockerfile | ✅ DONE | `Dockerfile.prod` | 1h | ✅ |
-| 4. Prod Compose | ✅ DONE | `docker-compose.prod.yml` | 30m | ✅ |
-| 5. Resource Limits | ✅ DONE | `docker-compose.prod.yml` | 15m | ✅ |
-| 6. Graceful Shutdown | ✅ DONE | `packages/lib/src/graceful-shutdown.ts` | 45m | ✅ |
-| 7. Security Headers | ✅ DONE | `apps/web/app/middleware.ts` | 30m | ✅ |
-| 8. DB Pooling | ✅ DONE | `packages/lib/src/db-pool.ts` | 1h | ✅ |
-| 9. Secrets Validation | ✅ EXISTS | `scripts/validate-credentials.ts` | 30m | ✅ |
-| 10. Error Tracking | ✅ DONE | `packages/lib/src/error-tracking.ts` | 1h | ✅ |
-| **Total** | - | - | **7.5h** | ✅ |
+| Win                   | Status    | File                                    | Time     | Complete |
+| --------------------- | --------- | --------------------------------------- | -------- | -------- |
+| 1. Health Check       | ✅ DONE   | `apps/web/app/api/health/route.ts`      | 30m      | ✅       |
+| 2. Env Validation     | ✅ DONE   | `packages/lib/src/env.ts`               | 1h       | ✅       |
+| 3. Prod Dockerfile    | ✅ DONE   | `Dockerfile.prod`                       | 1h       | ✅       |
+| 4. Prod Compose       | ✅ DONE   | `docker-compose.prod.yml`               | 30m      | ✅       |
+| 5. Resource Limits    | ✅ DONE   | `docker-compose.prod.yml`               | 15m      | ✅       |
+| 6. Graceful Shutdown  | ✅ DONE   | `packages/lib/src/graceful-shutdown.ts` | 45m      | ✅       |
+| 7. Security Headers   | ✅ DONE   | `apps/web/app/middleware.ts`            | 30m      | ✅       |
+| 8. DB Pooling         | ✅ DONE   | `packages/lib/src/db-pool.ts`           | 1h       | ✅       |
+| 9. Secrets Validation | ✅ EXISTS | `scripts/validate-credentials.ts`       | 30m      | ✅       |
+| 10. Error Tracking    | ✅ DONE   | `packages/lib/src/error-tracking.ts`    | 1h       | ✅       |
+| **Total**             | -         | -                                       | **7.5h** | ✅       |
 
 ---
 
@@ -489,14 +515,14 @@ After completing these quick wins, proceed with:
 
 ## 🎯 Success Metrics
 
-| Metric | Target | Status |
-|--------|--------|--------|
-| Infrastructure Score | 7/10+ | 🎯 |
-| Health checks passing | 100% | 🎯 |
-| Security headers present | 100% | 🎯 |
-| Connection pool working | Yes | 🎯 |
-| Graceful shutdown | <30s | 🎯 |
-| CI/CD pipeline running | Yes | 🎯 |
+| Metric                   | Target | Status |
+| ------------------------ | ------ | ------ |
+| Infrastructure Score     | 7/10+  | 🎯     |
+| Health checks passing    | 100%   | 🎯     |
+| Security headers present | 100%   | 🎯     |
+| Connection pool working  | Yes    | 🎯     |
+| Graceful shutdown        | <30s   | 🎯     |
+| CI/CD pipeline running   | Yes    | 🎯     |
 
 ---
 
@@ -531,6 +557,7 @@ After completing these quick wins, proceed with:
 File: `.github/workflows/production-pipeline.yml`
 
 Stages:
+
 1. **Validate** - Format, lint, type-check
 2. **Test** - Unit and integration tests
 3. **Security** - SAST and dependency scanning
@@ -539,6 +566,7 @@ Stages:
 6. **Notify** - Status notifications
 
 **Usage:**
+
 - Automatically runs on push to main/staging
 - Validates all PRs before merge
 - Builds and pushes Docker images
