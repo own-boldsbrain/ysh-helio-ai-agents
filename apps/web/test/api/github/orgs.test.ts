@@ -27,15 +27,15 @@ describe('GitHub API Routes - Orgs Integration Tests', () => {
         {
           login: 'testorg',
           name: 'Test Organization',
-          avatar_url: 'https://example.com/org-avatar.jpg'
+          avatar_url: 'https://example.com/org-avatar.jpg',
         },
         {
           login: 'anotherorg',
           name: 'Another Organization',
-          avatar_url: 'https://example.com/another-avatar.jpg'
-        }
+          avatar_url: 'https://example.com/another-avatar.jpg',
+        },
       ]
-      
+
       const mockFetchResponse = {
         ok: true,
         json: () => Promise.resolve(mockGithubOrgs),
@@ -46,7 +46,7 @@ describe('GitHub API Routes - Orgs Integration Tests', () => {
 
       // Create mock request
       const mockRequest = {
-        url: 'http://localhost:3000/api/github/orgs'
+        url: 'http://localhost:3000/api/github/orgs',
       } as NextRequest
 
       // Call the route handler
@@ -59,13 +59,13 @@ describe('GitHub API Routes - Orgs Integration Tests', () => {
         {
           login: 'testorg',
           name: 'Test Organization',
-          avatar_url: 'https://example.com/org-avatar.jpg'
+          avatar_url: 'https://example.com/org-avatar.jpg',
         },
         {
           login: 'anotherorg',
-          name: 'Another Organization', 
-          avatar_url: 'https://example.com/another-avatar.jpg'
-        }
+          name: 'Another Organization',
+          avatar_url: 'https://example.com/another-avatar.jpg',
+        },
       ])
 
       // Verify fetch was called with correct parameters
@@ -83,7 +83,7 @@ describe('GitHub API Routes - Orgs Integration Tests', () => {
 
       // Create mock request
       const mockRequest = {
-        url: 'http://localhost:3000/api/github/orgs'
+        url: 'http://localhost:3000/api/github/orgs',
       } as NextRequest
 
       // Call the route handler
@@ -114,7 +114,7 @@ describe('GitHub API Routes - Orgs Integration Tests', () => {
 
       // Create mock request
       const mockRequest = {
-        url: 'http://localhost:3000/api/github/orgs'
+        url: 'http://localhost:3000/api/github/orgs',
       } as NextRequest
 
       // Call the route handler
@@ -142,7 +142,7 @@ describe('GitHub API Routes - Orgs Integration Tests', () => {
 
       // Create mock request
       const mockRequest = {
-        url: 'http://localhost:3000/api/github/orgs'
+        url: 'http://localhost:3000/api/github/orgs',
       } as NextRequest
 
       // Call the route handler

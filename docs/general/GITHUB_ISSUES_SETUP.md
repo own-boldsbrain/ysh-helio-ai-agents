@@ -1,7 +1,7 @@
 # 🐙 GitHub Issues Setup - Production 360°
 
 **Data:** 17 Nov 2025  
-**Objetivo:** Criar 192 issues no GitHub automaticamente  
+**Objetivo:** Criar 192 issues no GitHub automaticamente
 
 ---
 
@@ -204,21 +204,21 @@ Add type guard before property access
 
 Criar labels no GitHub:
 
-| Label | Cor | Descrição |
-|-------|-----|-----------|
-| `bug` | d73a4a | Bug/Erro |
-| `feature` | a2eeef | Nova feature |
-| `refactor` | fbca04 | Refatoração |
-| `task` | cccccc | Tarefa genérica |
-| `type-safety` | 5319e7 | Type safety |
-| `critical` | ff0000 | Bloqueador |
-| `high` | ff6600 | Alta prioridade |
-| `logging` | 0e8a16 | Logging |
-| `docker` | 0075ca | Docker |
-| `database` | fbca04 | Database |
-| `security` | ff0000 | Security |
-| `performance` | 1f883d | Performance |
-| `observability` | 0075ca | Observability |
+| Label           | Cor    | Descrição       |
+| --------------- | ------ | --------------- |
+| `bug`           | d73a4a | Bug/Erro        |
+| `feature`       | a2eeef | Nova feature    |
+| `refactor`      | fbca04 | Refatoração     |
+| `task`          | cccccc | Tarefa genérica |
+| `type-safety`   | 5319e7 | Type safety     |
+| `critical`      | ff0000 | Bloqueador      |
+| `high`          | ff6600 | Alta prioridade |
+| `logging`       | 0e8a16 | Logging         |
+| `docker`        | 0075ca | Docker          |
+| `database`      | fbca04 | Database        |
+| `security`      | ff0000 | Security        |
+| `performance`   | 1f883d | Performance     |
+| `observability` | 0075ca | Observability   |
 
 Criar labels:
 
@@ -259,16 +259,20 @@ Criar milestones:
 
 ```markdown
 ## Description
+
 [O que este issue resolve?]
 
 ## Acceptance Criteria
+
 - [ ] Critério 1
 - [ ] Critério 2
 
 ## Effort
+
 [Horas estimadas]
 
 ## References
+
 [Links relevantes]
 ```
 
@@ -276,15 +280,19 @@ Criar milestones:
 
 ```markdown
 ## Description
+
 [O que muda?]
 
 ## Fixes
+
 Fixes #[issue_number]
 
 ## Testing
+
 [Como testar?]
 
 ## Checklist
+
 - [ ] Tests adicionados
 - [ ] Documentação atualizada
 - [ ] Sem breaking changes

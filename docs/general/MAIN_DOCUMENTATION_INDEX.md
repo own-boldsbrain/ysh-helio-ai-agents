@@ -24,7 +24,7 @@ Welcome to the comprehensive documentation for the Coding Agent Template project
 - [docker-compose.yml](docker-compose.yml) - Main Docker configuration
 - [docker-compose.multi-agent.yml](docker-compose.multi-agent.yml) - Multi-agent Docker configuration
 - [Dockerfile.dev](Dockerfile.dev) - Development Dockerfile
-- [DOCKER_OSS_* Files](DOCKER_OSS_*.md) - Docker OSS documentation
+- [DOCKER*OSS*\* Files](DOCKER_OSS_*.md) - Docker OSS documentation
 
 ## 🤖 AI & Multi-Agent System
 
@@ -115,4 +115,4 @@ coding-agent-template/
 
 ---
 
-*Last updated: November 17, 2025*
+_Last updated: November 17, 2025_

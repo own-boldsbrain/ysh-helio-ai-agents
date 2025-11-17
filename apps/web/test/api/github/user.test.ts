@@ -26,9 +26,9 @@ describe('GitHub API Routes - Integration Tests', () => {
       const mockGithubUser = {
         login: 'testuser',
         name: 'Test User',
-        avatar_url: 'https://example.com/avatar.jpg'
+        avatar_url: 'https://example.com/avatar.jpg',
       }
-      
+
       const mockFetchResponse = {
         ok: true,
         json: () => Promise.resolve(mockGithubUser),
@@ -39,7 +39,7 @@ describe('GitHub API Routes - Integration Tests', () => {
 
       // Create mock request
       const mockRequest = {
-        url: 'http://localhost:3000/api/github/user'
+        url: 'http://localhost:3000/api/github/user',
       } as NextRequest
 
       // Call the route handler
@@ -51,7 +51,7 @@ describe('GitHub API Routes - Integration Tests', () => {
       expect(responseData).toEqual({
         login: 'testuser',
         name: 'Test User',
-        avatar_url: 'https://example.com/avatar.jpg'
+        avatar_url: 'https://example.com/avatar.jpg',
       })
 
       // Verify fetch was called with correct parameters
@@ -69,7 +69,7 @@ describe('GitHub API Routes - Integration Tests', () => {
 
       // Create mock request
       const mockRequest = {
-        url: 'http://localhost:3000/api/github/user'
+        url: 'http://localhost:3000/api/github/user',
       } as NextRequest
 
       // Call the route handler
@@ -100,7 +100,7 @@ describe('GitHub API Routes - Integration Tests', () => {
 
       // Create mock request
       const mockRequest = {
-        url: 'http://localhost:3000/api/github/user'
+        url: 'http://localhost:3000/api/github/user',
       } as NextRequest
 
       // Call the route handler
@@ -130,7 +130,7 @@ describe('GitHub API Routes - Integration Tests', () => {
 
       // Create mock request
       const mockRequest = {
-        url: 'http://localhost:3000/api/github/user'
+        url: 'http://localhost:3000/api/github/user',
       } as NextRequest
 
       // Call the route handler

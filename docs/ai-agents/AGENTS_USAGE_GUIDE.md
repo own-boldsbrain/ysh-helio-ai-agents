@@ -28,50 +28,57 @@ Specialist agents are AI experts trained on specific technology roadmaps from ro
 ## 📱 AVAILABLE SPECIALIST AGENTS
 
 ### Mobile Development
-| Agent | Description |
-|-------|-------------|
+
+| Agent                 | Description                             |
+| --------------------- | --------------------------------------- |
 | **Android Developer** | Kotlin, Android Studio, Jetpack Compose |
-| **Flutter Developer** | Dart, Flutter, BLoC, Firebase |
+| **Flutter Developer** | Dart, Flutter, BLoC, Firebase           |
 
 ### Frontend Development
-| Agent | Description |
-|-------|-------------|
-| **Frontend Beginner** | HTML, CSS, JavaScript basics |
-| **Frontend Developer** | React/Vue/Angular, TypeScript, performance |
-| **Angular Developer** | Angular framework, RxJS, NgRx |
-| **Design System Agent** | Component libraries, Storybook, Figma |
+
+| Agent                   | Description                                |
+| ----------------------- | ------------------------------------------ |
+| **Frontend Beginner**   | HTML, CSS, JavaScript basics               |
+| **Frontend Developer**  | React/Vue/Angular, TypeScript, performance |
+| **Angular Developer**   | Angular framework, RxJS, NgRx              |
+| **Design System Agent** | Component libraries, Storybook, Figma      |
 
 ### Backend Development
-| Agent | Description |
-|-------|-------------|
+
+| Agent                 | Description                                 |
+| --------------------- | ------------------------------------------- |
 | **Backend Developer** | APIs, databases, authentication, deployment |
-| **Node.js Developer** | Node.js, Express, TypeScript, scaling |
-| **Go Developer** | Go, Gin, gRPC, concurrency |
-| **Java Developer** | Java, Spring Boot, Hibernate, microservices |
-| **ASP.NET Core** | C#, ASP.NET Core, Entity Framework |
-| **Python Developer** | Python, Django/Flask, data science |
+| **Node.js Developer** | Node.js, Express, TypeScript, scaling       |
+| **Go Developer**      | Go, Gin, gRPC, concurrency                  |
+| **Java Developer**    | Java, Spring Boot, Hibernate, microservices |
+| **ASP.NET Core**      | C#, ASP.NET Core, Entity Framework          |
+| **Python Developer**  | Python, Django/Flask, data science          |
 
 ### Database & Data
-| Agent | Description |
-|-------|-------------|
-| **MongoDB Agent** | NoSQL, document model, aggregation |
+
+| Agent                | Description                             |
+| -------------------- | --------------------------------------- |
+| **MongoDB Agent**    | NoSQL, document model, aggregation      |
 | **Computer Science** | Algorithms, data structures, complexity |
 
 ### Infrastructure & DevOps
-| Agent | Description |
-|-------|-------------|
-| **DevOps Agent** | Docker, Kubernetes, CI/CD, infrastructure |
+
+| Agent                | Description                                 |
+| -------------------- | ------------------------------------------- |
+| **DevOps Agent**     | Docker, Kubernetes, CI/CD, infrastructure   |
 | **Kubernetes Agent** | Container orchestration, cluster management |
 
 ### Emerging Technologies
-| Agent | Description |
-|-------|-------------|
-| **Blockchain Developer** | Solidity, Web3, smart contracts |
-| **GraphQL Agent** | GraphQL APIs, schema design, federation |
+
+| Agent                    | Description                             |
+| ------------------------ | --------------------------------------- |
+| **Blockchain Developer** | Solidity, Web3, smart contracts         |
+| **GraphQL Agent**        | GraphQL APIs, schema design, federation |
 
 ### Security
-| Agent | Description |
-|-------|-------------|
+
+| Agent                   | Description                     |
+| ----------------------- | ------------------------------- |
 | **Cybersecurity Agent** | OWASP, pentesting, cryptography |
 
 ---
@@ -88,6 +95,7 @@ Specialist Agent: Here's your learning path...
 ### Common Questions to Ask
 
 #### 1. Learning Paths
+
 ```
 "Create a 12-week learning path for [technology]"
 "What should I learn first in [technology]?"
@@ -95,6 +103,7 @@ Specialist Agent: Here's your learning path...
 ```
 
 #### 2. Project Ideas
+
 ```
 "Suggest 5 beginner projects for [technology]"
 "What project should I build to learn [concept]?"
@@ -102,6 +111,7 @@ Specialist Agent: Here's your learning path...
 ```
 
 #### 3. Code Review
+
 ```
 "Review my [language] code"
 "Is this [architecture pattern] correctly implemented?"
@@ -109,6 +119,7 @@ Specialist Agent: Here's your learning path...
 ```
 
 #### 4. Conceptual Help
+
 ```
 "Explain [concept] in simple terms"
 "What's the difference between [pattern1] and [pattern2]?"
@@ -116,6 +127,7 @@ Specialist Agent: Here's your learning path...
 ```
 
 #### 5. Career Questions
+
 ```
 "Should I learn [tech1] or [tech2]?"
 "What's the job market for [role]?"
@@ -123,6 +135,7 @@ Specialist Agent: Here's your learning path...
 ```
 
 #### 6. Resources
+
 ```
 "What are the best resources for learning [technology]?"
 "Recommend courses/books for [topic]"
@@ -136,31 +149,37 @@ Specialist Agent: Here's your learning path...
 ### Example: Learning React (Frontend Agent)
 
 **Week 1-2: Foundations**
+
 - JavaScript ES6+ essentials
 - Functional programming basics
 - npm and tooling
 
 **Week 3-4: React Basics**
+
 - JSX and components
 - Props and state
 - Hooks (useState, useEffect)
 
 **Week 5-6: Advanced Patterns**
+
 - Context API
 - Custom hooks
 - Performance optimization
 
 **Week 7-8: State Management**
+
 - Redux or Zustand
 - Redux DevTools
 - Time-travel debugging
 
 **Week 9-10: Testing**
+
 - Jest fundamentals
 - React Testing Library
 - E2E testing with Cypress
 
 **Week 11-12: Production**
+
 - Code splitting
 - Server-side rendering
 - Deployment
@@ -246,7 +265,7 @@ IMPROVED VERSION:
 ### Conversation 3: Career Transition
 
 ```
-User: I'm a frontend developer with 3 years React experience. 
+User: I'm a frontend developer with 3 years React experience.
 I want to learn full-stack development. What's the best path?
 
 Frontend Agent + Backend Agent:
@@ -282,33 +301,42 @@ This leverages your React skills while building backend expertise.
 ## 🎯 BY LEARNING LEVEL
 
 ### Absolute Beginner
+
 **Start with:**
+
 1. Frontend Beginner Agent (for web basics)
 2. JavaScript Developer Agent (for programming fundamentals)
 3. Computer Science Agent (for algorithm foundation)
 
 **Path:**
+
 - HTML, CSS, JavaScript → Frontend Basics
 - Progress to React → Frontend Developer
 
 ### Intermediate Developer (1-2 years experience)
+
 **Start with:**
+
 1. Your primary technology's specialist agent
 2. Related agents (e.g., React dev → Node.js dev)
 3. DevOps Agent (for deployment knowledge)
 
 **Path:**
+
 - Deepen current skills
 - Learn complementary technologies
 - Build full-stack projects
 
 ### Advanced Developer (3+ years experience)
+
 **Start with:**
+
 1. Emerging technology agents (Kubernetes, GraphQL, Blockchain)
 2. DevOps/Architecture focused agents
 3. Use for code review and best practices
 
 **Path:**
+
 - Transition to new tech
 - Lead architectural decisions
 - Mentor others
@@ -322,12 +350,14 @@ This leverages your React skills while building backend expertise.
 **Level: Beginner**
 
 Build: Weather App
+
 - Fetches real-time weather data
 - Shows weather on map
 - Saves favorite locations
 - Uses Android fundamentals
 
 **Skills Learned:**
+
 - Activities & Fragments
 - RecyclerView
 - HTTP requests
@@ -342,12 +372,14 @@ Build: Weather App
 **Level: Intermediate**
 
 Build: E-Commerce Platform
+
 - Frontend: React with TypeScript
 - Backend: Node.js + Express
 - Database: MongoDB
 - Features: Authentication, payments, reviews
 
 **Skills Learned:**
+
 - React patterns
 - REST API design
 - Database modeling
@@ -363,6 +395,7 @@ Build: E-Commerce Platform
 **Level: Advanced**
 
 Build: Multi-service order system
+
 - Order Service (Java/Go)
 - Payment Service (Node.js)
 - Inventory Service (Python)
@@ -370,6 +403,7 @@ Build: Multi-service order system
 - Kubernetes deployment
 
 **Skills Learned:**
+
 - Microservices architecture
 - Inter-service communication
 - Container orchestration
@@ -383,16 +417,16 @@ Build: Multi-service order system
 
 **Choose based on your goal:**
 
-| Goal | Best Agents |
-|------|-------------|
-| Learn web development | Frontend Beginner → Frontend |
-| Build mobile apps | Android or Flutter |
-| Become backend engineer | Backend → Node.js/Java/Go |
-| DevOps focus | DevOps → Kubernetes |
-| Data science | Python + Computer Science |
-| Security career | Cybersecurity + Backend |
-| Full-stack | Frontend + Backend + DevOps |
-| Emerging tech | Blockchain or GraphQL |
+| Goal                    | Best Agents                  |
+| ----------------------- | ---------------------------- |
+| Learn web development   | Frontend Beginner → Frontend |
+| Build mobile apps       | Android or Flutter           |
+| Become backend engineer | Backend → Node.js/Java/Go    |
+| DevOps focus            | DevOps → Kubernetes          |
+| Data science            | Python + Computer Science    |
+| Security career         | Cybersecurity + Backend      |
+| Full-stack              | Frontend + Backend + DevOps  |
+| Emerging tech           | Blockchain or GraphQL        |
 
 ---
 
@@ -401,6 +435,7 @@ Build: Multi-service order system
 ### 1. Learning Assessment
 
 Request your agent to assess your current level:
+
 ```
 "Assess my [technology] skills based on this project I built"
 [Share your code/project link]
@@ -414,6 +449,7 @@ Agent will:
 ### 2. Interview Preparation
 
 Get interview help from specialists:
+
 ```
 "Prepare me for [company/role] interviews in [technology]"
 
@@ -427,6 +463,7 @@ Agent will:
 ### 3. Code Optimization
 
 Request performance reviews:
+
 ```
 "Optimize this [language] code for performance"
 
@@ -440,6 +477,7 @@ Agent will:
 ### 4. Architecture Review
 
 Get system design feedback:
+
 ```
 "Is this [architecture] appropriate for [use case]?"
 
@@ -455,23 +493,28 @@ Agent will:
 ## 💡 TIPS FOR EFFECTIVE LEARNING
 
 ### 1. Be Specific
+
 ❌ "Help me learn programming"
 ✅ "Help me learn Python backend development with Flask"
 
 ### 2. Show Your Work
+
 ❌ "Is this correct?"
 ✅ "Here's my code for [specific problem]. Does it handle error cases correctly?"
 
 ### 3. Ask for Context
+
 ❌ "What's polymorphism?"
 ✅ "When would I use polymorphism instead of composition in Java?"
 
 ### 4. Iterative Learning
+
 - Ask → Learn → Practice → Ask again
 - Don't skip to advanced topics
 - Build projects, not just tutorials
 
 ### 5. Combine Agents
+
 - Frontend + Backend for full-stack
 - Backend + DevOps for scalable systems
 - Multiple agents for comprehensive view
@@ -481,18 +524,22 @@ Agent will:
 ## 🎓 CERTIFICATION PATHS
 
 ### Android Development
+
 - Google Associate Android Developer certification
 - Recommended prep with Android Agent
 
 ### Backend Development (Java)
+
 - Oracle Certified Associate Java Programmer
 - Recommended prep with Java Agent
 
 ### DevOps
+
 - Certified Kubernetes Administrator
 - Recommended prep with Kubernetes Agent
 
 ### Cloud (Not yet implemented)
+
 - AWS Solutions Architect
 - Azure Administrator
 - GCP Associate Cloud Engineer
@@ -502,26 +549,33 @@ Agent will:
 ## 📞 COMMON QUESTIONS
 
 ### Q: How do I choose between agents?
+
 **A:** Visit roadmap.sh, see which technology interests you, request that specialist.
 
 ### Q: Can I use multiple agents?
+
 **A:** Yes! Combine Frontend + Backend agents for full-stack learning.
 
 ### Q: How often should I ask agents for help?
+
 **A:** Daily is great! Use for:
+
 - Clarifying concepts
 - Code reviews
 - Debugging
 - Career advice
 
 ### Q: Can agents prepare me for interviews?
+
 **A:** Yes! They can:
+
 - Explain common interview questions
 - Practice algorithm problems
 - Mock system design interviews
 - Review your portfolio
 
 ### Q: What if my technology isn't listed?
+
 **A:** Check SPECIALIST_AGENTS.md for "Not Yet Covered" section.
 
 ---
@@ -529,19 +583,23 @@ Agent will:
 ## 🌟 SUCCESS STORIES
 
 ### Example 1: Bootcamp to First Job
-*"Used Frontend Beginner → Frontend Agent to go from bootcamp to React role in 4 months"*
+
+_"Used Frontend Beginner → Frontend Agent to go from bootcamp to React role in 4 months"_
 
 ### Example 2: Career Transition
-*"Combined Python Agent + Data Science resources to transition from web dev to data engineer"*
+
+_"Combined Python Agent + Data Science resources to transition from web dev to data engineer"_
 
 ### Example 3: Skill Upgrade
-*"Used DevOps Agent to learn Docker/Kubernetes and got 30% salary increase"*
+
+_"Used DevOps Agent to learn Docker/Kubernetes and got 30% salary increase"_
 
 ---
 
 ## 📈 TRACKING YOUR PROGRESS
 
 ### Weekly Checkpoint
+
 ```
 Week 1 Completed:
 - ✅ Learned [topic]
@@ -552,6 +610,7 @@ Next week: Move to [next topic]
 ```
 
 ### Monthly Review
+
 ```
 Month 1 Results:
 - Completed modules: 4/12
@@ -561,6 +620,7 @@ Month 1 Results:
 ```
 
 ### 3-Month Retrospective
+
 ```
 Q1 Achievement:
 - Starting level: Beginner

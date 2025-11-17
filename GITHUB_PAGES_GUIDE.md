@@ -9,6 +9,7 @@ GitHub Pages is a static site hosting service that can serve the output of a Nex
 ## 🏗️ GitHub Pages Limitations & Adaptations
 
 ### Key Limitations
+
 1. **No Server-Side Rendering** - Limited to static generation
 2. **No API Routes** - GitHub Pages is static-only (no dynamic server endpoints)
 3. **No Database Connection** - Must use external services for data persistence
@@ -17,6 +18,7 @@ GitHub Pages is a static site hosting service that can serve the output of a Nex
 ### Necessary Adaptations
 
 #### 1. **API Architecture Changes**
+
 ```typescript
 // Instead of direct database access, we'll use an external API backend
 // lib/api/client.ts
@@ -32,7 +34,7 @@ export const apiClient = {
     const response = await fetch('https://your-external-api.com/api/tasks', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(taskData)
+      body: JSON.stringify(taskData),
     })
     return response.json()
   },
@@ -44,7 +46,7 @@ export const apiClient = {
       { id: 'gpt-4', name: 'GPT-4', status: 'online' },
       // ... other agents
     ]
-  }
+  },
 }
 ```
 
@@ -55,17 +57,17 @@ export const apiClient = {
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export', // Important: This tells Next.js to build a static app
-  
+
   // For GitHub Pages, we need to add a path prefix if hosted on a subdirectory
   basePath: process.env.NODE_ENV === 'production' ? '/coding-agent-template' : '',
-  
+
   // Disable server-side features not supported on static hosting
   images: {
     unoptimized: true, // Disable image optimization for static exports
   },
-  
+
   trailingSlash: true, // This helps with GitHub Pages routing
-  
+
   // Remove any API route dependencies
   experimental: {
     // Disable features not compatible with static export
@@ -156,18 +158,18 @@ export const getStaticProps: GetStaticProps = async () => {
 
     // For GitHub Pages, we'll use mock data or data from external API
     const tasks = [
-      { 
-        id: 'task-1', 
-        title: 'Optimize database queries', 
-        status: 'completed', 
+      {
+        id: 'task-1',
+        title: 'Optimize database queries',
+        status: 'completed',
         agent: 'claude',
         createdAt: new Date().toISOString(),
         completedAt: new Date(Date.now() - 3600000).toISOString()
       },
-      { 
-        id: 'task-2', 
-        title: 'Fix authentication bug', 
-        status: 'processing', 
+      {
+        id: 'task-2',
+        title: 'Fix authentication bug',
+        status: 'processing',
         agent: 'gpt-4',
         createdAt: new Date().toISOString()
       },
@@ -224,7 +226,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: 'pages'
   cancel-in-progress: true
 
 jobs:
@@ -286,10 +288,10 @@ jobs:
           module.exports = nextConfig
           export default nextConfig
           EOL
-          
+
           # Build the application
           pnpm build
-          
+
           # Restore original config
           mv next.config.ts.backup next.config.ts
 
@@ -324,17 +326,17 @@ For a more robust solution that maintains some dynamic functionality, consider a
 // lib/github-pages-api.ts
 class GitHubPagesApiClient {
   private baseUrl: string
-  
+
   constructor() {
     // Use environment variable or fallback to external service
     this.baseUrl = process.env.NEXT_PUBLIC_EXTERNAL_API_URL || 'https://api.coding-agent.example.com'
   }
-  
+
   async getAgents() {
     const response = await fetch(`${this.baseUrl}/api/agents`)
     return response.json()
   }
-  
+
   async createTask(taskData: any) {
     const response = await fetch(`${this.baseUrl}/api/tasks`, {
       method: 'POST',
@@ -342,11 +344,11 @@ class GitHubPagesApiClient {
         'Content-Type': 'application/json',
         // Add any required authentication
       },
-      body: JSON.stringify(taskData)
+      body: JSON.stringify(taskData),
     })
     return response.json()
   }
-  
+
   // Fallback to static data if external API is unavailable
   async getAgentsWithFallback() {
     try {

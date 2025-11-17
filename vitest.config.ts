@@ -6,25 +6,14 @@ export default defineConfig({
   plugins: [react()],
   test: {
     include: ['apps/web/test/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-    exclude: [
-      'node_modules', 
-      'dist', 
-      '.idea', 
-      '.git', 
-      '.cache',
-      'apps/web/.next'
-    ],
+    exclude: ['node_modules', 'dist', '.idea', '.git', '.cache', 'apps/web/.next'],
     environment: 'jsdom',
     setupFiles: ['./apps/web/test/setup.ts'],
     globals: true,
     coverage: {
       provider: 'v8', // Use v8 for coverage since it's built-in
       reporter: ['text', 'json', 'html'],
-      include: [
-        'apps/web/lib/**/*.{ts,tsx}',
-        'apps/web/components/**/*.{ts,tsx}',
-        'apps/web/app/**/*.{ts,tsx}',
-      ],
+      include: ['apps/web/lib/**/*.{ts,tsx}', 'apps/web/components/**/*.{ts,tsx}', 'apps/web/app/**/*.{ts,tsx}'],
       exclude: [
         '**/node_modules/**',
         '**/test/**',

@@ -71,9 +71,9 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: process.env.CI 
+    command: process.env.CI
       ? 'pnpm run start' // Use production server in CI
-      : 'pnpm run dev',  // Use dev server locally
+      : 'pnpm run dev', // Use dev server locally
     url: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     stdout: 'pipe',
@@ -83,4 +83,4 @@ export default defineConfig({
       NEXT_SHARP_IS_AVAILABLE: 'false',
     },
   },
-});
+})

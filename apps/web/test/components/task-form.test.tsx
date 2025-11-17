@@ -43,19 +43,19 @@ describe('TaskForm Component', () => {
     onSubmit: mockOnSubmit,
     isSubmitting: false,
     selectedOwner: 'test-owner',
-    selectedRepo: 'test-repo'
+    selectedRepo: 'test-repo',
   }
 
   beforeEach(() => {
     vi.resetAllMocks()
-    
+
     // Mock the atom hooks
     vi.mocked(useAtom).mockReturnValue(['', vi.fn()]) // taskPrompt
-    
+
     // Mock window.matchMedia for responsive behavior
     Object.defineProperty(window, 'matchMedia', {
       writable: true,
-      value: vi.fn().mockImplementation(query => ({
+      value: vi.fn().mockImplementation((query) => ({
         matches: false,
         media: query,
         onchange: null,
@@ -104,7 +104,7 @@ describe('TaskForm Component', () => {
           installDependencies: expect.any(Boolean),
           maxDuration: expect.any(Number),
           keepAlive: expect.any(Boolean),
-        })
+        }),
       )
     })
   })

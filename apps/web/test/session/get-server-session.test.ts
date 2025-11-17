@@ -36,7 +36,7 @@ describe('Server Session', () => {
       get: vi.fn(() => ({ value: 'session-value' })),
     }
     const mockSession = { user: { id: 'user-123' } }
-    
+
     vi.mocked(cookies).mockResolvedValue(mockCookieStore as any)
     vi.mocked(getSessionFromCookie).mockResolvedValue(mockSession)
 
@@ -52,7 +52,7 @@ describe('Server Session', () => {
     const mockCookieStore = {
       get: vi.fn(() => undefined),
     }
-    
+
     vi.mocked(cookies).mockResolvedValue(mockCookieStore as any)
     vi.mocked(getSessionFromCookie).mockResolvedValue(null)
 
@@ -68,7 +68,7 @@ describe('Server Session', () => {
     const mockCookieStore = {
       get: vi.fn(() => ({ value: 'invalid-session' })),
     }
-    
+
     vi.mocked(cookies).mockResolvedValue(mockCookieStore as any)
     vi.mocked(getSessionFromCookie).mockResolvedValue(null)
 

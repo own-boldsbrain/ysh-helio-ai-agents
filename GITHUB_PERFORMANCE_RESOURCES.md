@@ -24,7 +24,7 @@ on:
 
 permissions:
   contents: read
-  id-token: write  # Required for OIDC authentication
+  id-token: write # Required for OIDC authentication
 
 concurrency:
   group: production-${{ github.ref }}
@@ -34,24 +34,24 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: production
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9.15.0
-          
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'pnpm'
-          
+
       - name: Cache Docker layers
         uses: actions/cache@v4
         with:
@@ -59,29 +59,29 @@ jobs:
           key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-
-            
+
       - name: Install dependencies
         run: pnpm install
-        
+
       - name: Run type checking
         run: pnpm type-check
-        
+
       - name: Run linting
         run: pnpm lint
-        
+
       - name: Run tests
         run: pnpm test:coverage
         env:
           DATABASE_URL: ${{ secrets.DATABASE_TEST_URL }}
-          
+
       - name: Build application
         run: pnpm build
         env:
           NEXT_PUBLIC_APP_ENV: production
-          
+
       - name: Run security scan
         run: pnpm audit
-        
+
       - name: Deploy to production
         run: |
           # Deploy using your preferred method (Vercel, Docker, etc.)
@@ -100,31 +100,31 @@ name: Performance Monitoring
 
 on:
   schedule:
-    - cron: '0 */6 * * *'  # Every 6 hours
+    - cron: '0 */6 * * *' # Every 6 hours
   workflow_dispatch:
 
 jobs:
   performance-check:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          
+
       - name: Install dependencies
         run: |
           npm install -g autocannon  # HTTP load testing
           npm install -g pm2         # Process manager
-          
+
       - name: Set up test environment
         run: |
           docker-compose -f docker-compose.test.yml up -d
-          
+
       - name: Run performance tests
         run: |
           # Warm up the server
@@ -132,10 +132,10 @@ jobs:
             curl -s http://localhost:3000/api/health || true
             sleep 1
           done
-          
+
           # Run performance tests
           autocannon -c 100 -d 30 -p 10 http://localhost:3000/api/health
-          
+
       - name: Upload performance results
         if: always()
         uses: actions/upload-artifact@v4
@@ -159,32 +159,32 @@ jobs:
   migrate:
     runs-on: ubuntu-latest
     environment: production
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: pnpm/action-setup@v4
         with:
           version: 9.15.0
-          
+
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'pnpm'
-          
+
       - name: Install dependencies
         run: pnpm install
-        
+
       - name: Generate database schema
         run: pnpm db:generate
         env:
           DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
-          
+
       - name: Push schema changes
         run: pnpm db:push
         env:
           DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
-          
+
       - name: Run database migrations
         run: pnpm db:migrate
         env:
@@ -212,7 +212,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: 'pages'
   cancel-in-progress: true
 
 jobs:
@@ -224,26 +224,26 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          
+
       - name: Install and Build
         run: |
           npm install -g pnpm
           pnpm install
           pnpm build:static
-          
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
-        
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: './dist'
-          
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
@@ -304,6 +304,7 @@ docker push ghcr.io/username/coding-agent-template:latest
 ### 3. **GitHub Environments for Production Deployments**
 
 Configure environments in your repository settings:
+
 - Go to Settings > Environments
 - Add environment: "production"
 - Set protection rules and required reviewers
@@ -316,6 +317,7 @@ Configure environments in your repository settings:
 ### 1. **GitHub Insights for Performance Tracking**
 
 Enable these in your repository:
+
 - **Insights > Traffic** - Monitor repository traffic and clones
 - **Insights > Graphs > Pulse** - Track recent activity
 - **Insights > Graphs > Contributors** - Team contribution analysis
@@ -325,13 +327,13 @@ Enable these in your repository:
 
 ```yaml
 # .github/workflows/codeql.yml
-name: "CodeQL"
+name: 'CodeQL'
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ['main']
   pull_request:
-    branches: [ "main" ]
+    branches: ['main']
   schedule:
     - cron: '36 12 * * 1'
 
@@ -347,29 +349,30 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'javascript', 'typescript' ]
+        language: ['javascript', 'typescript']
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
-      with:
-        languages: ${{ matrix.language }}
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
 
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v3
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
 
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
-      with:
-        category: "/language:${{matrix.language}}"
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: '/language:${{matrix.language}}'
 ```
 
 ### 3. **Dependency Security Scanning**
 
 Enable in repository settings:
+
 - Go to Settings > Security & analysis
 - Enable "Dependency graph"
 - Enable "Dependabot alerts"
@@ -398,7 +401,7 @@ jobs:
       - name: Label issues
         uses: actions/labeler@v5
         with:
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          repo-token: '${{ secrets.GITHUB_TOKEN }}'
           configuration-path: .github/labeler.yml
 
       - name: Welcome new contributors
@@ -406,8 +409,8 @@ jobs:
         uses: actions/first-interaction@v1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          issue-message: "Thank you for opening your first issue! A team member will review this soon."
-          pr-message: "Thanks for your first PR! This will be reviewed as soon as possible."
+          issue-message: 'Thank you for opening your first issue! A team member will review this soon.'
+          pr-message: 'Thanks for your first PR! This will be reviewed as soon as possible.'
 ```
 
 ### 2. **Pull Request Automation**
@@ -436,7 +439,7 @@ jobs:
           LINES_DELETED=$(awk '{sum += $2} END {print sum}' /tmp/changes.txt)
           TOTAL_CHANGES=$((LINES_ADDED + LINES_DELETED))
           echo "Total lines changed: $TOTAL_CHANGES"
-          
+
           if [ $TOTAL_CHANGES -gt 500 ]; then
             echo "This PR is large. Consider breaking it into smaller PRs." >> $GITHUB_STEP_SUMMARY
           elif [ $TOTAL_CHANGES -gt 200 ]; then
@@ -453,48 +456,48 @@ jobs:
 ```yaml
 # terraform/github.tf
 terraform {
-  required_providers {
-    github = {
-      source  = "integrations/github"
-      version = "~> 6.0"
-    }
-  }
+required_providers {
+github = {
+source  = "integrations/github"
+version = "~> 6.0"
+}
+}
 }
 
 resource "github_repository" "production" {
-  name        = "coding-agent-template-prod"
-  description = "Production environment for Coding Agent Template"
-  visibility  = "private"
-  
-  template {
-    owner      = var.github_org
-    repository = "coding-agent-template"
-  }
-  
-  settings = {
-    has_issues        = true
-    has_projects      = true
-    has_wiki          = false
-    allow_squash_merge = true
-    allow_merge_commit = false
-    allow_rebase_merge = false
-  }
+name        = "coding-agent-template-prod"
+description = "Production environment for Coding Agent Template"
+visibility  = "private"
+
+template {
+owner      = var.github_org
+repository = "coding-agent-template"
+}
+
+settings = {
+has_issues        = true
+has_projects      = true
+has_wiki          = false
+allow_squash_merge = true
+allow_merge_commit = false
+allow_rebase_merge = false
+}
 }
 
 resource "github_branch_protection" "main" {
-  repository_id = github_repository.production.node_id
-  branch        = "main"
-  
-  required_pull_request_reviews {
-    required_approving_review_count = 2
-    dismiss_stale_reviews           = true
-    require_code_owner_reviews      = true
-  }
-  
-  required_status_checks {
-    strict   = true
-    contexts = ["ci/circleci:build", "ci/circleci:test", "security/dependency-scan"]
-  }
+repository_id = github_repository.production.node_id
+branch        = "main"
+
+required_pull_request_reviews {
+required_approving_review_count = 2
+dismiss_stale_reviews           = true
+require_code_owner_reviews      = true
+}
+
+required_status_checks {
+strict   = true
+contexts = ["ci/circleci:build", "ci/circleci:test", "security/dependency-scan"]
+}
 }
 ```
 
@@ -506,7 +509,7 @@ name: Uptime Monitoring
 
 on:
   schedule:
-    - cron: '*/5 * * * *'  # Every 5 minutes
+    - cron: '*/5 * * * *' # Every 5 minutes
   workflow_dispatch:
 
 jobs:
@@ -516,7 +519,7 @@ jobs:
       - name: Check production health
         run: |
           RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" "${{ secrets.PRODUCTION_BASE_URL }}/api/health")
-          
+
           if [ "$RESPONSE" != "200" ]; then
             echo "❌ Production health check failed: HTTP $RESPONSE"
             # Send notification to alert channel
@@ -536,6 +539,7 @@ jobs:
 ### 1. **Repository Performance Dashboard**
 
 Track these GitHub metrics for production performance:
+
 - **Commit frequency**: High frequency indicates active development
 - **Pull request velocity**: Time from PR creation to merge
 - **Issue resolution time**: Average time to close issues
@@ -545,6 +549,7 @@ Track these GitHub metrics for production performance:
 ### 2. **Performance-Oriented Labels and Milestones**
 
 Use GitHub labels to track performance improvements:
+
 ```
 performance-enhancement
 database-optimization
@@ -557,6 +562,7 @@ load-testing
 ### 3. **GitHub Discussions for Performance Feedback**
 
 Enable GitHub Discussions for:
+
 - Performance improvement suggestions
 - Optimization requests
 - Load testing results sharing
@@ -569,6 +575,7 @@ Enable GitHub Discussions for:
 ### 1. **GitHub Advanced Security for Production Code**
 
 Enable these features:
+
 - Secret scanning
 - CodeQL analysis
 - Dependency graph
@@ -608,7 +615,7 @@ changelog:
         - documentation
     - title: Other Changes 📝
       labels:
-        - "*"
+        - '*'
 ```
 
 ### 3. **GitHub for Production Environment Configuration**
@@ -626,21 +633,21 @@ on:
         default: 'production'
         type: choice
         options:
-        - production
-        - staging
-        - development
+          - production
+          - staging
+          - development
 
 jobs:
   validate:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
-    
+
     steps:
       - name: Validate environment access
         run: |
           echo "Validating ${{ inputs.environment }} environment..."
           # Add validation commands here
-          
+
       - name: Run environment-specific tests
         run: |
           case "${{ inputs.environment }}" in
@@ -663,6 +670,7 @@ jobs:
 ## 🚀 Implementation Checklist
 
 ### Immediate Actions (This Week)
+
 - [ ] Set up GitHub Actions for CI/CD pipeline
 - [ ] Enable GitHub Advanced Security features
 - [ ] Configure environment protection rules
@@ -670,6 +678,7 @@ jobs:
 - [ ] Create performance-oriented labels
 
 ### Short-term Actions (This Month)
+
 - [ ] Implement automated performance monitoring workflows
 - [ ] Set up database migration workflows
 - [ ] Configure container registry (GHCR)
@@ -677,6 +686,7 @@ jobs:
 - [ ] Create issue templates for performance reports
 
 ### Long-term Actions (This Quarter)
+
 - [ ] Integrate with Terraform for IaC
 - [ ] Set up automated release management
 - [ ] Implement comprehensive monitoring workflow
@@ -688,12 +698,14 @@ jobs:
 ## 📈 Key Performance Indicators (KPIs) in GitHub
 
 ### Development Velocity Metrics
+
 - **Deployment Frequency**: How often code is deployed to production
 - **Mean Time to Recovery (MTTR)**: Time to fix production issues
 - **Change Failure Rate**: Percentage of deployments causing issues
 - **Lead Time for Changes**: Time from code commit to production
 
 ### Quality Metrics
+
 - **Code Review Cycle Time**: Average time for PR review and merge
 - **Security Alert Resolution Time**: Time to fix security vulnerabilities
 - **Dependency Update Speed**: Time to update vulnerable dependencies
@@ -717,12 +729,14 @@ jobs:
 ## 📞 Integration Points
 
 ### With Existing Infrastructure
+
 - GitHub Actions integrates with Docker for containerized deployments
 - GitHub can trigger external services (Vercel, AWS, etc.)
 - GitHub API can be used for automation and monitoring
 - GitHub Packages can store and serve dependencies
 
 ### With Monitoring Tools
+
 - Slack notifications for build/deployment status
 - Sentry for error tracking integration
 - Datadog/New Relic for comprehensive monitoring

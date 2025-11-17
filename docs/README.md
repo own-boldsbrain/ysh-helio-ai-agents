@@ -5,7 +5,9 @@ Welcome to the organized documentation for the Coding Agent Template project.
 ## 📖 Table of Contents
 
 ### 🏗️ Core Project Files (in root)
+
 These files are intentionally kept in the root directory:
+
 - [README.md](../README.md) - Main project overview
 - [ROADMAP.md](../ROADMAP.md) - Project roadmap and planning
 - [TESTING.md](../TESTING.md) - Testing strategy
@@ -17,12 +19,14 @@ These files are intentionally kept in the root directory:
 ### 📁 Organized Documentation
 
 #### [Docker & Infrastructure](docker/)
+
 - [DOCKER_QUICKREF.md](docker/DOCKER_QUICKREF.md) - Docker quick reference
 - [DOCKER_SANDBOX.md](docker/DOCKER_SANDBOX.md) - Docker sandbox configuration
 - [MULTI_AGENT_DOCKER.md](docker/MULTI_AGENT_DOCKER.md) - Multi-agent Docker setup
 - [WSL_DOCKER_SETUP.md](docker/WSL_DOCKER_SETUP.md) - WSL Docker setup guide
 
 #### [Docker OSS Stack](docker-oss/)
+
 - [DOCKER_OSS.md](docker-oss/DOCKER_OSS.md) - Main Docker OSS documentation
 - [DOCKER_OSS_REVIEW.md](docker-oss/DOCKER_OSS_REVIEW.md) - Complete Docker & OSS analysis
 - [DOCKER_OSS_IMPLEMENTATION.md](docker-oss/DOCKER_OSS_IMPLEMENTATION.md) - Implementation guide
@@ -31,14 +35,17 @@ These files are intentionally kept in the root directory:
 - [DOCKER_OSS_INDEX.md](docker-oss/DOCKER_OSS_INDEX.md) - Navigation & reference guide
 
 #### [AI & Agents](ai/)
+
 - [OLLAMA_INTEGRATION.md](ai/OLLAMA_INTEGRATION.md) - Ollama integration guide
 
 #### [AI Agents Specific](ai-agents/)
+
 - [AGENTS_USAGE_GUIDE.md](ai-agents/AGENTS_USAGE_GUIDE.md) - AI agents usage guide
 - [SPECIALIST_AGENTS.md](ai-agents/SPECIALIST_AGENTS.md) - Specialist agents documentation
 - [SPECIALIST_AGENT_SQUADS.md](ai-agents/SPECIALIST_AGENT_SQUADS.md) - Agent squads documentation
 
 #### [Development](development/)
+
 - [TUTORIAL.md](development/TUTORIAL.md) - Step-by-step tutorial
 - [EXAMPLES.md](development/EXAMPLES.md) - Usage examples
 - [IMPLEMENTATION_COMPLETE.md](development/IMPLEMENTATION_COMPLETE.md) - Implementation completion
@@ -47,6 +54,7 @@ These files are intentionally kept in the root directory:
 - [PROMETHEUS_METRICS.md](development/PROMETHEUS_METRICS.md) - Prometheus metrics configuration
 
 #### [Process & Management](process/)
+
 - [CODE_REVIEW.md](process/CODE_REVIEW.md) - Code review findings
 - [IMPLEMENTATION_CHECKLIST.md](process/IMPLEMENTATION_CHECKLIST.md) - Implementation checklist
 - [ISSUES_TRACKER.md](process/ISSUES_TRACKER.md) - Issues tracking
@@ -56,6 +64,7 @@ These files are intentionally kept in the root directory:
 - [REVIEW_COMPLETE.md](process/REVIEW_COMPLETE.md) - Complete review documentation
 
 #### [General Documentation](general/)
+
 - [API_CREDENTIALS_SETUP.md](general/API_CREDENTIALS_SETUP.md) - API credential configuration
 - [DOCS_INDEX.md](general/DOCS_INDEX.md) - Documentation index
 - [GITHUB_ISSUES_SETUP.md](general/GITHUB_ISSUES_SETUP.md) - GitHub issues configuration
@@ -70,6 +79,7 @@ These files are intentionally kept in the root directory:
 ## 🗂️ Documentation Structure
 
 The documentation has been organized into logical categories:
+
 - **docker/**: All Docker-related documentation
 - **docker-oss/**: Docker OSS stack and infrastructure
 - **ai/**: AI and machine learning components
@@ -81,6 +91,7 @@ The documentation has been organized into logical categories:
 ## 🆕 Adding New Documentation
 
 When adding new documentation files, please consider:
+
 1. **Essential to root**: Only keep files in the root that all users need immediate access to
 2. **Logical grouping**: Place new files in the appropriate category
 3. **Update indexes**: Update the relevant index files to include new documentation

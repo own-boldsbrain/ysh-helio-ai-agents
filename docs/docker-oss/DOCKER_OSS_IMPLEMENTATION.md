@@ -167,14 +167,7 @@ pnpm add prom-client
 **File: `lib/metrics/prometheus.ts`**
 
 ```typescript
-import {
-  register,
-  Counter,
-  Histogram,
-  Gauge,
-  Summary,
-  collectDefaultMetrics,
-} from 'prom-client'
+import { register, Counter, Histogram, Gauge, Summary, collectDefaultMetrics } from 'prom-client'
 
 // Collect default Node.js metrics
 collectDefaultMetrics({ register })
@@ -290,10 +283,7 @@ export async function GET() {
       },
     })
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to generate metrics' },
-      { status: 500 },
-    )
+    return NextResponse.json({ error: 'Failed to generate metrics' }, { status: 500 })
   }
 }
 ```
@@ -392,12 +382,12 @@ services:
     image: jaegertracing/all-in-one:latest
     container_name: coding-agent-jaeger
     ports:
-      - '6831:6831/udp'  # Jaeger agent (compact thrift)
-      - '6832:6832/udp'  # Jaeger agent (binary thrift)
-      - '5778:5778'      # Serve config
-      - '16686:16686'    # UI
-      - '14268:14268'    # Jaeger collector
-      - '14250:14250'    # gRPC
+      - '6831:6831/udp' # Jaeger agent (compact thrift)
+      - '6832:6832/udp' # Jaeger agent (binary thrift)
+      - '5778:5778' # Serve config
+      - '16686:16686' # UI
+      - '14268:14268' # Jaeger collector
+      - '14250:14250' # gRPC
     environment:
       COLLECTOR_ZIPKIN_HOST_PORT: ':9411'
     healthcheck:
@@ -603,12 +593,15 @@ export class MonitoredDockerSandbox extends DockerSandbox {
       activeSandboxes.inc()
 
       const duration = (Date.now() - startTime) / 1000
-      logger.info({
-        action: 'sandbox_created',
-        sandboxId: sandbox.sandboxId,
-        duration,
-        ports: sandbox.ports,
-      }, 'Sandbox created and monitored')
+      logger.info(
+        {
+          action: 'sandbox_created',
+          sandboxId: sandbox.sandboxId,
+          duration,
+          ports: sandbox.ports,
+        },
+        'Sandbox created and monitored',
+      )
 
       // Start metrics collection
       sandbox.startMetricsCollection()
@@ -633,17 +626,23 @@ export class MonitoredDockerSandbox extends DockerSandbox {
         containerCpuUsage.set({ sandbox_id: this.sandboxId }, metrics.cpu)
         containerMemoryUsage.set({ sandbox_id: this.sandboxId }, metrics.memory)
 
-        logger.debug({
-          sandboxId: this.sandboxId,
-          cpu: metrics.cpu,
-          memory: metrics.memory,
-          disk: metrics.diskUsage,
-        }, 'Sandbox metrics collected')
+        logger.debug(
+          {
+            sandboxId: this.sandboxId,
+            cpu: metrics.cpu,
+            memory: metrics.memory,
+            disk: metrics.diskUsage,
+          },
+          'Sandbox metrics collected',
+        )
       } catch (error) {
-        logger.error({
-          sandboxId: this.sandboxId,
-          error: error instanceof Error ? error.message : String(error),
-        }, 'Failed to collect metrics')
+        logger.error(
+          {
+            sandboxId: this.sandboxId,
+            error: error instanceof Error ? error.message : String(error),
+          },
+          'Failed to collect metrics',
+        )
       }
     }, 30000) // Collect every 30 seconds
   }

@@ -30,13 +30,13 @@ vi.mock('@/lib/session/server', () => ({
 }))
 
 vi.mock('drizzle-orm', async () => {
-  const actual = await vi.importActual('drizzle-orm');
+  const actual = await vi.importActual('drizzle-orm')
   return {
     ...actual,
     eq: vi.fn(),
     and: vi.fn(),
-  };
-});
+  }
+})
 
 describe('GitHub User Token', () => {
   beforeEach(() => {
@@ -69,7 +69,7 @@ describe('GitHub User Token', () => {
     const mockSession = { user: { id: 'user-123' } }
     const mockAccessToken = 'encrypted-token'
     const decryptedToken = 'decrypted-github-token'
-    
+
     vi.mocked(getServerSession).mockResolvedValue(mockSession)
     vi.mocked(db.select).mockReturnThis()
     vi.mocked(db.from).mockReturnThis()
@@ -91,7 +91,7 @@ describe('GitHub User Token', () => {
     const mockSession = { user: { id: 'user-123' } }
     const mockUserToken = 'encrypted-user-token'
     const decryptedToken = 'decrypted-user-token'
-    
+
     // First call (for accounts) returns empty array
     // Second call (for users) returns token
     let callCount = 0
@@ -102,7 +102,7 @@ describe('GitHub User Token', () => {
       }
       return Promise.resolve([{ accessToken: mockUserToken }]) // User primary account found
     })
-    
+
     vi.mocked(getServerSession).mockResolvedValue(mockSession)
     vi.mocked(db.select).mockReturnThis()
     vi.mocked(db.from).mockReturnThis()
@@ -119,7 +119,7 @@ describe('GitHub User Token', () => {
 
   it('should return null when no GitHub account is connected', async () => {
     const mockSession = { user: { id: 'user-123' } }
-    
+
     vi.mocked(getServerSession).mockResolvedValue(mockSession)
     vi.mocked(db.select).mockReturnThis()
     vi.mocked(db.from).mockReturnThis()
@@ -135,7 +135,7 @@ describe('GitHub User Token', () => {
 
   it('should return null when database query throws an error', async () => {
     const mockSession = { user: { id: 'user-123' } }
-    
+
     vi.mocked(getServerSession).mockResolvedValue(mockSession)
     vi.mocked(db.select).mockReturnThis()
     vi.mocked(db.from).mockImplementation(() => {
@@ -152,7 +152,7 @@ describe('GitHub User Token', () => {
     const mockSession = { user: { id: 'user-123' } }
     const mockAccessToken = 'encrypted-token'
     const decryptedToken = 'decrypted-github-token'
-    
+
     vi.mocked(getSessionFromReq).mockResolvedValue(mockSession)
     vi.mocked(db.select).mockReturnThis()
     vi.mocked(db.from).mockReturnThis()

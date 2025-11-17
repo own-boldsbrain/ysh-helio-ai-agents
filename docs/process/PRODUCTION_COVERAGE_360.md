@@ -34,7 +34,6 @@ Infrastructure Cost: $15K/month
 
 #### Issue #1: Fix Type Error - home-page-header.tsx (L132)
 
-
 ```tsx
 Title: Fix 'error' is of type 'unknown' in home-page-header.tsx
 Type: Bug/Type Safety
@@ -188,6 +187,7 @@ Time: 12 hours
 ```
 
 #### Issue #27-30: Service-Specific Metrics (4 issues)
+
 ```
 - API response time metrics
 - Database query metrics
@@ -200,6 +200,7 @@ Time: 12 hours
 ### Distributed Tracing
 
 #### Issue #31: Implement Jaeger Integration
+
 ```
 Title: Setup Jaeger distributed tracing
 Type: Feature
@@ -216,6 +217,7 @@ Time: 8 hours
 ```
 
 #### Issue #32-35: Tracing for Critical Paths (4 issues)
+
 ```
 - Sandbox creation trace
 - GitHub API interaction trace
@@ -232,6 +234,7 @@ Time: 8 hours
 ### Container Lifecycle
 
 #### Issue #36: Implement Health Checks
+
 ```
 Title: Add health check probes to DockerSandbox
 Type: Feature
@@ -253,6 +256,7 @@ Time: 6 hours
 ```
 
 #### Issue #37: Implement Timeout Handling
+
 ```
 Title: Add timeout handling to sandbox operations
 Type: Feature
@@ -273,6 +277,7 @@ Time: 4 hours
 ```
 
 #### Issue #38: Implement Retry Logic
+
 ```
 Title: Add exponential backoff retry for sandbox operations
 Type: Feature
@@ -288,6 +293,7 @@ Time: 4 hours
 ```
 
 #### Issue #39: Garbage Collection for Containers
+
 ```
 Title: Implement automatic cleanup of stale containers
 Type: Feature
@@ -311,6 +317,7 @@ Time: 6 hours
 ### Resource Management
 
 #### Issue #40-42: Resource Limits & Guarantees (3 issues)
+
 ```
 - Memory limit enforcement (2GB per container)
 - CPU limit enforcement (2 cores per container)
@@ -320,6 +327,7 @@ Time: 6 hours
 ```
 
 #### Issue #43: Network Isolation
+
 ```
 Title: Implement network policies for sandbox containers
 Type: Feature
@@ -335,6 +343,7 @@ Time: 4 hours
 ```
 
 #### Issue #44-58: Sandbox Resilience (15 issues)
+
 ```
 - Container restart policies
 - Volume backup strategy
@@ -355,6 +364,7 @@ Time: 24 hours
 ### Authentication
 
 #### Issue #59: Multi-factor Authentication (MFA)
+
 ```
 Title: Implement MFA for user accounts
 Type: Feature
@@ -376,6 +386,7 @@ Time: 16 hours
 ```
 
 #### Issue #60: OAuth2 Provider Integration
+
 ```
 Title: Add additional OAuth2 providers (Google, Microsoft)
 Type: Feature
@@ -385,6 +396,7 @@ Time: 12 hours
 ```
 
 #### Issue #61-64: Session Management (4 issues)
+
 ```
 - Session timeout (30 min idle)
 - Session revocation
@@ -397,6 +409,7 @@ Time: 8 hours
 ### Authorization
 
 #### Issue #65: Role-Based Access Control (RBAC)
+
 ```
 Title: Implement comprehensive RBAC system
 Type: Feature
@@ -412,6 +425,7 @@ Time: 16 hours
 ```
 
 #### Issue #66-76: Authorization Policies (11 issues)
+
 ```
 - API endpoint authorization
 - Sandbox access control
@@ -429,6 +443,7 @@ Time: 20 hours
 ### Data Consistency
 
 #### Issue #77: Implement Database Transactions
+
 ```
 Title: Add transactional guarantees to critical operations
 Type: Feature
@@ -444,6 +459,7 @@ Time: 12 hours
 ```
 
 #### Issue #78: Data Validation Layer
+
 ```
 Title: Implement Zod schema validation throughout codebase
 Type: Feature
@@ -459,6 +475,7 @@ Time: 16 hours
 ```
 
 #### Issue #79-85: Data Migration & Versioning (7 issues)
+
 ```
 - Database schema versioning
 - Migration rollback procedures
@@ -472,6 +489,7 @@ Time: 16 hours
 ### Backup & Recovery
 
 #### Issue #86: Automated Database Backups
+
 ```
 Title: Implement automated daily database backups
 Type: Feature
@@ -494,6 +512,7 @@ Time: 8 hours
 ```
 
 #### Issue #87: Point-in-Time Recovery (PITR)
+
 ```
 Title: Implement PITR capability for database
 Type: Feature
@@ -508,6 +527,7 @@ Time: 12 hours
 ```
 
 #### Issue #88-98: Data Integrity (11 issues)
+
 ```
 - Foreign key constraints
 - Unique constraints
@@ -528,6 +548,7 @@ Time: 20 hours
 ### Secret Management
 
 #### Issue #99: HashiCorp Vault Integration
+
 ```
 Title: Integrate HashiCorp Vault for secrets management
 Type: Feature
@@ -551,6 +572,7 @@ Time: 16 hours
 ```
 
 #### Issue #100: Secret Rotation Automation
+
 ```
 Title: Implement automatic secret rotation (90-day cycle)
 Type: Feature
@@ -568,6 +590,7 @@ Time: 12 hours
 ### Encryption
 
 #### Issue #101: Encryption at Rest
+
 ```
 Title: Implement encryption for sensitive data at rest
 Type: Feature
@@ -583,6 +606,7 @@ Time: 12 hours
 ```
 
 #### Issue #102: Encryption in Transit (mTLS)
+
 ```
 Title: Implement mTLS for service-to-service communication
 Type: Feature
@@ -600,6 +624,7 @@ Time: 16 hours
 ### Compliance
 
 #### Issue #103-128: Compliance & Audit (26 issues)
+
 ```
 - GDPR compliance (data deletion)
 - CCPA compliance (privacy)
@@ -625,6 +650,7 @@ Time: 80 hours
 ### Caching Strategy
 
 #### Issue #129: Redis Cache Layer
+
 ```
 Title: Implement Redis caching layer
 Type: Feature
@@ -645,6 +671,7 @@ Time: 12 hours
 ```
 
 #### Issue #130: Cache Warming Strategy
+
 ```
 Title: Implement cache pre-warming on startup
 Type: Feature
@@ -661,6 +688,7 @@ Time: 6 hours
 ### Database Optimization
 
 #### Issue #131: Query Optimization & Indexing
+
 ```
 Title: Optimize all database queries and add proper indexes
 Type: Feature
@@ -681,6 +709,7 @@ Time: 16 hours
 ```
 
 #### Issue #132: Database Sharding Strategy
+
 ```
 Title: Design and implement database sharding for scale
 Type: Feature
@@ -697,6 +726,7 @@ Time: 20 hours
 ### API Optimization
 
 #### Issue #133-156: API Performance (24 issues)
+
 ```
 - Response compression (gzip)
 - Connection pooling
@@ -718,6 +748,7 @@ Time: 40 hours
 ### Monitoring Infrastructure
 
 #### Issue #157: Prometheus + Grafana Setup
+
 ```
 Title: Production-grade Prometheus and Grafana setup
 Type: Feature
@@ -739,6 +770,7 @@ Time: 12 hours
 ```
 
 #### Issue #158: Distributed Tracing
+
 ```
 Title: Production Jaeger setup for distributed tracing
 Type: Feature
@@ -754,6 +786,7 @@ Time: 8 hours
 ```
 
 #### Issue #159: Log Aggregation (Loki)
+
 ```
 Title: Production Loki setup for log aggregation
 Type: Feature
@@ -771,6 +804,7 @@ Time: 8 hours
 ### Alerting
 
 #### Issue #160-178: Alert Rules & Response (19 issues)
+
 ```
 Alert rules for:
 - High error rate (>1% req)
@@ -791,26 +825,28 @@ Time: 24 hours
 
 ## 📊 CATEGORY BREAKDOWN
 
-| Category | Issues | Priority | Effort | Timeline |
-|----------|--------|----------|--------|----------|
-| Build & Type Safety | 18 | CRITICAL | 8h | 1 week |
-| Logging & Observability | 35 | HIGH | 96h | 3 weeks |
-| Docker Sandbox | 26 | HIGH | 80h | 3 weeks |
-| Auth & Authorization | 18 | HIGH | 72h | 2.5 weeks |
-| Database & Data | 22 | HIGH | 96h | 3 weeks |
-| Security & Compliance | 28 | CRITICAL | 168h | 4 weeks |
-| Performance & Scale | 26 | MEDIUM | 110h | 3 weeks |
-| Monitoring & Alerting | 19 | CRITICAL | 80h | 2 weeks |
-| **TOTAL** | **192** | - | **710h** | **6-9 months** |
+| Category                | Issues  | Priority | Effort   | Timeline       |
+| ----------------------- | ------- | -------- | -------- | -------------- |
+| Build & Type Safety     | 18      | CRITICAL | 8h       | 1 week         |
+| Logging & Observability | 35      | HIGH     | 96h      | 3 weeks        |
+| Docker Sandbox          | 26      | HIGH     | 80h      | 3 weeks        |
+| Auth & Authorization    | 18      | HIGH     | 72h      | 2.5 weeks      |
+| Database & Data         | 22      | HIGH     | 96h      | 3 weeks        |
+| Security & Compliance   | 28      | CRITICAL | 168h     | 4 weeks        |
+| Performance & Scale     | 26      | MEDIUM   | 110h     | 3 weeks        |
+| Monitoring & Alerting   | 19      | CRITICAL | 80h      | 2 weeks        |
+| **TOTAL**               | **192** | -        | **710h** | **6-9 months** |
 
 ---
 
 ## 🎯 IMPLEMENTATION PHASES
 
 ### Phase 0: Foundation (Week 1-2)
+
 **Issues:** #1-18 (Build fixes)
 **Effort:** 8 hours
 **Goal:** Production build passing
+
 ```
 Dependencies: None
 Blocking: Everything else
@@ -818,9 +854,11 @@ Go/No-Go: MUST PASS
 ```
 
 ### Phase 1: Observability (Week 2-4)
+
 **Issues:** #19-35 (Logging & Metrics)
 **Effort:** 96 hours
 **Goal:** Full visibility into operations
+
 ```
 Dependencies: Phase 0
 Team: 2 engineers
@@ -828,9 +866,11 @@ Deliverables: Dashboards, logs, traces
 ```
 
 ### Phase 2: Core Infrastructure (Week 4-8)
+
 **Issues:** #36-98 (Docker, Database, Auth)
 **Effort:** 260 hours
 **Goal:** Resilient, secure core
+
 ```
 Dependencies: Phase 1
 Team: 4 engineers
@@ -838,9 +878,11 @@ Deliverables: Health checks, backups, RBAC
 ```
 
 ### Phase 3: Security Hardening (Week 8-12)
+
 **Issues:** #99-128 (Security & Compliance)
 **Effort:** 168 hours
 **Goal:** Production-grade security
+
 ```
 Dependencies: Phase 2
 Team: 2 security engineers + 2 backend
@@ -848,9 +890,11 @@ Deliverables: Vault, encryption, compliance
 ```
 
 ### Phase 4: Performance (Week 12-16)
+
 **Issues:** #129-156 (Performance & Scale)
 **Effort:** 110 hours
 **Goal:** 99.99% uptime, <100ms latency
+
 ```
 Dependencies: Phase 2
 Team: 2 engineers + 1 DBA
@@ -858,9 +902,11 @@ Deliverables: Caching, optimization, sharding
 ```
 
 ### Phase 5: Monitoring (Week 16-20)
+
 **Issues:** #157-178 (Monitoring & Alerting)
 **Effort:** 80 hours
 **Goal:** Complete observability stack
+
 ```
 Dependencies: All previous phases
 Team: 1 SRE + 1 backend
@@ -900,6 +946,7 @@ Project Manager (1)
 ## 💰 COST BREAKDOWN
 
 ### Development Costs
+
 ```
 Phase 0 (1 week):     $2,000
 Phase 1 (3 weeks):   $24,000
@@ -912,6 +959,7 @@ TOTAL:             $138,000
 ```
 
 ### Infrastructure Costs (Monthly)
+
 ```
 Logging & Monitoring:  $2,000
 Vault & Security:      $1,000
@@ -928,6 +976,7 @@ TOTAL:                $15,000/month
 ## ✅ SUCCESS METRICS
 
 ### Availability & Performance
+
 ```
 - ✅ Uptime: 99.99% (4 nines)
 - ✅ RTO: <1 hour
@@ -938,6 +987,7 @@ TOTAL:                $15,000/month
 ```
 
 ### Observability
+
 ```
 - ✅ Log search latency: <1s
 - ✅ Metric query latency: <100ms
@@ -946,6 +996,7 @@ TOTAL:                $15,000/month
 ```
 
 ### Security
+
 ```
 - ✅ Secrets: 0 in code
 - ✅ Vulnerability scan: 0 critical
@@ -959,6 +1010,7 @@ TOTAL:                $15,000/month
 ## 🚀 QUICK START
 
 ### Week 1: Get Build Passing
+
 ```bash
 # Fix type errors
 pnpm type-check
@@ -973,6 +1025,7 @@ pnpm test
 ```
 
 ### Week 2-4: Observability
+
 ```bash
 # Install logging
 pnpm add pino pino-pretty prom-client
@@ -986,6 +1039,7 @@ curl http://localhost:3001
 ```
 
 ### Week 5+: Infrastructure Hardening
+
 Follow IMPLEMENTATION_CHECKLIST.md for detailed tasks
 
 ---
@@ -1014,6 +1068,7 @@ Blockers: [None | Issue #X]
 ## 🎓 KNOWLEDGE TRANSFER
 
 **Documentation Required:**
+
 - [ ] Architecture decisions (ADR)
 - [ ] Runbooks for operations
 - [ ] Troubleshooting guides
@@ -1042,7 +1097,7 @@ Phase 4 ← Phase 5 (needs metrics)
 **Expected ROI:** Immediate production readiness  
 **Timeline:** 6-9 months with full team  
 **Risk:** Medium (requires security expertise)  
-**Go/No-Go:** PROCEED with Phase 0 immediately  
+**Go/No-Go:** PROCEED with Phase 0 immediately
 
 ---
 

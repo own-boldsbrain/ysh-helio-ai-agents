@@ -25,6 +25,7 @@
 ## 🎨 FRONTEND SKILLS
 
 ### Framework & Runtime
+
 - **Next.js 16.0.0** ⭐⭐⭐⭐⭐
   - App Router (latest)
   - Server Components
@@ -33,7 +34,6 @@
   - Image Optimization
   - Font Optimization
   - Performance monitoring
-  
 - **React 19.1.0** ⭐⭐⭐⭐⭐
   - Hooks API
   - Context API
@@ -50,6 +50,7 @@
   - Type inference
 
 ### UI Component Library
+
 - **Radix UI** ⭐⭐⭐⭐⭐
   - 20+ pre-built components
   - Accessibility first
@@ -65,6 +66,7 @@
   - Tooltip, Popover
 
 ### Styling & CSS
+
 - **Tailwind CSS 4.1.13** ⭐⭐⭐⭐⭐
   - Utility-first CSS
   - PostCSS 4
@@ -82,6 +84,7 @@
   - Container queries
 
 ### Code Editor Integration
+
 - **Monaco Editor 4.7.0** ⭐⭐⭐⭐
   - 60+ language support
   - IntelliSense
@@ -98,6 +101,7 @@
   - 50+ more
 
 ### State Management
+
 - **Jotai 2.15.0** ⭐⭐⭐⭐
   - Primitive atoms
   - Minimal boilerplate
@@ -114,6 +118,7 @@
   - React DevTools support
 
 ### Data Fetching
+
 - **TanStack Query (React Query) 5.62.11** ⭐⭐⭐⭐⭐
   - Caching layer
   - Background refetching
@@ -132,6 +137,7 @@
   - Retry logic
 
 ### Animation & Effects
+
 - **Tailwind CSS Animate** ⭐⭐⭐⭐
   - CSS-based animations
   - Zero runtime overhead
@@ -152,6 +158,7 @@
   - Installation: `npm install vaul`
 
 ### HTTP Client
+
 - **Fetch API** (Built-in) ⭐⭐⭐⭐
   - Native browser API
   - Promise-based
@@ -159,6 +166,7 @@
   - AbortController support
 
 ### Development Tools
+
 - **Webpack** (via Next.js)
   - Module bundling
   - Code splitting
@@ -171,6 +179,7 @@
 ## 🔧 BACKEND SKILLS
 
 ### Runtime & Language
+
 - **Node.js 20+** ⭐⭐⭐⭐⭐
   - V8 engine
   - Event loop
@@ -186,6 +195,7 @@
   - Utility types
 
 ### Framework & HTTP
+
 - **Next.js 16 API Routes** ⭐⭐⭐⭐⭐
   - Route handlers
   - Middleware
@@ -195,6 +205,7 @@
   - Documentation: https://nextjs.org/docs/app/building-your-application/routing
 
 ### Database & ORM
+
 - **PostgreSQL 15-Alpine** ⭐⭐⭐⭐⭐
   - ACID compliance
   - JSONB support
@@ -228,6 +239,7 @@
   - Raw SQL support
 
 ### Authentication & Security
+
 - **Arctic 3.7.0** ⭐⭐⭐⭐⭐
   - OAuth provider library
   - 20+ providers supported
@@ -257,6 +269,7 @@
   - EdDSA
 
 ### Input Validation & Parsing
+
 - **Zod 4.1.11** ⭐⭐⭐⭐⭐
   - TypeScript-first validation
   - Runtime type checking
@@ -273,6 +286,7 @@
   - Defaults
 
 ### API Clients
+
 - **Octokit 22.0.0** ⭐⭐⭐⭐⭐
   - GitHub REST API
   - GitHub GraphQL API
@@ -303,6 +317,7 @@
   - Domains
 
 ### External Service Integrations
+
 - **Anthropic SDK** ⭐⭐⭐⭐⭐
   - Claude API integration
   - Streaming support
@@ -330,6 +345,7 @@
   - DALL-E 3
 
 ### Utility Libraries
+
 - **nanoid 5.1.5** ⭐⭐⭐⭐
   - Unique ID generation
   - URL-friendly strings
@@ -351,6 +367,7 @@
 ## 🐳 INFRASTRUCTURE SKILLS
 
 ### Containerization
+
 - **Docker 20.10+** ⭐⭐⭐⭐⭐
   - Image building
   - Container orchestration
@@ -382,6 +399,7 @@
   - Override files
 
 ### Databases
+
 - **PostgreSQL 15-Alpine** ⭐⭐⭐⭐⭐
   - Relational database
   - ACID compliance
@@ -414,6 +432,7 @@
   - Real-time features
 
 ### Message Queue
+
 - **RabbitMQ** ⭐⭐⭐⭐
   - Message broker
   - Task distribution
@@ -430,6 +449,7 @@
   - Persistence
 
 ### Reverse Proxy & Load Balancing
+
 - **Nginx** ⭐⭐⭐⭐⭐
   - HTTP server
   - Reverse proxy
@@ -446,6 +466,7 @@
   - Health checks
 
 ### Monitoring & Observability
+
 - **Prometheus** ⭐⭐⭐⭐⭐
   - Metrics collection
   - Time-series database
@@ -489,6 +510,7 @@
   - Documentation: https://www.jaegertracing.io/
 
 ### AI Runtime
+
 - **Ollama** ⭐⭐⭐⭐
   - Local LLM runtime
   - No API costs
@@ -503,10 +525,11 @@
   - Qwen2-VL (Vision model)
 
   Installation:
+
   ```bash
   # Pull model
   ollama pull qwen2.5-coder:7b
-  
+
   # Run server
   ollama serve
   ```
@@ -516,6 +539,7 @@
 ## 🤖 AI/ML SKILLS
 
 ### Large Language Models (LLMs)
+
 - **Anthropic Claude** ⭐⭐⭐⭐⭐
   - Claude 3 Opus (most capable)
   - Claude 3 Sonnet (balanced)
@@ -569,6 +593,7 @@
   - Pricing: FREE (local)
 
 ### AI Agent Patterns
+
 - **Tool Use/Function Calling**
   - Multiple tools per agent
   - Tool selection logic
@@ -592,6 +617,7 @@
 ## 🚀 DEVOPS/OPERATIONS
 
 ### Build & Deployment
+
 - **Turbo 2.3.3** ⭐⭐⭐⭐⭐
   - Monorepo build orchestration
   - Caching across workspaces
@@ -619,6 +645,7 @@
   - On-demand ISR
 
 ### Environment Management
+
 - **dotenv** ⭐⭐⭐⭐⭐
   - Environment variable loading
   - .env file support
@@ -626,6 +653,7 @@
   - Installation: Built into most tools
 
 ### Container Registry
+
 - **Docker Hub** ⭐⭐⭐⭐
   - Public/private repositories
   - Automated builds
@@ -642,6 +670,7 @@
 ## 🧪 TESTING & QA
 
 ### Unit Testing
+
 - **Vitest** ⭐⭐⭐⭐⭐
   - Jest-compatible API
   - ESM support
@@ -652,6 +681,7 @@
   - Documentation: https://vitest.dev/
 
   Commands:
+
   ```bash
   vitest run              # Run all tests
   vitest --ui            # UI explorer
@@ -660,6 +690,7 @@
   ```
 
 ### E2E Testing
+
 - **Playwright** ⭐⭐⭐⭐⭐
   - Cross-browser testing
   - Chromium, Firefox, WebKit
@@ -676,6 +707,7 @@
   - Trace viewer
 
   Commands:
+
   ```bash
   playwright test         # Run tests
   playwright test --ui    # UI mode
@@ -684,6 +716,7 @@
   ```
 
 ### Code Coverage
+
 - **Coverage Reporter** ⭐⭐⭐⭐
   - Statement coverage
   - Branch coverage
@@ -696,6 +729,7 @@
 ## 🎯 PRODUCTIVITY TOOLS
 
 ### Code Quality
+
 - **ESLint 9** ⭐⭐⭐⭐⭐
   - JavaScript/TypeScript linting
   - Rule engine
@@ -711,6 +745,7 @@
   - eslint-plugin-promise
 
   Commands:
+
   ```bash
   eslint .                # Lint all files
   eslint . --fix          # Auto-fix
@@ -732,12 +767,14 @@
   - GraphQL, HTML
 
   Commands:
+
   ```bash
   prettier --write "**/*.{ts,tsx,json,md}"
   prettier --check "**/*.{ts,tsx,json,md}"
   ```
 
 ### Version Control Hooks
+
 - **Husky 9.1.7** ⭐⭐⭐⭐
   - Git hooks automation
   - Pre-commit hooks
@@ -752,12 +789,14 @@
   - Commit-msg: Message validation
 
 ### Documentation
+
 - **TypeScript Compiler** ⭐⭐⭐⭐
   - Type checking
   - Doc generation
   - Installation: `npm install -D typescript`
 
   Commands:
+
   ```bash
   tsc --noEmit          # Type check
   tsc --version         # Show version
@@ -768,6 +807,7 @@
 ## 🔌 EXTERNAL APIS & SERVICES
 
 ### GitHub
+
 - **GitHub REST API** ⭐⭐⭐⭐⭐
   - Repository information
   - Issues, Pull Requests
@@ -782,6 +822,7 @@
   - Documentation: https://docs.github.com/en/graphql
 
 ### Vercel
+
 - **Vercel Deployments API** ⭐⭐⭐⭐
   - Deployment management
   - Project configuration
@@ -794,6 +835,7 @@
   - Edge middleware
 
 ### AI Provider APIs
+
 - **Anthropic API** ⭐⭐⭐⭐⭐
   - Base URL: https://api.anthropic.com
   - Authentication: API key in headers
@@ -819,96 +861,107 @@
 ## 🔗 REFERENCE URLS
 
 ### Documentation
-| Resource | URL |
-|----------|-----|
-| Next.js | https://nextjs.org/docs |
-| React | https://react.dev |
-| TypeScript | https://www.typescriptlang.org/docs |
-| Tailwind CSS | https://tailwindcss.com/docs |
-| PostgreSQL | https://www.postgresql.org/docs |
-| Docker | https://docs.docker.com |
-| Kubernetes | https://kubernetes.io/docs |
+
+| Resource     | URL                                 |
+| ------------ | ----------------------------------- |
+| Next.js      | https://nextjs.org/docs             |
+| React        | https://react.dev                   |
+| TypeScript   | https://www.typescriptlang.org/docs |
+| Tailwind CSS | https://tailwindcss.com/docs        |
+| PostgreSQL   | https://www.postgresql.org/docs     |
+| Docker       | https://docs.docker.com             |
+| Kubernetes   | https://kubernetes.io/docs          |
 
 ### API References
-| Service | URL |
-|---------|-----|
-| GitHub API | https://docs.github.com/en/rest |
+
+| Service        | URL                                |
+| -------------- | ---------------------------------- |
+| GitHub API     | https://docs.github.com/en/rest    |
 | GitHub GraphQL | https://docs.github.com/en/graphql |
-| Anthropic | https://docs.anthropic.com |
-| OpenAI | https://platform.openai.com/docs |
-| Google AI | https://ai.google.dev/docs |
-| Groq | https://console.groq.com/docs |
+| Anthropic      | https://docs.anthropic.com         |
+| OpenAI         | https://platform.openai.com/docs   |
+| Google AI      | https://ai.google.dev/docs         |
+| Groq           | https://console.groq.com/docs      |
 
 ### Tools & Platforms
-| Tool | URL |
-|------|-----|
-| Turbo | https://turbo.build |
-| Vitest | https://vitest.dev |
+
+| Tool       | URL                    |
+| ---------- | ---------------------- |
+| Turbo      | https://turbo.build    |
+| Vitest     | https://vitest.dev     |
 | Playwright | https://playwright.dev |
-| ESLint | https://eslint.org |
-| Prettier | https://prettier.io |
+| ESLint     | https://eslint.org     |
+| Prettier   | https://prettier.io    |
 | Docker Hub | https://hub.docker.com |
-| GitHub | https://github.com |
+| GitHub     | https://github.com     |
 
 ---
 
 ## 📊 PERFORMANCE BENCHMARKS
 
 ### Build Performance Targets
-| Metric | Target | Current | Status |
-|--------|--------|---------|--------|
-| Build Time | <30s | ~45s | ⚠️ |
-| Bundle Size | <2MB | ~2.5MB | ⚠️ |
-| Turbo Cache Hit Rate | >80% | ~75% | ⚠️ |
-| Incremental Build | <10s | ~15s | ⚠️ |
+
+| Metric               | Target | Current | Status |
+| -------------------- | ------ | ------- | ------ |
+| Build Time           | <30s   | ~45s    | ⚠️     |
+| Bundle Size          | <2MB   | ~2.5MB  | ⚠️     |
+| Turbo Cache Hit Rate | >80%   | ~75%    | ⚠️     |
+| Incremental Build    | <10s   | ~15s    | ⚠️     |
 
 ### Runtime Performance Targets
-| Metric | Target | Current | Status |
-|--------|--------|---------|--------|
-| API Response | <200ms | ~150ms | ✅ |
-| FCP (First Contentful Paint) | <1s | ~1.2s | ⚠️ |
-| LCP (Largest Contentful Paint) | <2.5s | ~1.8s | ✅ |
-| CLS (Cumulative Layout Shift) | <0.1 | 0.05 | ✅ |
-| Agent Latency | <1.5s | ~2.5s | ⚠️ |
+
+| Metric                         | Target | Current | Status |
+| ------------------------------ | ------ | ------- | ------ |
+| API Response                   | <200ms | ~150ms  | ✅     |
+| FCP (First Contentful Paint)   | <1s    | ~1.2s   | ⚠️     |
+| LCP (Largest Contentful Paint) | <2.5s  | ~1.8s   | ✅     |
+| CLS (Cumulative Layout Shift)  | <0.1   | 0.05    | ✅     |
+| Agent Latency                  | <1.5s  | ~2.5s   | ⚠️     |
 
 ### Infrastructure Performance
-| Component | Allocation | Utilization | Target |
-|-----------|-----------|-------------|--------|
-| PostgreSQL RAM | 8GB | ~60% | <70% |
-| PostgreSQL CPU | 4 cores | ~30% | <50% |
-| Redis RAM | 4GB | ~40% | <60% |
-| Redis CPU | - | <20% | <30% |
-| Nginx CPU | - | <10% | <25% |
+
+| Component      | Allocation | Utilization | Target |
+| -------------- | ---------- | ----------- | ------ |
+| PostgreSQL RAM | 8GB        | ~60%        | <70%   |
+| PostgreSQL CPU | 4 cores    | ~30%        | <50%   |
+| Redis RAM      | 4GB        | ~40%        | <60%   |
+| Redis CPU      | -          | <20%        | <30%   |
+| Nginx CPU      | -          | <10%        | <25%   |
 
 ### Scalability Targets
-| Metric | Target | Current | Status |
-|--------|--------|---------|--------|
-| Concurrent Agents | 32 | 32 | ✅ |
-| Concurrent Users | 100+ | ~50 | ⚠️ |
-| Requests/sec | 1000+ | ~500 | ⚠️ |
-| Message Queue Throughput | >1000 msgs/sec | ~800 | ⚠️ |
-| Database Connections | 200 max | ~50 | ✅ |
+
+| Metric                   | Target         | Current | Status |
+| ------------------------ | -------------- | ------- | ------ |
+| Concurrent Agents        | 32             | 32      | ✅     |
+| Concurrent Users         | 100+           | ~50     | ⚠️     |
+| Requests/sec             | 1000+          | ~500    | ⚠️     |
+| Message Queue Throughput | >1000 msgs/sec | ~800    | ⚠️     |
+| Database Connections     | 200 max        | ~50     | ✅     |
 
 ---
 
 ## 🎓 LEARNING RESOURCES
 
 ### Frontend
+
 - Next.js App Router: https://nextjs.org/learn/dashboard-app
 - React Hooks: https://react.dev/reference/react
 - TypeScript: https://www.typescriptlang.org/docs/handbook/
 
 ### Backend
+
 - PostgreSQL: https://www.postgresql.org/docs/15/
 - Drizzle ORM: https://orm.drizzle.team/
 - Node.js: https://nodejs.org/docs/
 
 ### DevOps
+
 - Docker: https://docs.docker.com/get-started/
 - Kubernetes: https://kubernetes.io/docs/tutorials/
 - Prometheus: https://prometheus.io/docs/
 
 ### AI/ML
+
 - Anthropic: https://docs.anthropic.com/
 - OpenAI: https://platform.openai.com/docs/
 - LangChain: https://python.langchain.com/docs/
@@ -918,6 +971,7 @@
 ## 📱 Quick Commands Reference
 
 ### Development
+
 ```bash
 # Start development server
 pnpm dev
@@ -936,6 +990,7 @@ pnpm test
 ```
 
 ### Docker
+
 ```bash
 # Start all services
 pnpm docker:start
@@ -951,6 +1006,7 @@ pnpm docker:status
 ```
 
 ### Database
+
 ```bash
 # Generate migrations
 pnpm db:generate
@@ -966,6 +1022,7 @@ pnpm db:fixtures
 ```
 
 ### Build & Deploy
+
 ```bash
 # Build production
 pnpm build
@@ -985,6 +1042,7 @@ pnpm analyze:web
 ## 🎯 Skill Matrix
 
 ### Frontend Skills Required
+
 - ⭐⭐⭐⭐⭐ Next.js & React
 - ⭐⭐⭐⭐⭐ TypeScript
 - ⭐⭐⭐⭐ Tailwind CSS
@@ -993,6 +1051,7 @@ pnpm analyze:web
 - ⭐⭐⭐⭐ Data Fetching (React Query)
 
 ### Backend Skills Required
+
 - ⭐⭐⭐⭐⭐ TypeScript & Node.js
 - ⭐⭐⭐⭐⭐ PostgreSQL & SQL
 - ⭐⭐⭐⭐ Drizzle ORM
@@ -1001,6 +1060,7 @@ pnpm analyze:web
 - ⭐⭐⭐ Redis & Caching
 
 ### DevOps Skills Required
+
 - ⭐⭐⭐⭐⭐ Docker & Docker Compose
 - ⭐⭐⭐⭐ Monitoring (Prometheus/Grafana)
 - ⭐⭐⭐ Database Administration
@@ -1008,6 +1068,7 @@ pnpm analyze:web
 - ⭐⭐ Kubernetes (future)
 
 ### AI/ML Skills Optional
+
 - ⭐⭐⭐ Prompt Engineering
 - ⭐⭐⭐ API Integration
 - ⭐⭐ Model Selection
@@ -1017,4 +1078,4 @@ pnpm analyze:web
 
 **Document Version**: 1.0  
 **Last Updated**: November 17, 2025  
-**Status**: Ready for Team Reference  
+**Status**: Ready for Team Reference

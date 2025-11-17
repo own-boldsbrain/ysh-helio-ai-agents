@@ -161,7 +161,7 @@ jobs:
 #### Ver apenas Phase 0 (crítico)
 
 ```tsx
-phase:"Phase 0: Build Fixes"
+phase: 'Phase 0: Build Fixes'
 ```
 
 #### Ver apenas Critical/High priority
@@ -173,7 +173,7 @@ priority:Critical OR priority:High
 #### Ver issues sem assignee
 
 ```tsx
-no:assignee
+no: assignee
 ```
 
 ## Estrutura do Board Recomendada

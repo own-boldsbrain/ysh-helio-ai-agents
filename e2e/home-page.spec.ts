@@ -33,12 +33,15 @@ test.describe('Home Page', () => {
   test('should maintain session state', async ({ page, context }) => {
     // Test that session is persisted across page navigations
     await page.goto('/')
-    
+
     // Check if session-related elements are present
-    const userMenu = page.locator('button').filter({ has: page.locator('img') }).first()
-    
+    const userMenu = page
+      .locator('button')
+      .filter({ has: page.locator('img') })
+      .first()
+
     // If user is signed in, the profile button should be visible
-    if (await userMenu.count() > 0) {
+    if ((await userMenu.count()) > 0) {
       await expect(userMenu).toBeVisible()
     }
   })
@@ -49,19 +52,22 @@ test.describe('Authentication Flow', () => {
     await page.goto('/')
 
     // Click on the profile area which should reveal sign-in options
-    const profileButton = page.locator('button').filter({ has: page.locator('img') }).first()
-    
-    if (await profileButton.count() > 0) {
+    const profileButton = page
+      .locator('button')
+      .filter({ has: page.locator('img') })
+      .first()
+
+    if ((await profileButton.count()) > 0) {
       await profileButton.click()
-      
+
       // Check if sign-out option is available (meaning user is signed in)
       const signOutOption = page.getByRole('menuitem', { name: /Log Out/i })
-      if (await signOutOption.count() > 0) {
+      if ((await signOutOption.count()) > 0) {
         await expect(signOutOption).toBeVisible()
       } else {
         // If not signed in, sign-in options should be visible
         const gitHubSignIn = page.getByRole('menuitem', { name: /Connect/i })
-        if (await gitHubSignIn.count() > 0) {
+        if ((await gitHubSignIn.count()) > 0) {
           await expect(gitHubSignIn).toBeVisible()
         }
       }

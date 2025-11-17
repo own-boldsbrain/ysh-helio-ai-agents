@@ -3,16 +3,16 @@ import { parseJsonResponse, getErrorMessage, safeJson } from '../../lib/utils/fe
 
 // Create a more realistic Response mock
 function createMockResponse(
-  data: any, 
-  options: { 
-    status?: number, 
-    statusText?: string, 
-    contentType?: string,
+  data: any,
+  options: {
+    status?: number
+    statusText?: string
+    contentType?: string
     ok?: boolean
-  } = {}
+  } = {},
 ): Response {
-  const { status = 200, statusText = 'OK', contentType = 'application/json', ok = status < 400 } = options;
-  
+  const { status = 200, statusText = 'OK', contentType = 'application/json', ok = status < 400 } = options
+
   return {
     status,
     statusText,
@@ -23,7 +23,7 @@ function createMockResponse(
           return contentType
         }
         return null
-      }
+      },
     } as Headers,
     json: async () => {
       if (typeof data === 'string' && data.startsWith('invalid')) {
@@ -36,7 +36,7 @@ function createMockResponse(
         return data
       }
       return JSON.stringify(data)
-    }
+    },
   } as Response
 }
 
@@ -53,9 +53,9 @@ describe('JSON Parsing Utilities', () => {
         contentType: 'text/plain',
         status: 404,
         statusText: 'Not Found',
-        ok: false
+        ok: false,
       })
-      
+
       await expect(parseJsonResponse(mockResponse)).rejects.toThrow('404 Not Found')
     })
 
@@ -64,11 +64,11 @@ describe('JSON Parsing Utilities', () => {
         contentType: 'text/plain',
         status: 200,
         statusText: 'OK',
-        ok: true
+        ok: true,
       })
-      
+
       await expect(parseJsonResponse(mockResponse)).rejects.toThrow(
-        'Expected JSON response but received non-JSON content'
+        'Expected JSON response but received non-JSON content',
       )
     })
 
@@ -76,10 +76,8 @@ describe('JSON Parsing Utilities', () => {
       const mockResponse = createMockResponse('invalid json {', {
         contentType: 'application/json',
       })
-      
-      await expect(parseJsonResponse(mockResponse)).rejects.toThrow(
-        'Invalid JSON response from server'
-      )
+
+      await expect(parseJsonResponse(mockResponse)).rejects.toThrow('Invalid JSON response from server')
     })
 
     it('should return JSON data for error response with valid JSON content', async () => {
@@ -87,9 +85,9 @@ describe('JSON Parsing Utilities', () => {
       const mockResponse = createMockResponse(errorData, {
         status: 404,
         statusText: 'Not Found',
-        ok: false
+        ok: false,
       })
-      
+
       // This should return the JSON data, not throw
       const result = await parseJsonResponse(mockResponse)
       expect(result).toEqual(errorData)
@@ -105,9 +103,9 @@ describe('JSON Parsing Utilities', () => {
 
     it('should handle non-JSON content type', async () => {
       const mockResponse = createMockResponse({ name: 'John' }, { contentType: 'text/html' })
-      
+
       await expect(safeJson(mockResponse)).rejects.toThrow(
-        'Expected JSON response but received unknown content type. Status: 200 OK'
+        'Expected JSON response but received unknown content type. Status: 200 OK',
       )
     })
 
@@ -115,10 +113,8 @@ describe('JSON Parsing Utilities', () => {
       const mockResponse = createMockResponse('invalid json {', {
         contentType: 'application/json',
       })
-      
-      await expect(safeJson(mockResponse)).rejects.toThrow(
-        'Failed to parse server response as JSON'
-      )
+
+      await expect(safeJson(mockResponse)).rejects.toThrow('Failed to parse server response as JSON')
     })
   })
 
@@ -172,7 +168,7 @@ describe('JSON Parsing Utilities', () => {
         text: async () => 'plain text',
         status: 500,
         statusText: 'Internal Server Error',
-        ok: false
+        ok: false,
       } as Response
 
       const result = await getErrorMessage(mockResponse)

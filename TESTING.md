@@ -7,6 +7,7 @@ The Coding Agent Template follows a comprehensive testing strategy to ensure cod
 ## 📊 Test Coverage Status
 
 ### Unit Tests
+
 - ✅ Core utilities (`lib/utils/fetch-json.ts`)
 - ✅ GitHub user token functionality (`lib/github/user-token.ts`)
 - ✅ Server session functionality (`lib/session/get-server-session.ts`)
@@ -14,6 +15,7 @@ The Coding Agent Template follows a comprehensive testing strategy to ensure cod
 - ⚠️ **Outdated** - Need to fix type errors in test files (blocking execution)
 
 ### Integration Tests
+
 - ✅ GitHub API routes (`/api/github/user`, `/api/github/orgs`, etc.)
 - ✅ API route error handling
 - ✅ Session management flow
@@ -21,6 +23,7 @@ The Coding Agent Template follows a comprehensive testing strategy to ensure cod
 - 🔄 **In Progress** - Docker sandbox integration tests
 
 ### End-to-End Tests
+
 - ✅ Home page functionality
 - ✅ Authentication flow
 - ✅ UI component interactions
@@ -28,6 +31,7 @@ The Coding Agent Template follows a comprehensive testing strategy to ensure cod
 - 🔄 **In Progress** - Dashboard monitoring features
 
 ### Performance Tests
+
 - ✅ JSON parsing utilities performance
 - ✅ Load simulation tests
 - ✅ Memory usage analysis
@@ -63,6 +67,7 @@ apps/web/test/
 ```
 
 ## 🎯 Coverage Goals
+
 - Line coverage: >80%
 - Function coverage: >80%
 - Branch coverage: >80%
@@ -71,6 +76,7 @@ apps/web/test/
 ## 🚀 Running Tests
 
 ### All Tests
+
 ```bash
 # Run all tests
 pnpm test
@@ -80,6 +86,7 @@ pnpm test:coverage
 ```
 
 ### Unit Tests
+
 ```bash
 # Run unit tests only
 pnpm test:unit
@@ -92,6 +99,7 @@ pnpm test apps/web/test/utils/fetch-json.test.ts
 ```
 
 ### Integration Tests
+
 ```bash
 # Run API integration tests only
 pnpm test:integration
@@ -101,6 +109,7 @@ pnpm test:db
 ```
 
 ### End-to-End Tests (Playwright)
+
 ```bash
 # Install Playwright browsers
 npx playwright install
@@ -116,6 +125,7 @@ pnpx playwright test --ui
 ```
 
 ### Performance Tests
+
 ```bash
 # Run benchmarks
 pnpm test:benchmark
@@ -125,6 +135,7 @@ pnpm test:load
 ```
 
 ### Docker-Based Tests
+
 ```bash
 # Test Docker sandbox functionality
 pnpm test:sandbox
@@ -136,24 +147,28 @@ pnpm test:multi-agent
 ## 🛠️ Test Quality Standards
 
 ### Unit Tests
+
 - Each function has at least one positive and one negative test case
 - Error handling scenarios are covered
 - All edge cases are tested
 - Performance benchmarks established for critical functions
 
 ### Integration Tests
+
 - All API endpoints have integration tests
 - Database operations are tested end-to-end
 - External service integrations are mocked appropriately
 - Authentication and authorization flows are verified
 
 ### End-to-End Tests
+
 - All critical user flows are covered
 - Cross-browser compatibility verified
 - Responsive design tested
 - Accessibility features validated
 
 ### Performance Tests
+
 - Baseline performance metrics established
 - Load testing for expected traffic patterns
 - Memory leak detection
@@ -162,18 +177,21 @@ pnpm test:multi-agent
 ## 🧩 Test Architecture
 
 ### Testing Frameworks
+
 - **Unit/Integration**: Vitest
 - **E2E**: Playwright
 - **API**: Supertest
 - **Performance**: Built-in Node.js benchmark tools
 
 ### Mocking Strategy
+
 - External API calls are mocked using MSW (Mock Service Worker)
 - Database operations use in-memory SQLite for tests
 - File system operations use temporary directories
 - Network calls are intercepted and mocked
 
 ### Test Data Management
+
 - Test fixtures are stored in `tests/fixtures/`
 - Database seeding for integration tests
 - Cleanup scripts to reset test state
@@ -182,16 +200,19 @@ pnpm test:multi-agent
 ## 🔧 Current Testing Issues
 
 ### Critical (Blocking)
+
 - **Type errors in test files**: Test files have type errors that prevent execution
 - **Build errors**: Main application has type errors preventing test execution
 - **Fix Required**: Resolve type errors in main application and test files
 
 ### High Priority
+
 - **Multi-agent tests**: Need to implement comprehensive tests for the AI agent system
 - **Docker sandbox tests**: Need tests for Docker-based sandbox functionality
 - **Integration tests**: Expand coverage for multi-service interactions
 
 ### Medium Priority
+
 - **Performance tests**: Add load testing for multi-agent system
 - **Security tests**: Add security scanning and vulnerability tests
 - **Accessibility tests**: Implement automated accessibility testing
@@ -199,6 +220,7 @@ pnpm test:multi-agent
 ## 📈 Continuous Integration
 
 Tests are automatically run in the CI pipeline:
+
 - Unit tests run on every commit
 - Integration tests run on PR creation
 - E2E tests run on staging deployment
@@ -207,6 +229,7 @@ Tests are automatically run in the CI pipeline:
 ## 📚 Testing Guidelines
 
 ### Writing Tests
+
 1. Use descriptive test names that explain what is being tested
 2. Follow the AAA pattern: Arrange, Act, Assert
 3. Test one behavior per test
@@ -214,12 +237,14 @@ Tests are automatically run in the CI pipeline:
 5. Maintain test independence
 
 ### Test Maintenance
+
 1. Refactor tests when refactoring code
 2. Remove unused or redundant tests
 3. Update tests when requirements change
 4. Ensure tests run fast (aim for <5s for unit tests)
 
 ### Performance Considerations
+
 1. Use fake timers for time-dependent tests
 2. Use in-memory databases for faster execution
 3. Run tests in parallel when possible
@@ -228,12 +253,14 @@ Tests are automatically run in the CI pipeline:
 ## 🚨 Troubleshooting
 
 ### Tests Failing
+
 1. Check for type errors in both source and test files
 2. Verify all dependencies are installed
 3. Ensure test environment is properly configured
 4. Check for any required services (database, etc.)
 
 ### Test Coverage Issues
+
 1. Use `pnpm test:coverage` to identify uncovered areas
 2. Focus on testing critical business logic first
 3. Add tests for error handling paths
@@ -241,4 +268,4 @@ Tests are automatically run in the CI pipeline:
 
 ---
 
-*Last Updated: November 17, 2025*
+_Last Updated: November 17, 2025_

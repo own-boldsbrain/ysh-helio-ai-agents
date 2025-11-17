@@ -3,16 +3,16 @@ import { parseJsonResponse, getErrorMessage, safeJson } from '@/lib/utils/fetch-
 
 // Create mock responses for performance testing
 function createMockResponse(
-  data: any, 
-  options: { 
-    status?: number, 
-    statusText?: string, 
-    contentType?: string,
+  data: any,
+  options: {
+    status?: number
+    statusText?: string
+    contentType?: string
     ok?: boolean
-  } = {}
+  } = {},
 ): Response {
-  const { status = 200, statusText = 'OK', contentType = 'application/json', ok = status < 400 } = options;
-  
+  const { status = 200, statusText = 'OK', contentType = 'application/json', ok = status < 400 } = options
+
   return {
     status,
     statusText,
@@ -23,7 +23,7 @@ function createMockResponse(
           return contentType
         }
         return null
-      }
+      },
     } as Headers,
     json: async () => {
       if (typeof data === 'string' && data.startsWith('invalid')) {
@@ -36,23 +36,23 @@ function createMockResponse(
         return data
       }
       return JSON.stringify(data)
-    }
+    },
   } as Response
 }
 
 describe('Performance: JSON Parsing Utilities', () => {
   bench('parseJsonResponse with valid JSON', async () => {
-    const mockResponse = createMockResponse({ 
-      id: 1, 
-      name: 'Test User', 
+    const mockResponse = createMockResponse({
+      id: 1,
+      name: 'Test User',
       email: 'test@example.com',
       profile: {
         age: 30,
         location: 'New York',
-        preferences: ['coding', 'ai', 'open source']
-      }
+        preferences: ['coding', 'ai', 'open source'],
+      },
     })
-    
+
     await parseJsonResponse(mockResponse)
   })
 
@@ -60,7 +60,7 @@ describe('Performance: JSON Parsing Utilities', () => {
     const mockResponse = createMockResponse('invalid json {', {
       contentType: 'application/json',
     })
-    
+
     try {
       await parseJsonResponse(mockResponse)
     } catch (e) {
@@ -69,18 +69,18 @@ describe('Performance: JSON Parsing Utilities', () => {
   })
 
   bench('safeJson with valid JSON', async () => {
-    const mockResponse = createMockResponse({ 
-      id: 1, 
-      name: 'Test User', 
-      email: 'test@example.com' 
+    const mockResponse = createMockResponse({
+      id: 1,
+      name: 'Test User',
+      email: 'test@example.com',
     })
-    
+
     await safeJson(mockResponse)
   })
 
   bench('getErrorMessage with JSON error', async () => {
     const mockResponse = createMockResponse({ error: 'Something went wrong' })
-    
+
     await getErrorMessage(mockResponse)
   })
 
@@ -90,7 +90,7 @@ describe('Performance: JSON Parsing Utilities', () => {
       status: 500,
       statusText: 'Internal Server Error',
     })
-    
+
     await getErrorMessage(mockResponse)
   })
 })
@@ -106,9 +106,9 @@ describe('Performance: Utility Functions', () => {
       'font-bold',
       'hover:bg-red-600',
       'transition-colors',
-      'duration-200'
+      'duration-200',
     ]
-    
+
     // Call cn with all classes
     for (let i = 0; i < 100; i++) {
       // @ts-ignore - we're using the actual cn function here

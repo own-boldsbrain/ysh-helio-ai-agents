@@ -1,6 +1,7 @@
 # 🚀 Coding Agent Template - Complete Documentation
 
 ## 📋 Table of Contents
+
 - [Project Overview](#-project-overview)
 - [Architecture](#-architecture)
 - [Getting Started](#-getting-started)
@@ -19,6 +20,7 @@
 The Coding Agent Template is a full-stack Next.js 16 application designed for AI-powered coding assistance with multi-agent support. The system orchestrates multiple AI agents (Claude, GPT-4, Gemini, Groq, and Ollama) through Docker sandboxes.
 
 ### Key Features
+
 - **Multi-Agent AI System**: Supports Claude, GPT-4, Gemini, Groq, and Ollama agents
 - **Docker Sandboxing**: Secure code execution with resource limits
 - **Real-time Monitoring**: Prometheus, Grafana, Loki, Jaeger integration
@@ -31,18 +33,20 @@ The Coding Agent Template is a full-stack Next.js 16 application designed for AI
 ## 🏗️ Architecture
 
 ### Tech Stack
-| Component | Technology |
-|-----------|------------|
-| **Frontend** | Next.js 16, React 19, TypeScript |
-| **UI Framework** | Tailwind CSS, Radix UI, Lucide Icons |
-| **Database** | PostgreSQL 15, Drizzle ORM |
-| **Containerization** | Docker, Docker Compose |
-| **Monitoring** | Prometheus, Grafana, Loki, Jaeger |
-| **Authentication** | NextAuth.js with GitHub provider |
-| **State Management** | Jotai for global state |
-| **Styling** | Tailwind CSS with custom design system |
+
+| Component            | Technology                             |
+| -------------------- | -------------------------------------- |
+| **Frontend**         | Next.js 16, React 19, TypeScript       |
+| **UI Framework**     | Tailwind CSS, Radix UI, Lucide Icons   |
+| **Database**         | PostgreSQL 15, Drizzle ORM             |
+| **Containerization** | Docker, Docker Compose                 |
+| **Monitoring**       | Prometheus, Grafana, Loki, Jaeger      |
+| **Authentication**   | NextAuth.js with GitHub provider       |
+| **State Management** | Jotai for global state                 |
+| **Styling**          | Tailwind CSS with custom design system |
 
 ### System Components
+
 ```
 ┌─────────────────────────────────────────────────────────┐
 │                    Browser (Client)                    │
@@ -96,6 +100,7 @@ The Coding Agent Template is a full-stack Next.js 16 application designed for AI
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Docker & Docker Compose
 - Node.js 20+ with pnpm
 - PostgreSQL 15+ (optional, for local development)
@@ -104,23 +109,27 @@ The Coding Agent Template is a full-stack Next.js 16 application designed for AI
 ### Quick Start
 
 1. **Clone the repository:**
+
 ```bash
 git clone https://github.com/own-boldsbrain/coding-agent-template.git
 cd coding-agent-template
 ```
 
 2. **Install dependencies:**
+
 ```bash
 pnpm install
 ```
 
 3. **Set up environment:**
+
 ```bash
 cp .env.example .env.local
 # Edit .env.local with your credentials
 ```
 
 4. **Start database:**
+
 ```bash
 # For development (starts on port 5433)
 docker compose -f docker-compose.dev.yml up -d
@@ -130,12 +139,14 @@ docker compose up -d
 ```
 
 5. **Run database migrations:**
+
 ```bash
 # Make sure POSTGRES_URL matches your running instance
 pnpm db:push
 ```
 
 6. **Start development server:**
+
 ```bash
 pnpm dev
 ```
@@ -162,7 +173,7 @@ export class DockerSandbox implements SandboxType {
   async runCommand(options: { cmd: string; args: string[]; cwd?: string }): Promise<CommandResult> {
     // Executes commands in isolated Docker container
   }
-  
+
   static async create(options: { ports?: number[]; volumes?: Volume[] }): Promise<DockerSandbox> {
     // Creates Docker container with resource limits
   }
@@ -170,6 +181,7 @@ export class DockerSandbox implements SandboxType {
 ```
 
 ### Container Configuration
+
 - **Memory Limit**: Configurable via SANDBOX_MEMORY_LIMIT (default: 2GB)
 - **CPU Limit**: Configurable via SANDBOX_CPU_LIMIT (default: 2 CPUs)
 - **Volume Isolation**: Temporary volumes for file storage
@@ -183,13 +195,13 @@ export class DockerSandbox implements SandboxType {
 
 The system supports multiple AI providers with intelligent routing:
 
-| Provider | Models | Rate Limits | Best For |
-|----------|--------|-------------|----------|
-| **Anthropic** | Claude 3.5 Sonnet, Opus | High | Complex reasoning |
-| **OpenAI** | GPT-4, GPT-4 Turbo | Moderate | Balanced tasks |
-| **Google** | Gemini Pro, Flash | High | Fast responses |
-| **Groq** | LLaMA 3, Mixtral | Very High | Real-time |
-| **Ollama** | Qwen2.5, Gemma2, LLaMA 3 | Unrestricted | Local processing |
+| Provider      | Models                   | Rate Limits  | Best For          |
+| ------------- | ------------------------ | ------------ | ----------------- |
+| **Anthropic** | Claude 3.5 Sonnet, Opus  | High         | Complex reasoning |
+| **OpenAI**    | GPT-4, GPT-4 Turbo       | Moderate     | Balanced tasks    |
+| **Google**    | Gemini Pro, Flash        | High         | Fast responses    |
+| **Groq**      | LLaMA 3, Mixtral         | Very High    | Real-time         |
+| **Ollama**    | Qwen2.5, Gemma2, LLaMA 3 | Unrestricted | Local processing  |
 
 ### Agent Types
 
@@ -229,17 +241,20 @@ The system uses a load-balanced approach with multiple agents:
 ## 🔐 Security & Authentication
 
 ### OAuth Integration
+
 - **GitHub OAuth** - Primary authentication method
 - **Session Management** - Secure session handling with NextAuth.js
 - **Access Token Storage** - Encrypted storage of API tokens
 
 ### Security Features
+
 - **Docker Sandboxing** - Isolated execution environments
 - **Resource Limits** - CPU and memory constraints on sandboxes
 - **API Key Protection** - Secure storage and rotation
 - **Rate Limiting** - Per-user request throttling
 
 ### Secrets Management
+
 - **Environment Variables** - For basic secrets
 - **Secure Storage** - Encrypted tokens via session store
 - **Token Scoping** - Minimal required scopes for operations
@@ -249,20 +264,24 @@ The system uses a load-balanced approach with multiple agents:
 ## 📊 Monitoring & Observability
 
 ### Logging Stack
+
 - **Pino** - High-performance JSON logging
 - **Loki** - Log aggregation and storage
 - **Grafana** - Log visualization and dashboards
 
 ### Metrics Stack
+
 - **Prometheus** - Metrics collection
 - **cAdvisor** - Container metrics
 - **Custom Metrics** - Application-level metrics using prom-client
 
 ### Distributed Tracing
+
 - **Jaeger** - Request tracing across services
 - **OpenTelemetry** - Automatic instrumentation
 
 ### Key Metrics
+
 - Task completion times
 - Agent utilization
 - Memory/CPU usage
@@ -274,6 +293,7 @@ The system uses a load-balanced approach with multiple agents:
 ## 🛠️ Development
 
 ### Project Structure
+
 ```
 coding-agent-template/
 ├── apps/
@@ -292,6 +312,7 @@ coding-agent-template/
 ```
 
 ### Development Commands
+
 ```bash
 # Install dependencies
 pnpm install
@@ -321,6 +342,7 @@ pnpm db:generate
 ```
 
 ### Testing Strategy
+
 - **Unit Tests** - For utility functions and pure logic
 - **Integration Tests** - For API endpoint behavior
 - **End-to-End Tests** - For complete user flows
@@ -331,11 +353,13 @@ pnpm db:generate
 ## 🚢 Deployment
 
 ### Environment Configuration
+
 - **Production** - Use production docker-compose.yml
 - **Staging** - Use staging-specific configurations
 - **Development** - Use dev-specific configurations
 
 ### Deployment Steps
+
 1. **Prepare Environment**
    - Configure environment variables
    - Set up database
@@ -357,6 +381,7 @@ pnpm db:generate
    - Validate functionality
 
 ### Scaling Considerations
+
 - **Horizontal Scaling** - Add more agent instances
 - **Vertical Scaling** - Increase resource limits
 - **Load Balancing** - Distribute requests across instances
@@ -369,35 +394,44 @@ pnpm db:generate
 ### Common Issues
 
 #### Database Connection Issues
+
 **Symptoms**: `ECONNREFUSED` when connecting to PostgreSQL
-**Solution**: 
+**Solution**:
+
 1. Check if PostgreSQL is running: `docker ps | grep postgres`
 2. Verify port in `.env` matches docker-compose: `POSTGRES_URL=...@localhost:5433/...` vs `POSTGRES_URL=...@localhost:5434/...`
 3. Confirm correct docker-compose file is running
 
 #### Docker Sandbox Failures
+
 **Symptoms**: Commands fail to execute in sandbox
 **Solution**:
+
 1. Check Docker daemon status: `docker ps`
 2. Verify container permissions: `docker run hello-world`
 3. Check resource limits: `docker stats`
 4. Ensure sufficient system resources
 
 #### Authentication Problems
+
 **Symptoms**: Sign-in fails or redirects loop
 **Solution**:
+
 1. Verify GitHub OAuth credentials in `.env`
 2. Check `NEXTAUTH_URL` configuration
 3. Ensure `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` are correct
 
 #### Build Failures
+
 **Symptoms**: `pnpm build` fails with type errors
 **Solution**:
+
 1. Run `pnpm type-check` to identify errors
 2. Verify all dependencies are installed
 3. Check `tsconfig.json` configurations
 
 ### Diagnostic Commands
+
 ```bash
 # Check running containers
 docker ps
@@ -420,18 +454,21 @@ pnpm --filter @repo/web dev
 ## 📞 Support & Resources
 
 ### Documentation
+
 - [README.md](./README.md) - Project overview and setup
 - [ROADMAP.md](./docs/ROADMAP.md) - Project direction and priorities
 - [API_CREDENTIALS_SETUP.md](./docs/API_CREDENTIALS_SETUP.md) - API configuration guide
 - [DOCKER_SANDBOX.md](./docs/DOCKER_SANDBOX.md) - Docker sandbox configuration
 
 ### Contributing
+
 - Follow the existing code style
 - Write tests for new features
 - Update documentation for API changes
 - Submit pull requests with clear descriptions
 
 ### Versioning
+
 - Use semantic versioning (major.minor.patch)
 - Update CHANGELOG.md with each release
 - Tag releases in git: `git tag v1.x.x`
@@ -444,5 +481,5 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 
 ---
 
-*Last Updated: November 17, 2025*
-*Version: 2.0.0*
+_Last Updated: November 17, 2025_
+_Version: 2.0.0_

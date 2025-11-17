@@ -19,12 +19,14 @@ These files are intentionally kept in the root directory for easy access:
 All other documentation has been organized into logical categories within the [`docs/`](docs/) directory:
 
 ### [Docker & Infrastructure](docs/docker/)
+
 - [DOCKER_QUICKREF.md](docs/docker/DOCKER_QUICKREF.md) - Docker quick reference
 - [DOCKER_SANDBOX.md](docs/docker/DOCKER_SANDBOX.md) - Docker sandbox configuration
 - [MULTI_AGENT_DOCKER.md](docs/docker/MULTI_AGENT_DOCKER.md) - Multi-agent Docker setup
 - [WSL_DOCKER_SETUP.md](docs/docker/WSL_DOCKER_SETUP.md) - WSL Docker setup guide
 
 ### [Docker OSS Stack](docs/docker-oss/)
+
 - [DOCKER_OSS.md](docs/docker-oss/DOCKER_OSS.md) - Main Docker OSS documentation
 - [DOCKER_OSS_REVIEW.md](docs/docker-oss/DOCKER_OSS_REVIEW.md) - Complete Docker & OSS analysis
 - [DOCKER_OSS_IMPLEMENTATION.md](docs/docker-oss/DOCKER_OSS_IMPLEMENTATION.md) - Implementation guide
@@ -32,14 +34,17 @@ All other documentation has been organized into logical categories within the [`
 - [DOCKER_OSS_SUMMARY.md](docs/docker-oss/DOCKER_OSS_SUMMARY.md) - Executive summary
 
 ### [AI & Machine Learning](docs/ai/)
+
 - [OLLAMA_INTEGRATION.md](docs/ai/OLLAMA_INTEGRATION.md) - Ollama integration guide
 
 ### [AI Agents](docs/ai-agents/)
+
 - [AGENTS_USAGE_GUIDE.md](docs/ai-agents/AGENTS_USAGE_GUIDE.md) - AI agents usage guide
 - [SPECIALIST_AGENTS.md](docs/ai-agents/SPECIALIST_AGENTS.md) - Specialist agents documentation
 - [SPECIALIST_AGENT_SQUADS.md](docs/ai-agents/SPECIALIST_AGENT_SQUADS.md) - Agent squads documentation
 
 ### [Development Resources](docs/development/)
+
 - [TUTORIAL.md](docs/development/TUTORIAL.md) - Step-by-step tutorial
 - [EXAMPLES.md](docs/development/EXAMPLES.md) - Usage examples
 - [IMPLEMENTATION_COMPLETE.md](docs/development/IMPLEMENTATION_COMPLETE.md) - Implementation completion
@@ -48,16 +53,19 @@ All other documentation has been organized into logical categories within the [`
 - [PROMETHEUS_METRICS.md](docs/development/PROMETHEUS_METRICS.md) - Prometheus metrics configuration
 
 ### [Project Management](docs/process/)
+
 - [IMPLEMENTATION_CHECKLIST.md](docs/process/IMPLEMENTATION_CHECKLIST.md) - Implementation checklist
 - [ISSUES_TRACKER.md](docs/process/ISSUES_TRACKER.md) - Issues tracking
 - [PRIORITY_TASKS.md](docs/process/PRIORITY_TASKS.md) - Priority tasks for performance
 - [PROJECT_STATUS.md](docs/process/PROJECT_STATUS.md) - Project status tracking
 
 ### [Code Review & Analysis](docs/process/)
+
 - [CODE_REVIEW.md](docs/process/CODE_REVIEW.md) - Code review findings
 - [PRODUCTION_COVERAGE_360.md](docs/process/PRODUCTION_COVERAGE_360.md) - Production coverage analysis
 
 ### [General Documentation](docs/general/)
+
 - [API_CREDENTIALS_SETUP.md](docs/general/API_CREDENTIALS_SETUP.md) - API credential configuration
 - [GITHUB_ISSUES_SETUP.md](docs/general/GITHUB_ISSUES_SETUP.md) - GitHub issues configuration
 - [GITHUB_OAUTH_SETUP.md](docs/general/GITHUB_OAUTH_SETUP.md) - GitHub OAuth setup

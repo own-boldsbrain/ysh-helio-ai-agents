@@ -10,6 +10,7 @@
 ## 📋 ISSUE TAXONOMY
 
 ### Categories
+
 - **Infrastructure** (8 issues)
 - **Observability** (6 issues)
 - **Security** (7 issues)
@@ -22,6 +23,7 @@
 ## 🔴 CRITICAL ISSUES (8)
 
 ### INF-001: Centralized Logging System (Loki)
+
 **Status**: 🔴 Not Implemented  
 **Priority**: Critical  
 **Category**: Infrastructure  
@@ -30,12 +32,14 @@
 
 **Description**:
 The system runs 32 concurrent Docker containers but has no centralized logging solution. Each agent logs locally, making it impossible to:
+
 - Correlate logs across agents
 - Search logs by request ID or user
 - Retain logs beyond container lifetime
 - Alert on patterns across all agents
 
 **Requirements**:
+
 - [ ] Deploy Loki container to docker-compose
 - [ ] Configure Promtail for log shipping
 - [ ] Add Grafana Loki datasource
@@ -44,6 +48,7 @@ The system runs 32 concurrent Docker containers but has no centralized logging s
 - [ ] Document log query syntax
 
 **Acceptance Criteria**:
+
 - ✅ Logs visible in Grafana Explore
 - ✅ Can filter logs by container
 - ✅ Can search across all agents
@@ -56,6 +61,7 @@ The system runs 32 concurrent Docker containers but has no centralized logging s
 ---
 
 ### INF-002: Automated Database Backups
+
 **Status**: 🔴 Not Implemented  
 **Priority**: Critical  
 **Category**: Infrastructure  
@@ -64,12 +70,14 @@ The system runs 32 concurrent Docker containers but has no centralized logging s
 
 **Description**:
 PostgreSQL runs without automated backups. If the database is corrupted or deleted:
+
 - Complete data loss (tasks, agents, configuration)
 - No recovery path
 - No disaster recovery site
 - Business continuity impossible
 
 **Requirements**:
+
 - [ ] Create backup service in Docker Compose
 - [ ] Implement pg_dump scheduled backups (daily + hourly)
 - [ ] Configure S3 storage for backups
@@ -79,6 +87,7 @@ PostgreSQL runs without automated backups. If the database is corrupted or delet
 - [ ] Document recovery procedures
 
 **Acceptance Criteria**:
+
 - ✅ Automated daily backup at 02:00 UTC
 - ✅ Hourly incremental backups
 - ✅ Backups stored in S3
@@ -92,6 +101,7 @@ PostgreSQL runs without automated backups. If the database is corrupted or delet
 ---
 
 ### INF-003: Disaster Recovery Plan
+
 **Status**: 🔴 Not Implemented  
 **Priority**: Critical  
 **Category**: Infrastructure  
@@ -100,12 +110,14 @@ PostgreSQL runs without automated backups. If the database is corrupted or delet
 
 **Description**:
 No documented disaster recovery procedures for:
+
 - Database corruption
 - Disk failure
 - Network partition
 - Complete infrastructure loss
 
 **Requirements**:
+
 - [ ] Document RTO/RPO targets
 - [ ] Create backup verification playbook
 - [ ] Create restore procedure
@@ -115,6 +127,7 @@ No documented disaster recovery procedures for:
 - [ ] Create incident response guide
 
 **Acceptance Criteria**:
+
 - ✅ RTO: 1 hour
 - ✅ RPO: 1 hour
 - ✅ Recovery tested monthly
@@ -127,6 +140,7 @@ No documented disaster recovery procedures for:
 ---
 
 ### OBS-001: Distributed Tracing (Jaeger)
+
 **Status**: 🔴 Not Implemented  
 **Priority**: Critical  
 **Category**: Observability  
@@ -135,6 +149,7 @@ No documented disaster recovery procedures for:
 
 **Description**:
 No distributed tracing for request flows through:
+
 - Next.js API routes
 - Agent selection logic
 - Database queries
@@ -142,12 +157,14 @@ No distributed tracing for request flows through:
 - External API calls
 
 Makes it impossible to:
+
 - Debug slow requests
 - Understand latency distribution
 - Identify bottlenecks
 - Track request context through system
 
 **Requirements**:
+
 - [ ] Deploy Jaeger all-in-one
 - [ ] Add OpenTelemetry SDK to Next.js
 - [ ] Instrument database layer
@@ -157,6 +174,7 @@ Makes it impossible to:
 - [ ] Configure retention
 
 **Acceptance Criteria**:
+
 - ✅ Jaeger UI accessible
 - ✅ Traces visible for all requests
 - ✅ 100% sampling in dev, 10% in prod
@@ -169,6 +187,7 @@ Makes it impossible to:
 ---
 
 ### SEC-001: Redis Authentication & Encryption
+
 **Status**: 🟠 Partial  
 **Priority**: Critical  
 **Category**: Security  
@@ -177,6 +196,7 @@ Makes it impossible to:
 
 **Description**:
 Redis runs without authentication or encryption:
+
 ```yaml
 # CURRENT (INSECURE)
 redis:
@@ -187,12 +207,14 @@ redis:
 ```
 
 Risks:
+
 - Session hijacking (Redis contains session tokens)
 - Cache poisoning (Cached agent responses)
 - Task manipulation (Queue contains tasks)
 - Denial of service (Can flush all data)
 
 **Requirements**:
+
 - [ ] Add `requirepass` with strong password
 - [ ] Enable TLS encryption
 - [ ] Create Redis ACL rules
@@ -202,6 +224,7 @@ Risks:
 - [ ] Document security configuration
 
 **Acceptance Criteria**:
+
 - ✅ Redis requires authentication
 - ✅ All connections over TLS
 - ✅ ACL roles configured
@@ -214,6 +237,7 @@ Risks:
 ---
 
 ### SEC-002: PostgreSQL Restricted User
+
 **Status**: 🟠 Partial  
 **Priority**: Critical  
 **Category**: Security  
@@ -222,6 +246,7 @@ Risks:
 
 **Description**:
 Application connects to PostgreSQL as superuser:
+
 ```sql
 -- CURRENT (INSECURE)
 POSTGRES_USER=postgres  -- Full superuser privileges
@@ -230,12 +255,14 @@ POSTGRES_USER=postgres  -- Full superuser privileges
 ```
 
 Risks:
+
 - One compromised connection = full database access
 - No audit trail separation
 - Violates principle of least privilege
 - Regulatory non-compliance
 
 **Requirements**:
+
 - [ ] Create restricted app_user role
 - [ ] Grant only necessary permissions
 - [ ] Enable row-level security (RLS)
@@ -245,6 +272,7 @@ Risks:
 - [ ] Document security model
 
 **Acceptance Criteria**:
+
 - ✅ App connects as non-superuser
 - ✅ User has only DML permissions
 - ✅ RLS policies enforced
@@ -257,6 +285,7 @@ Risks:
 ---
 
 ### SEC-003: OWASP Top 10 Compliance
+
 **Status**: 🔴 Not Implemented  
 **Priority**: Critical  
 **Category**: Security  
@@ -265,6 +294,7 @@ Risks:
 
 **Description**:
 No comprehensive OWASP Top 10 coverage:
+
 - [ ] A1: Injection attacks
 - [ ] A2: Broken authentication
 - [ ] A3: Sensitive data exposure
@@ -277,6 +307,7 @@ No comprehensive OWASP Top 10 coverage:
 - [ ] A10: Insufficient logging & monitoring
 
 **Requirements**:
+
 - [ ] Implement OWASP Top 10 checklist
 - [ ] Add security scanning to CI/CD
 - [ ] Add dependency vulnerability scanning
@@ -288,6 +319,7 @@ No comprehensive OWASP Top 10 coverage:
 - [ ] Enable security logging
 
 **Acceptance Criteria**:
+
 - ✅ All OWASP items addressed
 - ✅ Security scanning in CI/CD
 - ✅ No critical vulnerabilities
@@ -300,6 +332,7 @@ No comprehensive OWASP Top 10 coverage:
 ---
 
 ### TEST-001: E2E Test Coverage (<5% Current)
+
 **Status**: 🔴 Insufficient  
 **Priority**: Critical  
 **Category**: Testing  
@@ -308,6 +341,7 @@ No comprehensive OWASP Top 10 coverage:
 
 **Description**:
 E2E tests cover <5% of critical user paths:
+
 - No tests for agent task creation
 - No tests for sandbox execution
 - No tests for code generation flow
@@ -315,6 +349,7 @@ E2E tests cover <5% of critical user paths:
 - No tests for multi-agent scenarios
 
 **Requirements**:
+
 - [ ] Create test suite for 20+ critical paths
 - [ ] Test agent task lifecycle
 - [ ] Test sandbox creation/cleanup
@@ -325,6 +360,7 @@ E2E tests cover <5% of critical user paths:
 - [ ] Add accessibility tests
 
 **Acceptance Criteria**:
+
 - ✅ 40%+ E2E test coverage
 - ✅ 20 critical paths tested
 - ✅ <500ms test execution per path
@@ -339,6 +375,7 @@ E2E tests cover <5% of critical user paths:
 ## 🟠 HIGH PRIORITY ISSUES (12)
 
 ### OBS-002: Prometheus Alerting Rules
+
 **Status**: 🟠 Partial  
 **Priority**: High  
 **Category**: Observability  
@@ -347,6 +384,7 @@ E2E tests cover <5% of critical user paths:
 
 **Description**:
 Prometheus metrics collected but no alert rules configured for:
+
 - High error rates
 - High latency
 - Memory pressure
@@ -356,6 +394,7 @@ Prometheus metrics collected but no alert rules configured for:
 - Redis eviction rate
 
 **Requirements**:
+
 - [ ] Create alert rules for all metrics
 - [ ] Configure alert severity levels
 - [ ] Integrate with alerting service
@@ -365,6 +404,7 @@ Prometheus metrics collected but no alert rules configured for:
 - [ ] Add escalation policies
 
 **Acceptance Criteria**:
+
 - ✅ Alerts fire within 1 minute of issue
 - ✅ 15+ critical alerts configured
 - ✅ Runbooks for each alert
@@ -377,6 +417,7 @@ Prometheus metrics collected but no alert rules configured for:
 ---
 
 ### OBS-003: Log Aggregation Query Language
+
 **Status**: 🟠 Partial  
 **Priority**: High  
 **Category**: Observability  
@@ -385,6 +426,7 @@ Prometheus metrics collected but no alert rules configured for:
 
 **Description**:
 Once Loki is deployed, need standardized query patterns:
+
 - Query by request ID
 - Query by agent ID
 - Query by error type
@@ -392,6 +434,7 @@ Once Loki is deployed, need standardized query patterns:
 - Query by user action
 
 **Requirements**:
+
 - [ ] Create saved queries in Grafana
 - [ ] Document query syntax
 - [ ] Create query templates
@@ -400,6 +443,7 @@ Once Loki is deployed, need standardized query patterns:
 - [ ] Create runbook queries
 
 **Acceptance Criteria**:
+
 - ✅ 10+ saved queries
 - ✅ Queries execute <100ms
 - ✅ Team trained
@@ -411,6 +455,7 @@ Once Loki is deployed, need standardized query patterns:
 ---
 
 ### INF-004: Nginx Rate Limiting Configuration
+
 **Status**: 🟠 Partial  
 **Priority**: High  
 **Category**: Infrastructure  
@@ -419,6 +464,7 @@ Once Loki is deployed, need standardized query patterns:
 
 **Description**:
 Nginx is configured but rate limiting rules are minimal:
+
 - No per-IP limits
 - No per-user limits
 - No per-endpoint limits
@@ -426,6 +472,7 @@ Nginx is configured but rate limiting rules are minimal:
 - No DDoS protection
 
 **Requirements**:
+
 - [ ] Configure per-IP rate limits
 - [ ] Configure per-user rate limits
 - [ ] Configure per-endpoint limits
@@ -435,6 +482,7 @@ Nginx is configured but rate limiting rules are minimal:
 - [ ] Add monitoring
 
 **Acceptance Criteria**:
+
 - ✅ Rate limits enforced
 - ✅ Burst requests handled
 - ✅ No false positives
@@ -447,6 +495,7 @@ Nginx is configured but rate limiting rules are minimal:
 ---
 
 ### SEC-004: Container Image Scanning
+
 **Status**: 🔴 Not Implemented  
 **Priority**: High  
 **Category**: Security  
@@ -455,12 +504,14 @@ Nginx is configured but rate limiting rules are minimal:
 
 **Description**:
 Docker images built without vulnerability scanning:
+
 - Base images may contain CVEs
 - Dependencies may be outdated
 - No image signature verification
 - No attestation
 
 **Requirements**:
+
 - [ ] Integrate Trivy for image scanning
 - [ ] Scan on build
 - [ ] Block deployment of vulnerable images
@@ -470,6 +521,7 @@ Docker images built without vulnerability scanning:
 - [ ] Schedule daily rescans
 
 **Acceptance Criteria**:
+
 - ✅ Images scanned before push
 - ✅ No critical CVEs in images
 - ✅ Images signed
@@ -482,6 +534,7 @@ Docker images built without vulnerability scanning:
 ---
 
 ### SEC-005: API Input Validation
+
 **Status**: 🟡 Partial  
 **Priority**: High  
 **Category**: Security  
@@ -490,6 +543,7 @@ Docker images built without vulnerability scanning:
 
 **Description**:
 Input validation incomplete:
+
 - [ ] Request body size limits
 - [ ] Request timeout limits
 - [ ] File upload validation
@@ -499,6 +553,7 @@ Input validation incomplete:
 - [ ] Buffer overflow prevention
 
 **Requirements**:
+
 - [ ] Add comprehensive validation middleware
 - [ ] Validate all inputs
 - [ ] Sanitize before database
@@ -508,6 +563,7 @@ Input validation incomplete:
 - [ ] Add input logging (sanitized)
 
 **Acceptance Criteria**:
+
 - ✅ All endpoints validated
 - ✅ No injection vulnerabilities
 - ✅ Clear error messages
@@ -520,6 +576,7 @@ Input validation incomplete:
 ---
 
 ### TEST-002: Integration Test Coverage (<5% Current)
+
 **Status**: 🔴 Insufficient  
 **Priority**: High  
 **Category**: Testing  
@@ -528,6 +585,7 @@ Input validation incomplete:
 
 **Description**:
 Integration tests missing for:
+
 - Agent + Database interactions
 - Agent + Cache interactions
 - Agent + Message queue
@@ -536,6 +594,7 @@ Integration tests missing for:
 - Error propagation
 
 **Requirements**:
+
 - [ ] Create integration test suite
 - [ ] Test agent + database
 - [ ] Test agent + cache
@@ -545,6 +604,7 @@ Integration tests missing for:
 - [ ] Add performance assertions
 
 **Acceptance Criteria**:
+
 - ✅ 60%+ integration test coverage
 - ✅ All critical paths tested
 - ✅ Failure scenarios covered
@@ -557,6 +617,7 @@ Integration tests missing for:
 ---
 
 ### TEST-003: Load Testing Suite
+
 **Status**: 🔴 Not Implemented  
 **Priority**: High  
 **Category**: Testing  
@@ -565,6 +626,7 @@ Integration tests missing for:
 
 **Description**:
 No load testing for:
+
 - 32 concurrent agents
 - Database connection limits
 - Redis memory limits
@@ -573,6 +635,7 @@ No load testing for:
 - Network bandwidth limits
 
 **Requirements**:
+
 - [ ] Create load test suite (k6 or Locust)
 - [ ] Test agent creation at scale
 - [ ] Test database queries at scale
@@ -582,6 +645,7 @@ No load testing for:
 - [ ] Create performance baselines
 
 **Acceptance Criteria**:
+
 - ✅ Can sustain 100+ concurrent users
 - ✅ P95 latency <500ms
 - ✅ Database pool not exhausted
@@ -594,6 +658,7 @@ No load testing for:
 ---
 
 ### DOC-001: Deployment Troubleshooting Guide
+
 **Status**: 🔴 Not Implemented  
 **Priority**: High  
 **Category**: Documentation  
@@ -602,6 +667,7 @@ No load testing for:
 
 **Description**:
 No troubleshooting guide for common issues:
+
 - Docker Compose startup failures
 - Database connection failures
 - Agent startup failures
@@ -609,6 +675,7 @@ No troubleshooting guide for common issues:
 - Network port conflicts
 
 **Requirements**:
+
 - [ ] Document common errors
 - [ ] Create debugging procedures
 - [ ] Add command reference
@@ -617,6 +684,7 @@ No troubleshooting guide for common issues:
 - [ ] Document recovery steps
 
 **Acceptance Criteria**:
+
 - ✅ 20+ common issues documented
 - ✅ Each with resolution steps
 - ✅ Decision trees for diagnosis
@@ -628,6 +696,7 @@ No troubleshooting guide for common issues:
 ---
 
 ### DOC-002: API Endpoint Reference
+
 **Status**: 🔴 Not Implemented  
 **Priority**: High  
 **Category**: Documentation  
@@ -636,6 +705,7 @@ No troubleshooting guide for common issues:
 
 **Description**:
 No comprehensive API documentation:
+
 - [ ] Endpoint list
 - [ ] Request/response schemas
 - [ ] Authentication details
@@ -645,6 +715,7 @@ No comprehensive API documentation:
 - [ ] Code samples
 
 **Requirements**:
+
 - [ ] Create OpenAPI/Swagger schema
 - [ ] Document all endpoints
 - [ ] Add request examples
@@ -654,6 +725,7 @@ No comprehensive API documentation:
 - [ ] Add SDK examples
 
 **Acceptance Criteria**:
+
 - ✅ All endpoints documented
 - ✅ OpenAPI schema valid
 - ✅ Examples executable
@@ -667,6 +739,7 @@ No comprehensive API documentation:
 ## 🟡 MEDIUM PRIORITY ISSUES (8)
 
 ### PERF-001: Database Query Optimization
+
 **Status**: 🟡 Partial  
 **Priority**: Medium  
 **Category**: Performance  
@@ -675,12 +748,14 @@ No comprehensive API documentation:
 
 **Description**:
 Database queries not fully optimized:
+
 - Missing indexes on common queries
 - N+1 queries in some endpoints
 - No query result caching
 - No query timeout protection
 
 **Requirements**:
+
 - [ ] Profile slow queries
 - [ ] Create missing indexes
 - [ ] Eliminate N+1 queries
@@ -689,6 +764,7 @@ Database queries not fully optimized:
 - [ ] Add query performance monitoring
 
 **Acceptance Criteria**:
+
 - ✅ P95 query time <50ms
 - ✅ No slow query logs
 - ✅ Cache hit rate >80%
@@ -700,6 +776,7 @@ Database queries not fully optimized:
 ---
 
 ### PERF-002: Build Time Optimization
+
 **Status**: 🟡 Partial  
 **Priority**: Medium  
 **Category**: Performance  
@@ -708,12 +785,14 @@ Database queries not fully optimized:
 
 **Description**:
 Build time currently ~45s, target <30s:
+
 - Unused dependencies
 - Large bundle
 - Turbo cache not optimal
 - Code splitting opportunities
 
 **Requirements**:
+
 - [ ] Analyze bundle size
 - [ ] Remove unused dependencies
 - [ ] Optimize code splitting
@@ -722,6 +801,7 @@ Build time currently ~45s, target <30s:
 - [ ] Add build metrics
 
 **Acceptance Criteria**:
+
 - ✅ Build time <30s
 - ✅ Bundle size <2MB
 - ✅ Cache hit rate >80%
@@ -733,6 +813,7 @@ Build time currently ~45s, target <30s:
 ---
 
 ### PERF-003: Agent Latency Reduction
+
 **Status**: 🟡 Partial  
 **Priority**: Medium  
 **Category**: Performance  
@@ -741,12 +822,14 @@ Build time currently ~45s, target <30s:
 
 **Description**:
 Agent creation latency currently ~2.5s, target <1.5s:
+
 - Container startup time
 - Model loading time
 - Cache warmup time
 - Network initialization
 
 **Requirements**:
+
 - [ ] Profile agent startup
 - [ ] Pre-warm models
 - [ ] Optimize container images
@@ -755,6 +838,7 @@ Agent creation latency currently ~2.5s, target <1.5s:
 - [ ] Monitor startup metrics
 
 **Acceptance Criteria**:
+
 - ✅ Agent latency <1.5s
 - ✅ P95 latency <2s
 - ✅ Startup metrics tracked
@@ -766,6 +850,7 @@ Agent creation latency currently ~2.5s, target <1.5s:
 ---
 
 ### INF-005: Kubernetes Migration Path
+
 **Status**: 🔴 Not Implemented  
 **Priority**: Medium  
 **Category**: Infrastructure  
@@ -774,6 +859,7 @@ Agent creation latency currently ~2.5s, target <1.5s:
 
 **Description**:
 Currently Docker Compose only:
+
 - No multi-node deployment
 - No auto-scaling
 - No rolling updates
@@ -781,6 +867,7 @@ Currently Docker Compose only:
 - No resource management
 
 **Requirements**:
+
 - [ ] Create Kubernetes manifests
 - [ ] Add Helm charts
 - [ ] Configure auto-scaling
@@ -790,6 +877,7 @@ Currently Docker Compose only:
 - [ ] Document K8s setup
 
 **Acceptance Criteria**:
+
 - ✅ K8s manifests functional
 - ✅ Auto-scaling working
 - ✅ Rolling updates tested
@@ -801,6 +889,7 @@ Currently Docker Compose only:
 ---
 
 ### INF-006: Multi-Region Support
+
 **Status**: 🔴 Not Implemented  
 **Priority**: Medium  
 **Category**: Infrastructure  
@@ -809,12 +898,14 @@ Currently Docker Compose only:
 
 **Description**:
 Single region deployment only:
+
 - No cross-region replication
 - No geo-distributed failover
 - No low-latency regional access
 - No disaster recovery site
 
 **Requirements**:
+
 - [ ] Design multi-region architecture
 - [ ] Implement cross-region replication
 - [ ] Add global load balancer
@@ -823,6 +914,7 @@ Single region deployment only:
 - [ ] Document multi-region ops
 
 **Acceptance Criteria**:
+
 - ✅ Multi-region deployment works
 - ✅ Failover automatic
 - ✅ RPO: 1 hour
@@ -834,6 +926,7 @@ Single region deployment only:
 ---
 
 ### SEC-006: Secrets Management
+
 **Status**: 🟡 Partial  
 **Priority**: Medium  
 **Category**: Security  
@@ -842,6 +935,7 @@ Single region deployment only:
 
 **Description**:
 Secrets managed via .env files:
+
 - No encryption
 - No rotation policy
 - No audit trail
@@ -849,6 +943,7 @@ Secrets managed via .env files:
 - No secret scanning
 
 **Requirements**:
+
 - [ ] Integrate HashiCorp Vault or AWS Secrets Manager
 - [ ] Implement secret rotation
 - [ ] Enable audit logging
@@ -857,6 +952,7 @@ Secrets managed via .env files:
 - [ ] Document secret management
 
 **Acceptance Criteria**:
+
 - ✅ Secrets encrypted at rest
 - ✅ Rotation policy enforced
 - ✅ Audit trail available
@@ -868,6 +964,7 @@ Secrets managed via .env files:
 ---
 
 ### SEC-007: Compliance Documentation
+
 **Status**: 🔴 Not Implemented  
 **Priority**: Medium  
 **Category**: Security  
@@ -876,12 +973,14 @@ Secrets managed via .env files:
 
 **Description**:
 No compliance documentation for:
+
 - GDPR (data privacy)
 - SOC 2 (security controls)
 - ISO 27001 (information security)
 - HIPAA (if healthcare data)
 
 **Requirements**:
+
 - [ ] Document data handling
 - [ ] Document access controls
 - [ ] Document encryption
@@ -890,6 +989,7 @@ No compliance documentation for:
 - [ ] Create compliance matrix
 
 **Acceptance Criteria**:
+
 - ✅ Compliance matrix complete
 - ✅ All controls documented
 - ✅ Evidence gathered
@@ -903,6 +1003,7 @@ No compliance documentation for:
 ## 🔵 LOW PRIORITY ISSUES (4)
 
 ### DOC-003: Performance Tuning Guide
+
 **Status**: 🔴 Not Implemented  
 **Priority**: Low  
 **Category**: Documentation  
@@ -910,6 +1011,7 @@ No compliance documentation for:
 **Impact**: Operators cannot optimize system
 
 **Requirements**:
+
 - [ ] Document tunable parameters
 - [ ] Create baseline performance profiles
 - [ ] Document scaling strategies
@@ -918,6 +1020,7 @@ No compliance documentation for:
 ---
 
 ### DOC-004: Database Schema Documentation
+
 **Status**: 🔴 Not Implemented  
 **Priority**: Low  
 **Category**: Documentation  
@@ -925,6 +1028,7 @@ No compliance documentation for:
 **Impact**: Developer onboarding slow
 
 **Requirements**:
+
 - [ ] Document all tables
 - [ ] Document all relationships
 - [ ] Add schema diagrams
@@ -934,6 +1038,7 @@ No compliance documentation for:
 ---
 
 ### OPS-001: Backup Restoration Testing
+
 **Status**: 🟡 Partial  
 **Priority**: Low  
 **Category**: Operations  
@@ -941,6 +1046,7 @@ No compliance documentation for:
 **Impact**: Backups may not restore
 
 **Requirements**:
+
 - [ ] Automate backup testing
 - [ ] Verify restoration monthly
 - [ ] Document restoration procedures
@@ -949,6 +1055,7 @@ No compliance documentation for:
 ---
 
 ### OPS-002: Cost Optimization
+
 **Status**: 🟡 Partial  
 **Priority**: Low  
 **Category**: Operations  
@@ -956,6 +1063,7 @@ No compliance documentation for:
 **Impact**: Unnecessary cloud spend
 
 **Requirements**:
+
 - [ ] Analyze resource utilization
 - [ ] Right-size containers
 - [ ] Implement auto-shutdown
@@ -967,8 +1075,8 @@ No compliance documentation for:
 
 ### By Effort
 
-| 1 Day | 2 Days | 3 Days | 5+ Days |
-|-------|--------|--------|---------|
+| 1 Day    | 2 Days    | 3 Days   | 5+ Days  |
+| -------- | --------- | -------- | -------- |
 | 6 issues | 11 issues | 8 issues | 7 issues |
 
 ### By Priority vs Impact
@@ -1011,24 +1119,28 @@ Documentation (2)   ██░░░░░░░░░░░░░░░░░░
 ## 🎯 RECOMMENDED IMPLEMENTATION ORDER
 
 ### Week 1 (Critical Path)
+
 1. INF-001: Centralized Logging (Loki)
 2. INF-002: Database Backups
 3. SEC-001: Redis Authentication
 4. SEC-002: PostgreSQL Restricted User
 
 ### Week 2
+
 5. OBS-001: Jaeger Tracing
 6. TEST-001: E2E Test Coverage
 7. SEC-003: OWASP Top 10 Compliance
 8. DOC-001: Deployment Troubleshooting
 
 ### Week 3
+
 9. TEST-002: Integration Tests
 10. TEST-003: Load Testing
 11. INF-004: Nginx Rate Limiting
 12. SEC-004: Container Image Scanning
 
 ### Week 4+
+
 13. PERF-001: Database Optimization
 14. PERF-002: Build Optimization
 15. PERF-003: Agent Latency
@@ -1039,24 +1151,28 @@ Documentation (2)   ██░░░░░░░░░░░░░░░░░░
 ## 💡 IMPLEMENTATION TIPS
 
 ### For Infrastructure Issues
+
 - Use infrastructure-as-code (Terraform/Pulumi)
 - Automate configuration
 - Test disaster recovery monthly
 - Monitor backup success rate
 
 ### For Security Issues
+
 - Run OWASP ZAP for DAST
 - Use Snyk for dependency scanning
 - Implement GitOps for secrets
 - Regular penetration testing
 
 ### For Testing Issues
+
 - Start with critical paths
 - Use property-based testing
 - Implement chaos engineering
 - Track test coverage trends
 
 ### For Observability Issues
+
 - Use structured logging (JSON)
 - Add request IDs everywhere
 - Correlate metrics with traces

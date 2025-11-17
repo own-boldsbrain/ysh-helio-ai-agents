@@ -79,7 +79,7 @@ O script cria uma **amostra representativa** das 192 issues documentadas em `PRO
 - P1-002: Replace console.log with Pino logger
 - P1-011: Implement Prometheus metrics
 - P1-031: Implement Jaeger distributed tracing
-- + Logging para diferentes módulos
+- - Logging para diferentes módulos
 
 ### Phase 2: Core Infrastructure
 
@@ -87,7 +87,7 @@ O script cria uma **amostra representativa** das 192 issues documentadas em `PRO
 - P2-002: Implement timeout handling
 - P2-045: Implement database transactions
 - P2-051: Implement automated database backups
-- + Resource limits, garbage collection
+- - Resource limits, garbage collection
 
 ### Phase 3: Security & Compliance
 
@@ -135,6 +135,7 @@ export GITHUB_TOKEN="ghp_xxxxx"
 ### Error: Permission denied
 
 Verifique se seu token tem as permissões corretas:
+
 - `repo` (full control)
 - `workflow`
 
@@ -153,7 +154,6 @@ Após criar as issues:
 1. **Organize no GitHub Projects**
    - Criar board Kanban
    - Adicionar campos customizados (Effort, Status)
-   
 2. **Assign Issues**
    - Distribuir entre equipe
    - Priorizar Phase 0 (bloqueadores)

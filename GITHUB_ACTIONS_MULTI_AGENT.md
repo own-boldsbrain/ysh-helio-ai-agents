@@ -20,7 +20,7 @@ on:
   pull_request:
     branches: [main]
   schedule:
-    - cron: '0 2 * * 1'  # Weekly comprehensive tests
+    - cron: '0 2 * * 1' # Weekly comprehensive tests
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -36,34 +36,34 @@ jobs:
         test-suite: [basic, performance, stress]
       fail-fast: false
     timeout-minutes: 60
-    
+
     env:
       # Use different environments for different test types
       TEST_SUITE: ${{ matrix.test-suite }}
       AGENT_TYPE: ${{ matrix.agent }}
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'pnpm'
-          
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9.15.0
-          
+
       - name: Install dependencies
         run: pnpm install
-        
+
       - name: Start test database
         run: |
           docker-compose -f docker-compose.test.yml up -d postgres
           sleep 10
-          
+
       - name: Run AI agent tests
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -89,15 +89,15 @@ jobs:
   test-docker-sandboxes:
     runs-on: ubuntu-latest
     timeout-minutes: 45
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
           driver-opts: network=host
-        
+
       - name: Build sandbox images
         uses: docker/build-push-action@v6
         with:
@@ -106,7 +106,7 @@ jobs:
           tags: coding-agent-sandbox:test
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          
+
       - name: Test sandbox performance
         run: |
           # Test sandbox creation performance
@@ -118,7 +118,7 @@ jobs:
             }
             console.timeEnd('Sandbox Creation');
           "
-          
+
       - name: Memory usage test
         run: |
           docker run --memory=2g --cpus=2 --rm coding-agent-sandbox:test \
@@ -134,7 +134,7 @@ name: Production Deploy with Agent Scaling
 on:
   push:
     tags:
-      - 'v*.*.*'  # Deploy on version tags
+      - 'v*.*.*' # Deploy on version tags
   workflow_dispatch:
     inputs:
       agent-count:
@@ -143,10 +143,10 @@ on:
         default: '16'
         type: choice
         options:
-        - '8'
-        - '16'
-        - '32'
-        - '64'
+          - '8'
+          - '16'
+          - '32'
+          - '64'
 
 env:
   NODE_VERSION: '22'
@@ -160,7 +160,7 @@ jobs:
       should-deploy: ${{ steps.validation.outputs.result }}
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Validate code
         id: validation
         run: |
@@ -178,21 +178,21 @@ jobs:
     if: needs.validate.outputs.should-deploy == 'true'
     runs-on: ubuntu-latest
     environment: production
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: ${{ env.PNPM_VERSION }}
-          
+
       - name: Migrate database
         env:
           DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
         run: |
           pnpm dlx drizzle-kit push
-          
+
       - name: Verify database health
         env:
           DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
@@ -211,10 +211,10 @@ jobs:
     strategy:
       matrix:
         agent-type: ['claude', 'gpt-4', 'gemini', 'groq', 'ollama']
-        instance: [1, 2, 3, 4]  # 4 instances of each agent type
+        instance: [1, 2, 3, 4] # 4 instances of each agent type
       fail-fast: false
     timeout-minutes: 90
-    
+
     steps:
       - name: Deploy agent instance
         uses: appleboy/ssh-action@v1.0.0
@@ -225,11 +225,11 @@ jobs:
           script: |
             # Pull latest images
             docker compose -f docker-compose.multi-agent.yml pull
-            
+
             # Scale agent based on type
             AGENT_COUNT=${{ github.event.inputs.agent-count || '16' }}
             docker compose -f docker-compose.multi-agent.yml up -d --scale agent-${{ matrix.agent-type }}-1=$AGENT_COUNT
-            
+
             # Verify agent health
             docker compose -f docker-compose.multi-agent.yml ps
 
@@ -238,30 +238,30 @@ jobs:
     needs: [validate, deploy-database, deploy-agents]
     runs-on: ubuntu-latest
     environment: production
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-          
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: ${{ env.PNPM_VERSION }}
-          
+
       - name: Install dependencies
         run: pnpm install
-        
+
       - name: Build application
         run: pnpm build
         env:
           NODE_ENV: production
           NEXT_PUBLIC_APP_ENV: production
-          
+
       - name: Deploy to production
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -279,13 +279,13 @@ jobs:
         run: |
           # Test API endpoints
           sleep 30  # Wait for systems to stabilize
-          
+
           # Health check
           curl -f ${{ secrets.PRODUCTION_BASE_URL }}/api/health || exit 1
-          
+
           # Test agent availability
           curl -f ${{ secrets.PRODUCTION_BASE_URL }}/api/agents/status || exit 1
-          
+
           # Check load balancer status
           curl -f ${{ secrets.PRODUCTION_BASE_URL }}/nginx-status || exit 1
 ```
@@ -298,14 +298,14 @@ name: Performance & Resource Monitoring
 
 on:
   schedule:
-    - cron: '*/10 * * * *'  # Every 10 minutes
+    - cron: '*/10 * * * *' # Every 10 minutes
   workflow_dispatch:
 
 jobs:
   monitor:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    
+
     steps:
       - name: Monitor system resources
         run: |
@@ -315,20 +315,20 @@ jobs:
           echo ""
           df -h
           echo ""
-          
+
           # Monitor Docker containers if running
           if command -v docker &> /dev/null; then
             echo "=== Docker Container Status ==="
             docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
           fi
-          
+
           echo "=== GitHub Runner Resources ==="
           echo "CPU Info:"
           lscpu | head -10
           echo ""
           echo "Memory Info:"
           cat /proc/meminfo | head -5
-          
+
       - name: Monitor API Performance
         if: env.PRODUCTION_BASE_URL != ''
         env:
@@ -352,14 +352,14 @@ jobs:
               fi
             done
           fi
-          
+
       - name: Check GitHub API rate limits
         run: |
           # Monitor GitHub API usage
           curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/rate_limit | jq '.rate'
-            
+
       - name: Upload monitoring data
         uses: actions/upload-artifact@v4
         with:
@@ -376,7 +376,7 @@ name: Load Testing & Performance Validation
 
 on:
   schedule:
-    - cron: '0 3 * * 0'  # Weekly at 3 AM on Sunday
+    - cron: '0 3 * * 0' # Weekly at 3 AM on Sunday
   workflow_dispatch:
     inputs:
       duration:
@@ -396,31 +396,31 @@ jobs:
   load-test:
     runs-on: ubuntu-latest
     timeout-minutes: 45
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup load testing tools
         run: |
           # Install autocannon (HTTP load testing)
           npm install -g autocannon
-          
+
           # Install artillery (advanced load testing)
           npm install -g artillery@latest
-          
+
       - name: Run load test
         env:
           TARGET_URL: ${{ secrets.LOAD_TEST_TARGET_URL || 'http://localhost:3000' }}
         run: |
           echo "Running load test for $TEST_DURATION minutes with $CONCURRENCY concurrent users"
-          
+
           # Basic load test with autocannon
           autocannon \
             -c $CONCURRENCY \
             -d $TEST_DURATION \
             -p 10 \
             "$TARGET_URL/api/health" > /tmp/basic-load-test.json
-          
+
           # Advanced test with realistic user scenarios
           cat > /tmp/scenario.yml << 'EOF'
           config:
@@ -451,26 +451,26 @@ jobs:
                 - get:
                     url: "/api/tasks"
           EOF
-          
+
           cat /tmp/scenario.yml
-          
+
       - name: Analyze results
         run: |
           echo "Load test results:"
           cat /tmp/basic-load-test.json
-          
+
           # Extract key metrics
           RESPONSE_TIME=$(cat /tmp/basic-load-test.json | jq '.latency.mean')
           REQUEST_RATE=$(cat /tmp/basic-load-test.json | jq '.requests.average')
           THROUGHPUT=$(cat /tmp/basic-load-test.json | jq '.throughput.average')
-          
+
           echo "Response Time: $RESPONSE_TIME ms"
           echo "Request Rate: $REQUEST_RATE req/sec"
           echo "Throughput: $THROUGHPUT req/sec"
-          
+
           # Store metrics
           echo "$RESPONSE_TIME,$REQUEST_RATE,$THROUGHPUT" > /tmp/metrics.csv
-          
+
       - name: Generate performance report
         run: |
           cat > /tmp/performance-report.md << EOF
@@ -510,7 +510,7 @@ on:
   pull_request:
     branches: [main]
   workflow_run:
-    workflows: ["Multi-Agent Performance Test Suite"]
+    workflows: ['Multi-Agent Performance Test Suite']
     types:
       - completed
 
@@ -537,17 +537,17 @@ jobs:
     strategy:
       matrix:
         test-type: [response-time, error-rate, memory-usage]
-    
+
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-          
+
       - name: Setup test environment
         run: |
           # Set up test infrastructure
           echo "Setting up test environment..."
-          
+
       - name: Run ${{ matrix.test-type }} test
         run: |
           # Run specific performance test
@@ -572,22 +572,22 @@ jobs:
     runs-on: ubuntu-latest
     needs: [performance-test-pr, performance-baseline]
     if: github.event_name == 'pull_request'
-    
+
     steps:
       - name: Compare performance metrics
         run: |
           # This would run after both jobs complete
           # Compare current PR performance with baseline
           echo "Comparing performance metrics..."
-          
+
           # Example comparison logic (in real scenario would be more complex)
           CURRENT_AVG_RESPONSE=140  # Would come from performance-test-pr job
           BASELINE_AVG_RESPONSE=${{ needs.performance-baseline.outputs.baseline-avg-response }}
-          
+
           DIFF_PERCENTAGE=$(echo "scale=2; (($CURRENT_AVG_RESPONSE - $BASELINE_AVG_RESPONSE) / $BASELINE_AVG_RESPONSE) * 100" | bc)
-          
+
           echo "Average Response Time Change: $DIFF_PERCENTAGE%"
-          
+
           if (( $(echo "$DIFF_PERCENTAGE > 5.0" | bc -l) )); then
             echo "::error ::Performance regression detected! Response time increased by $DIFF_PERCENTAGE%"
             exit 1
@@ -606,7 +606,7 @@ name: Auto-scaling Trigger
 
 on:
   schedule:
-    - cron: '*/5 * * * *'  # Every 5 minutes
+    - cron: '*/5 * * * *' # Every 5 minutes
   workflow_dispatch:
     inputs:
       force-scale:
@@ -615,16 +615,16 @@ on:
         default: 'false'
         type: choice
         options:
-        - 'true'
-        - 'false'
+          - 'true'
+          - 'false'
       scale-direction:
         description: 'Direction to scale'
         required: true
         default: 'up'
         type: choice
         options:
-        - 'up'
-        - 'down'
+          - 'up'
+          - 'down'
 
 jobs:
   check-scaling-conditions:
@@ -639,32 +639,32 @@ jobs:
           PRODUCTION_BASE_URL: ${{ secrets.PRODUCTION_BASE_URL }}
         run: |
           echo "Checking for scaling conditions..."
-          
+
           if [ "${{ github.event.inputs.force-scale }}" = "true" ]; then
             echo "force scaling action"
             echo "need_scaling=true" >> $GITHUB_OUTPUT
             echo "scale_direction=${{ github.event.inputs.scale-direction }}" >> $GITHUB_OUTPUT
             exit 0
           fi
-          
+
           # Check system metrics
           RESPONSE=$(curl -s $PRODUCTION_BASE_URL/api/agent/metrics)
-          
+
           if [ -z "$RESPONSE" ]; then
             echo "Could not reach metrics endpoint"
             echo "need_scaling=false" >> $GITHUB_OUTPUT
             exit 0
           fi
-          
+
           # Parse metrics to determine scaling needs
           QUEUE_DEPTH=$(echo $RESPONSE | jq '.queue_depth')
           CPU_USAGE=$(echo $RESPONSE | jq '.cpu_usage')
           ACTIVE_AGENTS=$(echo $RESPONSE | jq '.active_agents')
-          
+
           echo "Queue Depth: $QUEUE_DEPTH"
           echo "CPU Usage: $CPU_USAGE%"
           echo "Active Agents: $ACTIVE_AGENTS"
-          
+
           # Determine if scaling is needed
           if [ $QUEUE_DEPTH -gt 100 ] || [ $CPU_USAGE -gt 80 ]; then
             echo "need_scaling=true" >> $GITHUB_OUTPUT
@@ -680,7 +680,7 @@ jobs:
     needs: check-scaling-conditions
     if: needs.check-scaling-conditions.outputs.scale-needed == 'true'
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Scale agents ${{ needs.check-scaling-conditions.outputs.direction }}
         env:
@@ -688,7 +688,7 @@ jobs:
         run: |
           echo "Scaling agents $SCALE_DIRECTION..."
           # Implementation would depend on your deployment infrastructure
-          
+
           # Example for Docker Compose scaling
           if [ "$SCALE_DIRECTION" = "up" ]; then
             echo "Scaling agents up..."
@@ -711,7 +711,7 @@ name: Performance Alerting
 
 on:
   schedule:
-    - cron: '*/15 * * * *'  # Every 15 minutes
+    - cron: '*/15 * * * *' # Every 15 minutes
   workflow_dispatch:
 
 jobs:
@@ -723,7 +723,7 @@ jobs:
           PRODUCTION_BASE_URL: ${{ secrets.PRODUCTION_BASE_URL }}
         run: |
           echo "Checking performance metrics..."
-          
+
           # Get metrics from monitoring endpoints
           if [ -n "$PRODUCTION_BASE_URL" ]; then
             HEALTH_STATUS=$(curl -s $PRODUCTION_BASE_URL/api/health)
@@ -749,7 +749,7 @@ jobs:
               fi
             fi
           fi
-          
+
       - name: Check database metrics
         env:
           DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
@@ -757,12 +757,12 @@ jobs:
           # Check database performance if possible
           echo "Database monitoring (would require proper access)..."
           # In real scenario, would connect to DB and check metrics
-          
+
       - name: Check resource metrics
         run: |
           # This would connect to Prometheus or similar monitoring system
           echo "Checking resource metrics..."
-          
+
           # Example: Check if monitoring system is available
           if [ -n "${{ secrets.PROMETHEUS_URL }}" ]; then
             # Query metrics from Prometheus
@@ -785,7 +785,7 @@ name: Performance Reporting
 
 on:
   schedule:
-    - cron: '0 0 * * 1'  # Weekly on Monday at midnight
+    - cron: '0 0 * * 1' # Weekly on Monday at midnight
   workflow_dispatch:
 
 jobs:
@@ -793,14 +793,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Generate performance report
         run: |
           echo "# Weekly Performance Report - $(date +%B\ %d,\ %Y)" > /tmp/report.md
           echo "" >> /tmp/report.md
           echo "## Key Metrics" >> /tmp/report.md
           echo "" >> /tmp/report.md
-          
+
           # Add metrics here (would come from monitoring systems)
           echo "| Metric | Value | Trend |" >> /tmp/report.md
           echo "|--------|-------|-------|" >> /tmp/report.md
@@ -808,29 +808,29 @@ jobs:
           echo "| Error Rate | 0.02% | ⬇️ -5% |" >> /tmp/report.md
           echo "| Throughput | 500 req/s | ⬆️ +15% |" >> /tmp/report.md
           echo "| Active Agents | 32 | ➡️ +0% |" >> /tmp/report.md
-          
+
           echo "" >> /tmp/report.md
           echo "## Top Performance Improvements" >> /tmp/report.md
           echo "- Optimized database queries for task creation: -20% response time" >> /tmp/report.md
           echo "- Introduced Redis caching for user sessions: -15% API load" >> /tmp/report.md
           echo "" >> /tmp/report.md
-          
+
           echo "## Areas for Improvement" >> /tmp/report.md
           echo "- Task processing queue occasionally reaches 45-second delays" >> /tmp/report.md
           echo "- Memory usage peaks during batch processing" >> /tmp/report.md
           echo "" >> /tmp/report.md
-          
+
           echo "## Recommendations" >> /tmp/report.md
           echo "1. Implement additional caching for frequently accessed data" >> /tmp/report.md
           echo "2. Add auto-scaling based on queue depth metrics" >> /tmp/report.md
           echo "3. Optimize Docker sandbox initialization time" >> /tmp/report.md
-          
+
       - name: Post report to discussion
         uses: abirismiley/action-discussion@master
         with:
           body: ${{ github.workspace }}/tmp/report.md
-          title: "Weekly Performance Report - $(date +%Y-%m-%d)"
-          discussion-category: "Performance Reports"
+          title: 'Weekly Performance Report - $(date +%Y-%m-%d)'
+          discussion-category: 'Performance Reports'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -854,34 +854,34 @@ jobs:
   canary-deploy:
     runs-on: ubuntu-latest
     environment: canary
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Deploy to canary
         run: |
           # Deploy to small subset of production infrastructure
           echo "Deploying canary version..."
-          
+
       - name: Health check canary
         run: |
           # Run health checks against canary deployment
           sleep 30
           curl -f ${{ secrets.CANARY_BASE_URL }}/api/health
-          
+
       - name: Run smoke tests on canary
         env:
           CANARY_URL: ${{ secrets.CANARY_BASE_URL }}
         run: |
           # Run basic functionality tests
           pnpm test:smoke --base-url=$CANARY_URL
-          
+
   promote-to-production:
     needs: canary-deploy
     runs-on: ubuntu-latest
     environment: production
     if: ${{ needs.canary-deploy.result == 'success' }}
-    
+
     steps:
       - name: Promote canary to production
         run: |

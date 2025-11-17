@@ -543,60 +543,60 @@ Criamos **20+ specialist agents** baseados nos roadmaps de carreira do roadmap.s
 1. **Ask for Learning Path**
 
    ```tsx
-   "Create a 12-week learning path for [skill]"
+   'Create a 12-week learning path for [skill]'
    ```
 
 2. **Get Project Ideas**
 
    ```tsx
-   "Suggest beginner/intermediate/advanced projects for [skill]"
+   'Suggest beginner/intermediate/advanced projects for [skill]'
    ```
 
 3. **Review Your Code**
 
    ```tsx
-   "Review my [language] code for [topic]"
+   'Review my [language] code for [topic]'
    ```
 
 4. **Resource Recommendations**
 
    ```tsx
-   "What are the best resources for learning [topic]?"
+   'What are the best resources for learning [topic]?'
    ```
 
 5. **Career Guidance**
 
    ```tsx
    "What's the job market like for [role]?"
-   "How do I transition from [skill1] to [skill2]?"
+   'How do I transition from [skill1] to [skill2]?'
    ```
 
 ---
 
 ## 📊 AGENT CAPABILITIES MATRIX
 
-| Agent | Teaching | Projects | Code Review | Resources | Career |
-|-------|----------|----------|-------------|-----------|--------|
-| Android | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Angular | ✅ | ✅ | ✅ | ✅ | ✅ |
-| ASP.NET | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Backend | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Blockchain | ✅ | ✅ | ✅ | ✅ | ✅ |
-| CS | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Cybersecurity | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Design System | ✅ | ✅ | ✅ | ✅ | ✅ |
-| DevOps | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Flutter | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Frontend Beginner | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Frontend | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Golang | ✅ | ✅ | ✅ | ✅ | ✅ |
-| GraphQL | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Java | ✅ | ✅ | ✅ | ✅ | ✅ |
-| JavaScript | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Kubernetes | ✅ | ✅ | ✅ | ✅ | ✅ |
-| MongoDB | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Node.js | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Python | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Agent             | Teaching | Projects | Code Review | Resources | Career |
+| ----------------- | -------- | -------- | ----------- | --------- | ------ |
+| Android           | ✅       | ✅       | ✅          | ✅        | ✅     |
+| Angular           | ✅       | ✅       | ✅          | ✅        | ✅     |
+| ASP.NET           | ✅       | ✅       | ✅          | ✅        | ✅     |
+| Backend           | ✅       | ✅       | ✅          | ✅        | ✅     |
+| Blockchain        | ✅       | ✅       | ✅          | ✅        | ✅     |
+| CS                | ✅       | ✅       | ✅          | ✅        | ✅     |
+| Cybersecurity     | ✅       | ✅       | ✅          | ✅        | ✅     |
+| Design System     | ✅       | ✅       | ✅          | ✅        | ✅     |
+| DevOps            | ✅       | ✅       | ✅          | ✅        | ✅     |
+| Flutter           | ✅       | ✅       | ✅          | ✅        | ✅     |
+| Frontend Beginner | ✅       | ✅       | ✅          | ✅        | ✅     |
+| Frontend          | ✅       | ✅       | ✅          | ✅        | ✅     |
+| Golang            | ✅       | ✅       | ✅          | ✅        | ✅     |
+| GraphQL           | ✅       | ✅       | ✅          | ✅        | ✅     |
+| Java              | ✅       | ✅       | ✅          | ✅        | ✅     |
+| JavaScript        | ✅       | ✅       | ✅          | ✅        | ✅     |
+| Kubernetes        | ✅       | ✅       | ✅          | ✅        | ✅     |
+| MongoDB           | ✅       | ✅       | ✅          | ✅        | ✅     |
+| Node.js           | ✅       | ✅       | ✅          | ✅        | ✅     |
+| Python            | ✅       | ✅       | ✅          | ✅        | ✅     |
 
 ---
 
@@ -636,10 +636,12 @@ Criamos **20+ specialist agents** baseados nos roadmaps de carreira do roadmap.s
 - Kubernetes Agent
 
 **Emerging Technologies**
+
 - Blockchain Developer Agent
 - GraphQL Agent
 
 **Security**
+
 - Cybersecurity Agent
 
 ---
@@ -647,6 +649,7 @@ Criamos **20+ specialist agents** baseados nos roadmaps de carreira do roadmap.s
 ## 💡 EXAMPLE CONVERSATIONS
 
 ### Example 1: Learning Path
+
 ```
 You: I want to learn React in 12 weeks. Create a structured plan.
 Frontend Agent: Here's your 12-week React learning path...

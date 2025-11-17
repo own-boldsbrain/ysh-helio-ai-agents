@@ -173,6 +173,7 @@ Week 11-12: Workflow Engine (Temporal)
 ## 🏗️ Architecture Evolution
 
 ### Current (v2.0.0)
+
 ```
 ┌──────────────────────────────────────────┐
 │         Next.js Frontend (3000)          │
@@ -199,6 +200,7 @@ Week 11-12: Workflow Engine (Temporal)
 ```
 
 ### Phase 1 (+ Observability)
+
 ```
 ┌──────────────────────────────────────────┐
 │         Next.js Frontend (3000)          │
@@ -246,6 +248,7 @@ Week 11-12: Workflow Engine (Temporal)
 ```
 
 ### Phase 2 (+ Security)
+
 ```
 [Previous Architecture]
               ↓
@@ -275,6 +278,7 @@ Week 11-12: Workflow Engine (Temporal)
 ```
 
 ### Phase 3 (+ Advanced Features)
+
 ```
 [Previous Architecture]
               ↓
@@ -308,6 +312,7 @@ Week 11-12: Workflow Engine (Temporal)
 ## 💰 Resource Allocation
 
 ### Development Team
+
 ```
 Phase 1 (Weeks 1-2)
 ├─ 1x Senior Backend (Lead)
@@ -337,6 +342,7 @@ Phase 3 (Weeks 7-12)
 ```
 
 ### Infrastructure Costs (AWS/GCP)
+
 ```
 Phase 1: Observability Stack
 ├─ Prometheus + Grafana: ~$50/month
@@ -364,7 +370,9 @@ Total Infrastructure: ~$1,000/month (production)
 ## 📊 Metrics & Success Criteria
 
 ### Phase 1: Observability
+
 **Success Criteria:**
+
 - ✅ 100% of API requests logged with Pino
 - ✅ Prometheus collecting metrics from all services
 - ✅ Grafana dashboards with <5s query time
@@ -372,6 +380,7 @@ Total Infrastructure: ~$1,000/month (production)
 - ✅ Jaeger tracing 100% of transactions
 
 **Target Metrics:**
+
 ```
 Logging:
 ├─ Log volumes: <5GB/day (dev), <50GB/day (prod)
@@ -394,7 +403,9 @@ Tracing:
 ```
 
 ### Phase 2: Security
+
 **Success Criteria:**
+
 - ✅ 0 secrets in git
 - ✅ 100% of credentials from Vault
 - ✅ 99.99% service discovery reliability
@@ -402,6 +413,7 @@ Tracing:
 - ✅ 0 security scan failures
 
 **Target Metrics:**
+
 ```
 Secrets Management:
 ├─ Secret rotation time: <1 minute
@@ -417,7 +429,9 @@ Service Discovery:
 ```
 
 ### Phase 3: Advanced
+
 **Success Criteria:**
+
 - ✅ Container startup: <5s (warmed pool)
 - ✅ Auto-scaling latency: <30s
 - ✅ Event sourcing: 100% consistency
@@ -429,6 +443,7 @@ Service Discovery:
 ## 🚀 Deployment Strategy
 
 ### Development Environment
+
 ```bash
 # Local development with observability
 docker-compose -f docker-compose.dev.yml \
@@ -444,6 +459,7 @@ docker-compose -f docker-compose.dev.yml \
 ```
 
 ### Staging Environment
+
 ```bash
 # Full stack without auto-scaling
 docker-compose -f docker-compose.multi-agent.yml \
@@ -457,6 +473,7 @@ docker-compose -f docker-compose.multi-agent.yml \
 ```
 
 ### Production Environment
+
 ```bash
 # Kubernetes deployment (recommended)
 # Using Helm charts for all OSS components
@@ -510,6 +527,7 @@ docs/
 ## ✅ Go/No-Go Checklist
 
 ### Before Phase 1
+
 - [ ] Team reviewed roadmap
 - [ ] Resources allocated
 - [ ] Development environment ready
@@ -518,6 +536,7 @@ docs/
 - [ ] Documentation structure created
 
 ### Before Phase 2
+
 - [ ] Phase 1 complete & tested
 - [ ] All metrics & logs working
 - [ ] Dashboards validated
@@ -526,6 +545,7 @@ docs/
 - [ ] Team trained on new stack
 
 ### Before Phase 3
+
 - [ ] Phase 2 complete in production
 - [ ] Security baseline met
 - [ ] Cost optimization done
@@ -534,6 +554,7 @@ docs/
 - [ ] Capacity planning finalized
 
 ### Before Production
+
 - [ ] All phases complete
 - [ ] Compliance certifications obtained
 - [ ] Disaster recovery tested
@@ -546,6 +567,7 @@ docs/
 ## 📞 Contact & Support
 
 **For questions about this roadmap:**
+
 - Technical Architect: infrastructure-team@example.com
 - Project Lead: development-lead@example.com
 - DevOps Team: devops@example.com
@@ -556,11 +578,11 @@ docs/
 
 ## 📄 Revision History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | Nov 17, 2025 | GitHub Copilot | Initial document |
-| 1.1 | TBD | Team | Refinements after review |
-| 2.0 | TBD | Team | Phase 1 completion |
+| Version | Date         | Author         | Changes                  |
+| ------- | ------------ | -------------- | ------------------------ |
+| 1.0     | Nov 17, 2025 | GitHub Copilot | Initial document         |
+| 1.1     | TBD          | Team           | Refinements after review |
+| 2.0     | TBD          | Team           | Phase 1 completion       |
 
 ---
 

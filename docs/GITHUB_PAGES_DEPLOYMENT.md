@@ -38,17 +38,17 @@ Update your Next.js configuration for static export:
 // next.config.js
 const nextConfig = {
   output: 'export', // This enables static site generation
-  
+
   // Adjust path prefix for GitHub Pages subdirectory
   basePath: process.env.NODE_ENV === 'production' ? '/coding-agent-template' : '',
-  
+
   // Disable image optimization for static sites
   images: {
     unoptimized: true,
   },
-  
+
   trailingSlash: true, // Ensure clean URLs
-  
+
   experimental: {
     serverComponentsExternalPackages: [],
   },
@@ -65,10 +65,9 @@ Create an API client that works with external services:
 // lib/github-pages-api-client.ts
 class GitHubPagesApiClient {
   private baseUrl: string
-  
+
   constructor() {
-    this.baseUrl = process.env.NEXT_PUBLIC_EXTERNAL_API_URL || 
-                   'https://your-external-api.com/api'
+    this.baseUrl = process.env.NEXT_PUBLIC_EXTERNAL_API_URL || 'https://your-external-api.com/api'
   }
 
   async getAgents() {
@@ -106,7 +105,7 @@ class GitHubPagesApiClient {
       const response = await fetch(`${this.baseUrl}/tasks`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(taskData)
+        body: JSON.stringify(taskData),
       })
       return await response.json()
     } catch (error) {
@@ -115,7 +114,7 @@ class GitHubPagesApiClient {
       return {
         id: `task-${Date.now()}`,
         status: 'submitted',
-        message: 'Task submitted (demo mode)'
+        message: 'Task submitted (demo mode)',
       }
     }
   }
@@ -164,7 +163,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: 'pages'
   cancel-in-progress: true
 
 jobs:
@@ -200,13 +199,13 @@ jobs:
           }
           module.exports = nextConfig
           EOF
-          
+
           # Use GitHub Pages config for build
           mv next.config.pages.js next.config.js
-          
+
           # Build the app
           pnpm build
-          
+
           # Rename dist to out for GitHub Pages
           mv dist out 2>/dev/null || mv build out 2>/dev/null || true
 
@@ -302,19 +301,28 @@ export function StaticAgentStatus() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {agents.map(agent => (
-        <div key={agent.id} className={`p-4 rounded-lg border ${
-          agent.status === 'online' ? 'border-green-500 bg-green-50' :
-          agent.status === 'busy' ? 'border-yellow-500 bg-yellow-50' :
-          'border-gray-500 bg-gray-50'
-        }`}>
+      {agents.map((agent) => (
+        <div
+          key={agent.id}
+          className={`p-4 rounded-lg border ${
+            agent.status === 'online'
+              ? 'border-green-500 bg-green-50'
+              : agent.status === 'busy'
+                ? 'border-yellow-500 bg-yellow-50'
+                : 'border-gray-500 bg-gray-50'
+          }`}
+        >
           <div className="flex justify-between items-center">
             <h3 className="font-medium">{agent.name}</h3>
-            <span className={`px-2 py-1 rounded-full text-xs ${
-              agent.status === 'online' ? 'bg-green-200 text-green-800' :
-              agent.status === 'busy' ? 'bg-yellow-200 text-yellow-800' :
-              'bg-gray-200 text-gray-800'
-            }`}>
+            <span
+              className={`px-2 py-1 rounded-full text-xs ${
+                agent.status === 'online'
+                  ? 'bg-green-200 text-green-800'
+                  : agent.status === 'busy'
+                    ? 'bg-yellow-200 text-yellow-800'
+                    : 'bg-gray-200 text-gray-800'
+              }`}
+            >
               {agent.status}
             </span>
           </div>

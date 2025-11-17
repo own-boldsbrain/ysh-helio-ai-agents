@@ -128,9 +128,10 @@ export function HomePageHeader({
       } else {
         const result = await safeJson(response)
         console.error('Failed to disconnect GitHub:', result)
-        const errorMessage = typeof result === 'object' && result !== null && 'error' in result 
-          ? (result as { error?: string }).error || 'Failed to disconnect GitHub'
-          : 'Failed to disconnect GitHub'
+        const errorMessage =
+          typeof result === 'object' && result !== null && 'error' in result
+            ? (result as { error?: string }).error || 'Failed to disconnect GitHub'
+            : 'Failed to disconnect GitHub'
         toast.error(errorMessage)
       }
     } catch (error) {
@@ -168,7 +169,9 @@ export function HomePageHeader({
 
       // Add task optimistically to sidebar immediately
       const result = addTaskOptimistically(taskData)
-      const taskId = result?.id || (typeof result === 'object' && result !== null && 'id' in result ? (result as { id: string }).id : undefined)
+      const taskId =
+        result?.id ||
+        (typeof result === 'object' && result !== null && 'id' in result ? (result as { id: string }).id : undefined)
 
       // Navigate to the new task page immediately
       if (taskId) {
@@ -192,11 +195,12 @@ export function HomePageHeader({
         toast.success('Task created successfully!')
       } else {
         const result = await safeJson(response)
-        const errorMessage = typeof result === 'object' && result !== null 
-          ? ('message' in result ? (result as { message?: string }).message : undefined) ||
-            ('error' in result ? (result as { error?: string }).error : undefined) ||
-            'Failed to create task'
-          : 'Failed to create task'
+        const errorMessage =
+          typeof result === 'object' && result !== null
+            ? ('message' in result ? (result as { message?: string }).message : undefined) ||
+              ('error' in result ? (result as { error?: string }).error : undefined) ||
+              'Failed to create task'
+            : 'Failed to create task'
         toast.error(errorMessage)
       }
     } catch (error) {
