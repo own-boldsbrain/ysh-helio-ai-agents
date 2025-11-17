@@ -67,3 +67,6 @@ logs/
 .DS_Store
 Thumbs.db
 .pnpm-store
+
+# Turbo cache
+.turbo
