@@ -28,6 +28,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { safeJson } from '@/lib/utils/fetch-json'
 
 const CODING_AGENTS = [
   { value: 'claude', label: 'Claude', icon: Claude },
@@ -166,7 +167,7 @@ export function RepoIssues({ owner, repo }: RepoIssuesProps) {
         if (!response.ok) {
           throw new Error('Failed to fetch issues')
         }
-        const data = await response.json()
+        const data = await safeJson<{ issues?: Issue[] }>(response)
         setIssues(data.issues || [])
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load issues')
@@ -216,12 +217,12 @@ export function RepoIssues({ owner, repo }: RepoIssuesProps) {
       })
 
       if (response.ok) {
-        const result = await response.json()
+        const result = await safeJson<{ success: boolean; task: { id: string } }>(response)
         toast.success('Task created successfully!')
         setShowCreateTaskDialog(false)
         router.push(`/tasks/${result.task.id}`)
       } else {
-        const error = await response.json()
+        const error = await safeJson<{ error?: string }>(response)
         toast.error(error.error || 'Failed to create task')
       }
     } catch (error) {

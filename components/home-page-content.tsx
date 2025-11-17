@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { TaskForm } from '@/components/task-form'
+import { safeJson } from '@/lib/utils/fetch-json'
 import { HomePageHeader } from '@/components/home-page-header'
 import { toast } from 'sonner'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -233,7 +234,7 @@ export function HomePageContent({
           // Refresh sidebar to get the real task data from server
           await refreshTasks()
         } else {
-          const error = await response.json()
+          const error = await safeJson(response)
           // Show detailed message for rate limits, or generic error message
           toast.error(error.message || error.error || 'Failed to create task')
           // TODO: Remove the optimistic task on error

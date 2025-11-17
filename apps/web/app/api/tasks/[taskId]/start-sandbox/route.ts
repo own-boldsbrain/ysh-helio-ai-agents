@@ -1,4 +1,3 @@
-import { Sandbox } from '@vercel/sandbox'
 import { eq } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -7,6 +6,7 @@ import { tasks } from '@/lib/db/schema'
 import { getMaxSandboxDuration } from '@/lib/db/settings'
 import { getGitHubUser } from '@/lib/github/client'
 import { getUserGitHubToken } from '@/lib/github/user-token'
+import { Sandbox } from '@/lib/sandbox'
 import { runCommandInSandbox, runInProject, PROJECT_DIR } from '@/lib/sandbox/commands'
 import { detectPackageManager, installDependencies } from '@/lib/sandbox/package-manager'
 import { detectPortFromRepo } from '@/lib/sandbox/port-detection'
@@ -53,9 +53,11 @@ export async function POST(_request: NextRequest, { params }: { params: Promise<
         })
 
         // Try a simple command to verify it's accessible
-        const testResult = await runCommandInSandbox(existingSandbox, 'echo', ['test'])
-        if (testResult.success) {
-          return NextResponse.json({ error: 'Sandbox is already running' }, { status: 400 })
+        if (existingSandbox) {
+          const testResult = await runCommandInSandbox(existingSandbox, 'echo', ['test'])
+          if (testResult.success) {
+            return NextResponse.json({ error: 'Sandbox is already running' }, { status: 400 })
+          }
         }
       } catch (error) {
         // Sandbox is not accessible, clear it from the database and registry, then continue

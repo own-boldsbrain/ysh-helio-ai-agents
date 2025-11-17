@@ -1,4 +1,3 @@
-import { Sandbox } from '@vercel/sandbox'
 import { eq } from 'drizzle-orm'
 
 import { db } from '@/lib/db/client'
@@ -9,6 +8,8 @@ import { TaskLogger } from '@/lib/utils/task-logger'
 
 import { runCommandInSandbox, runInProject, PROJECT_DIR } from '../commands'
 import { AgentExecutionResult } from '../types'
+
+import type { SandboxType as Sandbox } from '@/lib/sandbox'
 
 type Connector = typeof connectors.$inferSelect
 

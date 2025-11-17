@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getUserGitHubToken } from '@/lib/github/user-token'
+import { parseJsonResponse } from '@/lib/utils/fetch-json'
 
 export async function GET(req: NextRequest) {
   try {
@@ -20,7 +21,7 @@ export async function GET(req: NextRequest) {
       throw new Error(`GitHub API error: ${response.status}`)
     }
 
-    const orgs = await response.json()
+    const orgs = await parseJsonResponse(response)
 
     interface GitHubOrg {
       login: string
@@ -36,7 +37,7 @@ export async function GET(req: NextRequest) {
       })),
     )
   } catch (error) {
-    console.error('Error fetching GitHub organizations:', error)
+    console.error('Error fetching GitHub organizations')
     return NextResponse.json({ error: 'Failed to fetch organizations' }, { status: 500 })
   }
 }

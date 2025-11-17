@@ -27,6 +27,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { sessionAtom } from '@/lib/atoms/session'
 import { Task } from '@/lib/db/schema'
 import { cn } from '@/lib/utils'
+import { safeJson } from '@/lib/utils/fetch-json'
 
 // Model mappings for human-friendly names
 const AGENT_MODELS = {
@@ -166,12 +167,12 @@ export function TaskSidebar({ tasks, width = 288 }: TaskSidebarProps) {
       })
 
       if (response.ok) {
-        const result = await response.json()
+        const result = await safeJson<{ message?: string }>(response)
         toast.success(result.message)
         await refreshTasks()
         setShowDeleteDialog(false)
       } else {
-        const error = await response.json()
+        const error = await safeJson<{ error?: string }>(response)
         toast.error(error.error || 'Failed to delete tasks')
       }
     } catch (error) {

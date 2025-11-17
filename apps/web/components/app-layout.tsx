@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Task } from '@/lib/db/schema'
 import { getSidebarWidth, setSidebarWidth, getSidebarOpen, setSidebarOpen } from '@/lib/utils/cookies'
+import { safeJson } from '@/lib/utils/fetch-json'
 
 interface AppLayoutProps {
   children: React.ReactNode
@@ -196,7 +197,7 @@ export function AppLayout({ children, initialSidebarWidth, initialSidebarOpen, i
     try {
       const response = await fetch('/api/tasks')
       if (response.ok) {
-        const data = await response.json()
+        const data = await safeJson<{ tasks: Task[] }>(response)
         setTasks(data.tasks)
       } else if (response.status === 401) {
         // User is not authenticated, show empty tasks

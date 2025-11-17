@@ -4,6 +4,7 @@
  */
 
 import 'dotenv/config'
+import { safeJson } from '@/lib/utils/fetch-json'
 
 interface ValidationResult {
   service: string
@@ -149,7 +150,7 @@ async function validateHuggingFace() {
     })
 
     if (response.ok) {
-      const data = await response.json()
+      const data = await safeJson<any>(response)
       logResult({
         service: 'Hugging Face',
         status: 'success',

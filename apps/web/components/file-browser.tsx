@@ -51,6 +51,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { getTaskFileBrowserState } from '@/lib/atoms/file-browser'
+import { safeJson } from '@/lib/utils/fetch-json'
 
 interface FileChange {
   filename: string
@@ -224,7 +225,22 @@ export function FileBrowser({
     try {
       const url = `/api/tasks/${taskId}/files?mode=${viewMode}`
       const response = await fetch(url)
-      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`)
+      }
+
+      const contentType = response.headers.get('content-type')
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Invalid response format')
+      }
+
+      const result = await safeJson<{
+        success: boolean
+        files?: FileChange[]
+        fileTree?: { [key: string]: FileTreeNode }
+        error?: string
+      }>(response)
 
       if (result.success) {
         const fetchedFiles = result.files || []
@@ -324,7 +340,12 @@ export function FileBrowser({
         }),
       })
 
-      const result = await response.json()
+      const result = await safeJson<{
+        success: boolean
+        files?: FileChange[]
+        fileTree?: { [key: string]: FileTreeNode }
+        error?: string
+      }>(response)
 
       if (!response.ok || !result.success) {
         throw new Error(result.error || 'Failed to sync changes')
@@ -337,7 +358,11 @@ export function FileBrowser({
       try {
         const url = `/api/tasks/${taskId}/files?mode=${viewMode}`
         const fetchResponse = await fetch(url)
-        const fetchResult = await fetchResponse.json()
+        const fetchResult = await safeJson<{
+          success: boolean
+          files?: FileChange[]
+          fileTree?: { [key: string]: FileTreeNode }
+        }>(fetchResponse)
 
         if (fetchResult.success) {
           const fetchedFiles = fetchResult.files || []
@@ -382,7 +407,12 @@ export function FileBrowser({
         }),
       })
 
-      const result = await response.json()
+      const result = await safeJson<{
+        success: boolean
+        files?: FileChange[]
+        fileTree?: { [key: string]: FileTreeNode }
+        error?: string
+      }>(response)
 
       if (!response.ok || !result.success) {
         throw new Error(result.error || 'Failed to reset changes')
@@ -395,7 +425,11 @@ export function FileBrowser({
       try {
         const url = `/api/tasks/${taskId}/files?mode=${viewMode}`
         const fetchResponse = await fetch(url)
-        const fetchResult = await fetchResponse.json()
+        const fetchResult = await safeJson<{
+          success: boolean
+          files?: FileChange[]
+          fileTree?: { [key: string]: FileTreeNode }
+        }>(fetchResponse)
 
         if (fetchResult.success) {
           const fetchedFiles = fetchResult.files || []
@@ -452,7 +486,7 @@ export function FileBrowser({
         // Now fetch the files with the updated task data
         await fetchBranchFiles()
       } else {
-        const error = await response.json()
+        const error = await safeJson<{ error?: string }>(response)
         toast.error(error.error || 'Failed to start sandbox')
       }
     } catch (error) {
@@ -489,7 +523,12 @@ export function FileBrowser({
         }),
       })
 
-      const result = await response.json()
+      const result = await safeJson<{
+        success: boolean
+        files?: FileChange[]
+        fileTree?: { [key: string]: FileTreeNode }
+        error?: string
+      }>(response)
 
       if (!response.ok || !result.success) {
         throw new Error(result.error || 'Failed to create file')
@@ -503,7 +542,11 @@ export function FileBrowser({
       try {
         const url = `/api/tasks/${taskId}/files?mode=${viewMode}`
         const fetchResponse = await fetch(url)
-        const fetchResult = await fetchResponse.json()
+        const fetchResult = await safeJson<{
+          success: boolean
+          files?: FileChange[]
+          fileTree?: { [key: string]: FileTreeNode }
+        }>(fetchResponse)
 
         if (fetchResult.success) {
           const fetchedFiles = fetchResult.files || []
@@ -567,7 +610,12 @@ export function FileBrowser({
         }),
       })
 
-      const result = await response.json()
+      const result = await safeJson<{
+        success: boolean
+        files?: FileChange[]
+        fileTree?: { [key: string]: FileTreeNode }
+        error?: string
+      }>(response)
 
       if (!response.ok || !result.success) {
         throw new Error(result.error || 'Failed to create folder')
@@ -581,7 +629,11 @@ export function FileBrowser({
       try {
         const url = `/api/tasks/${taskId}/files?mode=${viewMode}`
         const fetchResponse = await fetch(url)
-        const fetchResult = await fetchResponse.json()
+        const fetchResult = await safeJson<{
+          success: boolean
+          files?: FileChange[]
+          fileTree?: { [key: string]: FileTreeNode }
+        }>(fetchResponse)
 
         if (fetchResult.success) {
           const fetchedFiles = fetchResult.files || []
@@ -639,7 +691,12 @@ export function FileBrowser({
           }),
         })
 
-        const result = await response.json()
+        const result = await safeJson<{
+          success: boolean
+          files?: FileChange[]
+          fileTree?: { [key: string]: FileTreeNode }
+          error?: string
+        }>(response)
 
         if (!response.ok || !result.success) {
           throw new Error(result.error || 'Failed to delete file')
@@ -653,7 +710,12 @@ export function FileBrowser({
         try {
           const url = `/api/tasks/${taskId}/files?mode=${viewMode}`
           const fetchResponse = await fetch(url)
-          const fetchResult = await fetchResponse.json()
+          const fetchResult = await safeJson<{
+            success: boolean
+            files?: FileChange[]
+            fileTree?: { [key: string]: FileTreeNode }
+            error?: string
+          }>(fetchResponse)
 
           if (fetchResult.success) {
             const fetchedFiles = fetchResult.files || []
@@ -772,7 +834,12 @@ export function FileBrowser({
           }),
         })
 
-        const result = await response.json()
+        const result = await safeJson<{
+          success: boolean
+          files?: FileChange[]
+          fileTree?: { [key: string]: FileTreeNode }
+          error?: string
+        }>(response)
 
         if (!response.ok || !result.success) {
           throw new Error(result.error || 'Failed to paste file')
@@ -789,7 +856,11 @@ export function FileBrowser({
         try {
           const url = `/api/tasks/${taskId}/files?mode=${viewMode}`
           const fetchResponse = await fetch(url)
-          const fetchResult = await fetchResponse.json()
+          const fetchResult = await safeJson<{
+            success: boolean
+            files?: FileChange[]
+            fileTree?: { [key: string]: FileTreeNode }
+          }>(fetchResponse)
 
           if (fetchResult.success) {
             const fetchedFiles = fetchResult.files || []
@@ -840,7 +911,12 @@ export function FileBrowser({
         }),
       })
 
-      const result = await response.json()
+      const result = await safeJson<{
+        success: boolean
+        files?: FileChange[]
+        fileTree?: { [key: string]: FileTreeNode }
+        error?: string
+      }>(response)
 
       if (!response.ok || !result.success) {
         throw new Error(result.error || 'Failed to discard changes')
@@ -852,7 +928,12 @@ export function FileBrowser({
       try {
         const url = `/api/tasks/${taskId}/files?mode=${viewMode}`
         const fetchResponse = await fetch(url)
-        const fetchResult = await fetchResponse.json()
+        const fetchResult = await safeJson<{
+          success: boolean
+          files?: FileChange[]
+          fileTree?: { [key: string]: FileTreeNode }
+          error?: string
+        }>(fetchResponse)
 
         if (fetchResult.success) {
           const fetchedFiles = fetchResult.files || []
@@ -960,7 +1041,7 @@ export function FileBrowser({
           }),
         })
 
-        const result = await response.json()
+        const result = await safeJson<{ success: boolean; error?: string }>(response)
 
         if (!response.ok || !result.success) {
           throw new Error(result.error || 'Failed to move item')
@@ -972,7 +1053,11 @@ export function FileBrowser({
         try {
           const url = `/api/tasks/${taskId}/files?mode=${viewMode}`
           const fetchResponse = await fetch(url)
-          const fetchResult = await fetchResponse.json()
+          const fetchResult = await safeJson<{
+            success: boolean
+            files?: FileChange[]
+            fileTree?: { [key: string]: FileTreeNode }
+          }>(fetchResponse)
 
           if (fetchResult.success) {
             const fetchedFiles = fetchResult.files || []

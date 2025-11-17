@@ -1,4 +1,5 @@
 import type { VercelTeam } from './types'
+import { safeJson } from '@/lib/utils/fetch-json'
 
 export async function fetchTeams(accessToken: string) {
   const response = await fetch('https://api.vercel.com/v2/teams', {
@@ -15,11 +16,14 @@ export async function fetchTeams(accessToken: string) {
       return []
     }
 
-    console.error('Failed to fetch teams', response.status, errorText)
+    console.error('Failed to fetch teams', response.status)
+    if (errorText && errorText.length > 0 && errorText.length < 500) {
+      console.error('Error response:', errorText.substring(0, 500))
+    }
     return undefined
   }
 
-  const { teams } = (await response.json()) as { teams: VercelTeam[] }
+  const { teams } = (await safeJson<{ teams: VercelTeam[] }>(response)) as { teams: VercelTeam[] }
   console.log('Successfully fetched teams')
   return teams || []
 }

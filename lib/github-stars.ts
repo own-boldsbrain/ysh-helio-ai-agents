@@ -1,3 +1,5 @@
+import { safeJson } from '@/lib/utils/fetch-json'
+
 const GITHUB_REPO = 'vercel-labs/coding-agent-template'
 const CACHE_DURATION = 5 * 60 // 5 minutes in seconds
 
@@ -15,7 +17,7 @@ export async function getGitHubStars(): Promise<number> {
       throw new Error('GitHub API request failed')
     }
 
-    const data = await response.json()
+    const data = await safeJson<{ stargazers_count?: number }>(response)
     return data.stargazers_count || 994
   } catch (error) {
     console.error('Error fetching GitHub stars:', error)

@@ -28,6 +28,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { VERCEL_DEPLOY_URL } from '@/lib/constants'
 import { Task } from '@/lib/db/schema'
+import { safeJson } from '@/lib/utils/fetch-json'
 import { cn } from '@/lib/utils'
 
 import type { Session } from '@/lib/session/types'
@@ -122,11 +123,18 @@ export function TasksListClient({ user, authProvider, initialStars = 1200 }: Tas
     try {
       const response = await fetch('/api/tasks')
       if (response.ok) {
-        const data = await response.json()
-        setTasks(data.tasks)
+        const contentType = response.headers.get('content-type')
+        if (contentType && contentType.includes('application/json')) {
+          const result = await safeJson(response)
+          if (result && typeof result === 'object' && 'tasks' in result) {
+            setTasks((result as { tasks: Task[] }).tasks)
+          } else {
+            setTasks([])
+          }
+        }
       }
     } catch (error) {
-      console.error('Error fetching tasks:', error)
+      console.error('Error fetching tasks')
       toast.error('Failed to fetch tasks')
     } finally {
       setIsLoading(false)

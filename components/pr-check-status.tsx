@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Check, Loader2, X } from 'lucide-react'
+import { safeJson } from '@/lib/utils/fetch-json'
 
 interface CheckRun {
   id: number
@@ -29,7 +30,7 @@ export function PRCheckStatus({ taskId, prStatus, isActive = false, className = 
       try {
         const response = await fetch(`/api/tasks/${taskId}/check-runs`)
         if (response.ok) {
-          const data = await response.json()
+          const data = await safeJson(response)
           if (data.success && data.checkRuns) {
             setCheckRuns(data.checkRuns)
           }

@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { githubOwnersAtom, githubReposAtomFamily } from '@/lib/atoms/github-cache'
 import { githubConnectionAtom } from '@/lib/atoms/github-connection'
+import { safeJson } from '@/lib/utils/fetch-json'
 
 interface GitHubOwner {
   login: string
@@ -137,7 +138,7 @@ export function RepoSelector({
         let personalAccount: GitHubOwner | null = null
 
         // Get user (personal account)
-        const user = await userResponse.json()
+        const user = await safeJson<GitHubOwner>(userResponse)
         personalAccount = {
           login: user.login,
           name: user.name || user.login,
@@ -147,7 +148,7 @@ export function RepoSelector({
         // Get organizations and sort them
         const organizations: GitHubOwner[] = []
         if (orgsResponse.ok) {
-          const orgs = await orgsResponse.json()
+          const orgs = await safeJson<GitHubOwner[]>(orgsResponse)
           organizations.push(...orgs)
         }
 
@@ -245,7 +246,7 @@ export function RepoSelector({
             throw new Error('Failed to load repositories')
           }
 
-          const reposList = await response.json()
+          const reposList = await safeJson<GitHubRepo[]>(response)
           setRepos(reposList)
           // Cache is automatic with atomWithStorage
         } catch (error) {

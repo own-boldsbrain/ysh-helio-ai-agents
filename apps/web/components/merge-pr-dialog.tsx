@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { safeJson } from '@/lib/utils/fetch-json'
 
 interface MergePRDialogProps {
   taskId: string
@@ -59,7 +60,7 @@ export function MergePRDialog({
         }),
       })
 
-      const result = await response.json()
+      const result = await safeJson<{ success: boolean; error?: string }>(response)
 
       if (response.ok && result.success) {
         // Don't show toast here - parent will show it when status updates
@@ -101,7 +102,7 @@ export function MergePRDialog({
         }),
       })
 
-      const result = await response.json()
+      const result = await safeJson<{ success: boolean; error?: string }>(response)
 
       if (response.ok && result.success) {
         toast.success('Agent is now fixing the merge conflict')

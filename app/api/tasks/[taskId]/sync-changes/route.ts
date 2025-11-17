@@ -37,7 +37,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ tas
 
     // Get sandbox
     const { getSandbox } = await import('@/lib/sandbox/sandbox-registry')
-    const { Sandbox } = await import('@vercel/sandbox')
+    const { Sandbox } = await import('@/lib/sandbox')
 
     let sandbox = getSandbox(taskId)
 

@@ -8,6 +8,7 @@ import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { safeJson } from '@/lib/utils/fetch-json'
 
 interface SandboxesDialogProps {
   open: boolean
@@ -44,10 +45,12 @@ export function SandboxesDialog({ open, onOpenChange }: SandboxesDialogProps) {
     setLoading(true)
     try {
       const response = await fetch('/api/sandboxes')
-      const data = await response.json()
+      const data = await safeJson<{ sandboxes: Array<Omit<Sandbox, 'createdAt'> & { createdAt: string }> }>(response)
 
       if (data.sandboxes) {
-        setSandboxes(data.sandboxes)
+        // Convert createdAt strings to Date objects
+        const parsedSandboxes = data.sandboxes.map((s) => ({ ...s, createdAt: new Date(s.createdAt) }))
+        setSandboxes(parsedSandboxes)
       }
     } catch (error) {
       console.error('Error fetching sandboxes:', error)
@@ -69,7 +72,7 @@ export function SandboxesDialog({ open, onOpenChange }: SandboxesDialogProps) {
         // Remove from list
         setSandboxes((prev) => prev.filter((s) => s.taskId !== taskId))
       } else {
-        const error = await response.json()
+        const error = await safeJson<{ error?: string }>(response)
         toast.error(error.error || 'Failed to stop sandbox')
       }
     } catch (error) {

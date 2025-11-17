@@ -1,5 +1,8 @@
 import { exec } from 'child_process'
 import { randomBytes } from 'crypto'
+import * as fs from 'fs'
+import * as os from 'os'
+import * as path from 'path'
 import { promisify } from 'util'
 
 const execAsync = promisify(exec)
@@ -92,14 +95,18 @@ WORKDIR /workspace
 CMD ["/bin/bash"]
 `
 
-      // Create temp Dockerfile
-      const tempDockerfile = `C:\\Users\\fjuni\\coding-agent-template\\Dockerfile.sandbox`
-      require('fs').writeFileSync(tempDockerfile, dockerfile)
+      // Create temp Dockerfile in a portable way
+      const tempDir = os.tmpdir()
+      const tempDockerfile = path.join(
+        tempDir,
+        `Dockerfile.sandbox.${Date.now()}.${Math.random().toString(36).substr(2, 9)}`,
+      )
+      fs.writeFileSync(tempDockerfile, dockerfile)
 
       await execAsync(`docker build -t ${this.imageName} -f ${tempDockerfile} .`)
 
       // Clean up temp file
-      require('fs').unlinkSync(tempDockerfile)
+      fs.unlinkSync(tempDockerfile)
     }
   }
 

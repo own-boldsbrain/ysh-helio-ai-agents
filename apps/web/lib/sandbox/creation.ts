@@ -1,5 +1,3 @@
-import { Sandbox } from '@vercel/sandbox'
-
 import { generateId } from '@/lib/utils/id'
 import { redactSensitiveInfo } from '@/lib/utils/logging'
 import { TaskLogger } from '@/lib/utils/task-logger'
@@ -9,6 +7,8 @@ import { validateEnvironmentVariables, createAuthenticatedRepoUrl } from './conf
 import { detectPackageManager, installDependencies } from './package-manager'
 import { registerSandbox } from './sandbox-registry'
 import { SandboxConfig, SandboxResult } from './types'
+
+import { Sandbox } from './index'
 
 // Helper function to run command and log it
 async function runAndLogCommand(sandbox: Sandbox, command: string, args: string[], logger: TaskLogger, cwd?: string) {

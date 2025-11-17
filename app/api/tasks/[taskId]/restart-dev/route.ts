@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db/client'
 import { tasks } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
-import { Sandbox } from '@vercel/sandbox'
+// Dynamic import of Sandbox to access runtime implementation
 import { getServerSession } from '@/lib/session/get-server-session'
 import { runCommandInSandbox, runInProject, PROJECT_DIR } from '@/lib/sandbox/commands'
 import { detectPackageManager } from '@/lib/sandbox/package-manager'
@@ -35,6 +35,7 @@ export async function POST(_request: NextRequest, { params }: { params: Promise<
     }
 
     // Reconnect to the sandbox
+    const { Sandbox } = await import('@/lib/sandbox')
     const sandbox = await Sandbox.get({
       sandboxId: task.sandboxId,
       teamId: process.env.SANDBOX_VERCEL_TEAM_ID!,

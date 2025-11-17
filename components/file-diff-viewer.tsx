@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { useParams } from 'next/navigation'
+import { safeJson } from '@/lib/utils/fetch-json'
 import { DiffView, DiffModeEnum } from '@git-diff-view/react'
 import { generateDiffFile } from '@git-diff-view/file'
 import '@git-diff-view/react/styles/diff-view-pure.css'
@@ -134,7 +135,7 @@ export function FileDiffViewer({
           params.set('mode', 'local')
         }
         const response = await fetch(`${endpoint}?${params.toString()}`)
-        const result = await response.json()
+        const result = await safeJson(response)
 
         if (!response.ok || !result.success) {
           throw new Error(result.error || 'Failed to fetch file data')

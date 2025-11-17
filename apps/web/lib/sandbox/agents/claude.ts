@@ -1,6 +1,5 @@
 import { Writable } from 'stream'
 
-import { Sandbox } from '@vercel/sandbox'
 import { eq } from 'drizzle-orm'
 
 import { db } from '@/lib/db/client'
@@ -11,6 +10,8 @@ import { TaskLogger } from '@/lib/utils/task-logger'
 import { runInProject, PROJECT_DIR } from '../commands'
 import { AgentExecutionResult } from '../types'
 import { SafeCommandExecutor } from './utils'
+
+import type { SandboxType as Sandbox } from '@/lib/sandbox'
 
 type Connector = typeof connectors.$inferSelect
 

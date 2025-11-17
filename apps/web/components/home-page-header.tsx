@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
-import { useTasks, useTasks as useTasksContext } from '@/components/app-layout'
+import { useTasks } from '@/components/app-layout'
+import { useTasks as useTasksContext } from '@/components/tasks-context'
 import { User } from '@/components/auth/user'
 import { GitHubStarsButton } from '@/components/github-stars-button'
 import { GitHubIcon } from '@/components/icons/github-icon'
@@ -24,6 +25,7 @@ import {
 import { githubConnectionAtom, githubConnectionInitializedAtom } from '@/lib/atoms/github-connection'
 import { sessionAtom } from '@/lib/atoms/session'
 import { VERCEL_DEPLOY_URL } from '@/lib/constants'
+import { safeJson } from '@/lib/utils/fetch-json'
 
 import type { Session } from '@/lib/session/types'
 
@@ -126,9 +128,12 @@ export function HomePageHeader({
         // Refresh the page
         routerNav.refresh()
       } else {
-        const error = await response.json()
-        console.error('Failed to disconnect GitHub:', error)
-        toast.error(error.error || 'Failed to disconnect GitHub')
+        const result = await safeJson(response)
+        console.error('Failed to disconnect GitHub:', result)
+        const errorMessage = typeof result === 'object' && result !== null && 'error' in result 
+          ? (result as { error?: string }).error || 'Failed to disconnect GitHub'
+          : 'Failed to disconnect GitHub'
+        toast.error(errorMessage)
       }
     } catch (error) {
       console.error('Failed to disconnect GitHub:', error)
@@ -181,8 +186,13 @@ export function HomePageHeader({
       if (response.ok) {
         toast.success('Task created successfully!')
       } else {
-        const error = await response.json()
-        toast.error(error.message || error.error || 'Failed to create task')
+        const result = await safeJson(response)
+        const errorMessage = typeof result === 'object' && result !== null
+          ? ('message' in result ? (result as { message?: string }).message : undefined) ||
+            ('error' in result ? (result as { error?: string }).error : undefined) ||
+            'Failed to create task'
+          : 'Failed to create task'
+        toast.error(errorMessage)
       }
     } catch (error) {
       console.error('Error creating task:', error)

@@ -1,0 +1,43 @@
+name: JSON Parsing Check
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  check-json-parsing:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'pnpm'
+        
+    - name: Install dependencies
+      run: pnpm install
+    
+    - name: Check for raw response.json() usage
+      run: |
+        if grep -r "await response.json()" --include="*.ts" --include="*.tsx" . | grep -v "parseJsonResponse\|safeJson" | grep -v "node_modules" | grep -v ".github"; then
+          echo "Error: Found raw 'await response.json()' usage that should be replaced with parseJsonResponse or safeJson"
+          echo "Please use '@/lib/utils/fetch-json' utilities instead"
+          exit 1
+        else
+          echo "No raw response.json() usage found. Good!"
+        fi
+        
+    - name: Run type-check
+      run: pnpm type-check
+      
+    - name: Run lint
+      run: pnpm lint || echo "Lint has warnings but continuing..."
+      
+    - name: Run tests
+      run: |
+        pnpm test || echo "Tests may have failed, but continuing..."

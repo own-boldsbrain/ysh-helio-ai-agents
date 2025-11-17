@@ -1,4 +1,3 @@
-import { Sandbox } from '@vercel/sandbox'
 import { eq, and, isNull } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -53,12 +52,14 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
           return NextResponse.json({ error: 'Sandbox credentials not configured' }, { status: 500 })
         }
 
-        sandbox = await Sandbox.get({
+        const { Sandbox } = await import('@/lib/sandbox')
+        const reconnected = await Sandbox.get({
           sandboxId: task.sandboxId,
           teamId,
           projectId,
           token: sandboxToken,
         })
+        sandbox = reconnected || undefined
       } catch (error) {
         console.error('Failed to reconnect to sandbox:', error)
         return NextResponse.json({ error: 'Failed to connect to sandbox' }, { status: 500 })

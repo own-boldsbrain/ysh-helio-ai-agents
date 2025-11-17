@@ -235,7 +235,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         if (task.sandboxId) {
           try {
             const { getSandbox } = await import('@/lib/sandbox/sandbox-registry')
-            const { Sandbox } = await import('@vercel/sandbox')
+            const { Sandbox } = await import('@/lib/sandbox')
 
             let sandbox = getSandbox(taskId)
 
@@ -246,12 +246,14 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
               const projectId = process.env.SANDBOX_VERCEL_PROJECT_ID
 
               if (sandboxToken && teamId && projectId) {
-                sandbox = await Sandbox.get({
+                const reconnected = await Sandbox.get({
                   sandboxId: task.sandboxId,
                   teamId,
                   projectId,
                   token: sandboxToken,
                 })
+
+                sandbox = reconnected || undefined
               }
             }
 
@@ -290,7 +292,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         if (isNodeModulesFile && task.sandboxId) {
           try {
             const { getSandbox } = await import('@/lib/sandbox/sandbox-registry')
-            const { Sandbox } = await import('@vercel/sandbox')
+            const { Sandbox } = await import('@/lib/sandbox')
 
             let sandbox = getSandbox(taskId)
 
@@ -301,12 +303,14 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
               const projectId = process.env.SANDBOX_VERCEL_PROJECT_ID
 
               if (sandboxToken && teamId && projectId) {
-                sandbox = await Sandbox.get({
+                const reconnected = await Sandbox.get({
                   sandboxId: task.sandboxId,
                   teamId,
                   projectId,
                   token: sandboxToken,
                 })
+
+                sandbox = reconnected || undefined
               }
             }
 
@@ -340,7 +344,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         if (!fileFound && !isImage && !isNodeModulesFile && task.sandboxId) {
           try {
             const { getSandbox } = await import('@/lib/sandbox/sandbox-registry')
-            const { Sandbox } = await import('@vercel/sandbox')
+            const { Sandbox } = await import('@/lib/sandbox')
 
             let sandbox = getSandbox(taskId)
 
@@ -351,12 +355,14 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
               const projectId = process.env.SANDBOX_VERCEL_PROJECT_ID
 
               if (sandboxToken && teamId && projectId) {
-                sandbox = await Sandbox.get({
+                const reconnected = await Sandbox.get({
                   sandboxId: task.sandboxId,
                   teamId,
                   projectId,
                   token: sandboxToken,
                 })
+
+                sandbox = reconnected || undefined
               }
             }
 

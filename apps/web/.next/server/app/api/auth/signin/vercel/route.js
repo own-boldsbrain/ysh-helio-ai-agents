@@ -1,0 +1,12 @@
+var R=require("../../../../../chunks/[turbopack]_runtime.js")("server/app/api/auth/signin/vercel/route.js")
+R.c("server/chunks/[root-of-the-server]__d38bd5ed._.js")
+R.c("server/chunks/6f0c7_next_685f14ab._.js")
+R.c("server/chunks/apps_web_lib_utils_ts_7b401b9e._.js")
+R.c("server/chunks/6f0c7_next_dist_b05a6161._.js")
+R.c("server/chunks/37e87_zod_v4_classic_external_42456106.js")
+R.c("server/chunks/apps_web_lib_utils_id_ts_d97130d7._.js")
+R.c("server/chunks/[root-of-the-server]__980c1973._.js")
+R.c("server/chunks/09832_arctic_dist_index_999035fd.js")
+R.c("server/chunks/apps_web__next-internal_server_app_api_auth_signin_vercel_route_actions_29ce63e1.js")
+R.m(382879)
+module.exports=R.m(382879).exports

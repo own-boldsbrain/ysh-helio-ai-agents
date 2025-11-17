@@ -1,4 +1,5 @@
 import 'server-only'
+import { safeJson } from '@/lib/utils/fetch-json'
 
 import type { Session } from './types'
 import { SESSION_COOKIE_NAME } from './constants'
@@ -29,7 +30,7 @@ export async function createGitHubSession(accessToken: string, scope?: string): 
     return undefined
   }
 
-  const githubUser = (await userResponse.json()) as GitHubUser
+  const githubUser = (await safeJson<GitHubUser>(userResponse)) as GitHubUser
 
   // If email is not public, fetch it from the emails endpoint
   let email = githubUser.email
@@ -42,7 +43,13 @@ export async function createGitHubSession(accessToken: string, scope?: string): 
         },
       })
       if (emailsResponse.ok) {
-        const emails = (await emailsResponse.json()) as Array<{ email: string; primary: boolean; verified: boolean }>
+        const emails = (await safeJson<Array<{ email: string; primary: boolean; verified: boolean }>>(
+          emailsResponse,
+        )) as Array<{
+          email: string
+          primary: boolean
+          verified: boolean
+        }>
         const primaryEmail = emails.find((e) => e.primary && e.verified)
         email = primaryEmail?.email || emails[0]?.email || null
       }

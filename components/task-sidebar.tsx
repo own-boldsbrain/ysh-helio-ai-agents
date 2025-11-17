@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { AlertCircle, Plus, Trash2, GitBranch } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { safeJson } from '@/lib/utils/fetch-json'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Claude, Codex, Copilot, Cursor, Gemini, OpenCode } from '@/components/logos'
@@ -173,12 +174,12 @@ export function TaskSidebar({ tasks, onTaskSelect, width = 288 }: TaskSidebarPro
       })
 
       if (response.ok) {
-        const result = await response.json()
+        const result = await safeJson<{ message?: string }>(response)
         toast.success(result.message)
         await refreshTasks()
         setShowDeleteDialog(false)
       } else {
-        const error = await response.json()
+        const error = await safeJson<{ error?: string }>(response)
         toast.error(error.error || 'Failed to delete tasks')
       }
     } catch (error) {

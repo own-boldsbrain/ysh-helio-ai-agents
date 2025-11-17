@@ -1,0 +1,3 @@
+{
+  "/api/tasks/[taskId]/autocomplete/route": "app/api/tasks/[taskId]/autocomplete/route.js"
+}

@@ -25,6 +25,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Textarea } from '@/components/ui/textarea'
 import { taskChatInputAtomFamily } from '@/lib/atoms/task'
 import { TaskMessage, Task } from '@/lib/db/schema'
+import { safeJson } from '@/lib/utils/fetch-json'
 
 interface TaskChatProps {
   taskId: string
@@ -119,9 +120,14 @@ export function TaskChat({ taskId, task }: TaskChatProps) {
 
       try {
         const response = await fetch(`/api/tasks/${taskId}/messages`)
-        const data = await response.json()
 
-        if (response.ok && data.success) {
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`)
+        }
+
+        const data = await safeJson<{ success: boolean; messages: TaskMessage[]; error?: string }>(response)
+
+        if (data.success) {
           setMessages(data.messages)
         } else {
           setError(data.error || 'Failed to fetch messages')
@@ -152,9 +158,14 @@ export function TaskChat({ taskId, task }: TaskChatProps) {
 
       try {
         const response = await fetch(`/api/tasks/${taskId}/pr-comments`)
-        const data = await response.json()
 
-        if (response.ok && data.success) {
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`)
+        }
+
+        const data = await safeJson<{ success: boolean; comments?: any[]; error?: string }>(response)
+
+        if (data.success) {
           setPrComments(data.comments || [])
           commentsLoadedRef.current = true
         } else {
@@ -186,7 +197,7 @@ export function TaskChat({ taskId, task }: TaskChatProps) {
 
       try {
         const response = await fetch(`/api/tasks/${taskId}/check-runs`)
-        const data = await response.json()
+        const data = await safeJson<{ success: boolean; checkRuns?: any[]; error?: string }>(response)
 
         if (response.ok && data.success) {
           setCheckRuns(data.checkRuns || [])
@@ -218,7 +229,7 @@ export function TaskChat({ taskId, task }: TaskChatProps) {
 
       try {
         const response = await fetch(`/api/tasks/${taskId}/deployment`)
-        const data = await response.json()
+        const data = await safeJson<{ success: boolean; data?: any; error?: string }>(response)
 
         if (response.ok && data.success) {
           setDeployment(data.data)
@@ -481,7 +492,7 @@ export function TaskChat({ taskId, task }: TaskChatProps) {
         }),
       })
 
-      const data = await response.json()
+      const data = await safeJson<{ error?: string }>(response)
 
       if (response.ok) {
         // Refresh messages to show the new user message without loading state
@@ -534,7 +545,7 @@ export function TaskChat({ taskId, task }: TaskChatProps) {
         }),
       })
 
-      const data = await response.json()
+      const data = await safeJson<{ error?: string }>(response)
 
       if (response.ok) {
         // Refresh messages to show the new user message without loading state
@@ -566,8 +577,14 @@ export function TaskChat({ taskId, task }: TaskChatProps) {
         toast.success('Task stopped successfully!')
         // Task will update through polling
       } else {
-        const error = await response.json()
-        toast.error(error.error || 'Failed to stop task')
+        let errorMessage = 'Failed to stop task'
+        try {
+          const error = await safeJson<{ error?: string }>(response)
+          errorMessage = error.error || errorMessage
+        } catch {
+          // Ignore JSON parse errors
+        }
+        toast.error(errorMessage)
       }
     } catch (error) {
       console.error('Error stopping task:', error)

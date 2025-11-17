@@ -107,8 +107,8 @@ fi
 
 print_success "docker-compose is available"
 
-# Navigate to project directory
-PROJECT_DIR="/mnt/c/Users/fjuni/rookie-dev/coding-agent-template"
+# Navigate to project directory (use current directory instead of hardcoded path)
+PROJECT_DIR="$(pwd)"
 cd "$PROJECT_DIR"
 print_success "Changed to project directory: $PROJECT_DIR"
 

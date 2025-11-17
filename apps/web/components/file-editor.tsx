@@ -5,6 +5,8 @@ import { useTheme } from 'next-themes'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { toast } from 'sonner'
 
+import { safeJson } from '@/lib/utils/fetch-json'
+
 // Monaco types for editor and monaco instances
 type MonacoEditor = Parameters<OnMount>[0]
 type Monaco = Parameters<OnMount>[1]
@@ -182,7 +184,7 @@ export function FileEditor({
         }),
       })
 
-      const data = await response.json()
+      const data = await safeJson<{ success?: boolean; error?: string }>(response)
       console.log('[Save] Response:', { ok: response.ok, data })
 
       if (response.ok && data.success) {
@@ -499,7 +501,7 @@ export function FileEditor({
           return null
         }
 
-        const data = await response.json()
+        const data = await safeJson<{ definitions?: LspDefinition[] }>(response)
         console.log('[Go to Definition] LSP API response data:', JSON.stringify(data, null, 2))
 
         if (!data.definitions || data.definitions.length === 0) {

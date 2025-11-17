@@ -1,0 +1,13 @@
+var R=require("../../../../chunks/[turbopack]_runtime.js")("server/app/api/vercel/teams/route.js")
+R.c("server/chunks/_8836f803._.js")
+R.c("server/chunks/[root-of-the-server]__1aaf1f73._.js")
+R.c("server/chunks/6f0c7_next_1302694d._.js")
+R.c("server/chunks/6f0c7_next_685f14ab._.js")
+R.c("server/chunks/_212256fc._.js")
+R.c("server/chunks/[root-of-the-server]__980c1973._.js")
+R.c("server/chunks/37e87_zod_v4_classic_external_42456106.js")
+R.c("server/chunks/_acaf0e04._.js")
+R.c("server/chunks/6f0c7_next_dist_b05a6161._.js")
+R.c("server/chunks/apps_web__next-internal_server_app_api_vercel_teams_route_actions_09f622f6.js")
+R.m(279572)
+module.exports=R.m(279572).exports

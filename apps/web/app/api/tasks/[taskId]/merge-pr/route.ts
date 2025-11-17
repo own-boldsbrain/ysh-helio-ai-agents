@@ -1,10 +1,10 @@
-import { Sandbox } from '@vercel/sandbox'
 import { eq, and, isNull } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
 
 import { db } from '@/lib/db/client'
 import { tasks } from '@/lib/db/schema'
 import { mergePullRequest } from '@/lib/github/client'
+import { Sandbox } from '@/lib/sandbox'
 import { unregisterSandbox } from '@/lib/sandbox/sandbox-registry'
 import { getServerSession } from '@/lib/session/get-server-session'
 
@@ -64,8 +64,10 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
           token: process.env.SANDBOX_VERCEL_TOKEN!,
         })
 
-        await sandbox.stop()
-        unregisterSandbox(taskId)
+        if (sandbox) {
+          await sandbox.stop()
+          unregisterSandbox(taskId)
+        }
       } catch (sandboxError) {
         // Log error but don't fail the merge
         console.error('Error stopping sandbox after merge:', sandboxError)

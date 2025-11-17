@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useImperativeHandle, forwardRef } from 'react'
 
 import { cn } from '@/lib/utils'
+import { safeJson } from '@/lib/utils/fetch-json'
 
 interface TerminalProps {
   taskId: string
@@ -116,9 +117,13 @@ export const Terminal = forwardRef<TerminalRef, TerminalProps>(function Terminal
         body: JSON.stringify({ command }),
       })
 
-      const result = await response.json()
+      const result = await safeJson<{
+        success: boolean
+        data?: { exitCode: number; stdout?: string; stderr?: string }
+        error?: string
+      }>(response)
 
-      if (response.ok && result.success) {
+      if (response.ok && result.success && result.data) {
         // Add output to history
         const newLines: TerminalLine[] = []
 
@@ -150,8 +155,10 @@ export const Terminal = forwardRef<TerminalRef, TerminalProps>(function Terminal
               },
               body: JSON.stringify({ command: 'pwd' }),
             })
-            const pwdResult = await pwdResponse.json()
-            if (pwdResult.success && pwdResult.data.stdout) {
+            const pwdResult = await safeJson<{ success: boolean; data?: { stdout?: string }; error?: string }>(
+              pwdResponse,
+            )
+            if (pwdResult.success && pwdResult.data && pwdResult.data.stdout) {
               setCwd(pwdResult.data.stdout.trim())
             }
           } catch {
@@ -200,11 +207,15 @@ export const Terminal = forwardRef<TerminalRef, TerminalProps>(function Terminal
         }),
       })
 
-      const result = await response.json()
+      const result = await safeJson<{
+        success: boolean
+        data?: { completions: { name: string; isDirectory: boolean }[]; prefix?: string }
+        error?: string
+      }>(response)
 
-      if (response.ok && result.success && result.data.completions.length > 0) {
+      if (response.ok && result.success && result.data && result.data.completions.length > 0) {
         const completions = result.data.completions
-        const prefix = result.data.prefix
+        const prefix = result.data.prefix ?? ''
 
         if (completions.length === 1) {
           // Single match - complete it

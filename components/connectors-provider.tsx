@@ -2,6 +2,7 @@
 
 import { useState, useEffect, createContext, useContext, useCallback } from 'react'
 import { Connector } from '@/lib/db/schema'
+import { safeJson } from '@/lib/utils/fetch-json'
 
 interface ConnectorsContextType {
   connectors: Connector[]
@@ -31,7 +32,7 @@ export function ConnectorsProvider({ children }: ConnectorsProviderProps) {
     try {
       const response = await fetch('/api/connectors')
       if (response.ok) {
-        const data = await response.json()
+        const data = await safeJson(response)
         setConnectors(data.data || [])
       }
     } catch (error) {

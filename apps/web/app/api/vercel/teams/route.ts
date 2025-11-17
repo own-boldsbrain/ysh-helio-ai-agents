@@ -4,6 +4,7 @@ import { getOAuthToken } from '@/lib/session/get-oauth-token'
 import { getServerSession } from '@/lib/session/get-server-session'
 import { fetchTeams } from '@/lib/vercel-client/teams'
 import { fetchUser } from '@/lib/vercel-client/user'
+import { parseJsonResponse } from '@/lib/utils/fetch-json'
 
 export async function GET() {
   try {
@@ -44,7 +45,7 @@ export async function GET() {
 
     return NextResponse.json({ scopes })
   } catch (error) {
-    console.error('Error fetching Vercel teams:', error)
+    console.error('Error fetching Vercel teams')
     return NextResponse.json({ error: 'Failed to fetch Vercel teams' }, { status: 500 })
   }
 }

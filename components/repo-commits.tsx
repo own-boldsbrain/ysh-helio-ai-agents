@@ -8,6 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useTasks } from '@/components/app-layout'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { safeJson } from '@/lib/utils/fetch-json'
 import { RevertCommitDialog } from '@/components/revert-commit-dialog'
 
 function formatDistanceToNow(date: Date): string {
@@ -63,7 +64,7 @@ export function RepoCommits({ owner, repo }: RepoCommitsProps) {
         if (!response.ok) {
           throw new Error('Failed to fetch commits')
         }
-        const data = await response.json()
+        const data = await safeJson<{ commits: Commit[] }>(response)
         setCommits(data.commits || [])
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load commits')
@@ -128,7 +129,7 @@ export function RepoCommits({ owner, repo }: RepoCommitsProps) {
       if (response.ok) {
         toast.success('Revert task created successfully!')
       } else {
-        const error = await response.json()
+        const error = await safeJson<{ message?: string; error?: string }>(response)
         toast.error(error.message || error.error || 'Failed to create revert task')
       }
     } catch (error) {

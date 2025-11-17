@@ -36,6 +36,7 @@ import {
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { safeJson } from '@/lib/utils/fetch-json'
 
 const CODING_AGENTS = [
   { value: 'claude', label: 'Claude', icon: Claude },
@@ -163,16 +164,17 @@ export function RepoPullRequests({ owner, repo }: RepoPullRequestsProps) {
         if (!response.ok) {
           throw new Error('Failed to fetch pull requests')
         }
-        const data = await response.json()
-        setPullRequests(data.pullRequests || [])
+        const data = await safeJson<{ pullRequests?: PullRequest[] }>(response)
+        const pullRequestsList = data.pullRequests || []
+        setPullRequests(pullRequestsList)
 
         // Check task status for each PR
         const statusChecks = await Promise.all(
-          data.pullRequests.map(async (pr: PullRequest) => {
+          pullRequestsList.map(async (pr: PullRequest) => {
             try {
               const taskResponse = await fetch(`/api/repos/${owner}/${repo}/pull-requests/${pr.number}/check-task`)
               if (taskResponse.ok) {
-                const taskData = await taskResponse.json()
+                const taskData = await safeJson<{ hasTask: boolean; taskId: string | null }>(taskResponse)
                 return { prNumber: pr.number, hasTask: taskData.hasTask, taskId: taskData.taskId }
               }
             } catch {
@@ -235,12 +237,12 @@ export function RepoPullRequests({ owner, repo }: RepoPullRequestsProps) {
       })
 
       if (response.ok) {
-        const result = await response.json()
+        const result = await safeJson<{ success: boolean; task: { id: string } }>(response)
         toast.success('Task created successfully!')
         setShowCreateTaskDialog(false)
         router.push(`/tasks/${result.task.id}`)
       } else {
-        const error = await response.json()
+        const error = await safeJson<{ error?: string }>(response)
         toast.error(error.error || 'Failed to create task')
       }
     } catch (error) {

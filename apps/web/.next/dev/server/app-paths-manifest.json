@@ -1,10 +1,6 @@
 {
-  "/api/tasks/route": "app/api/tasks/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
   "/api/auth/info/route": "app/api/auth/info/route.js",
   "/api/auth/github/status/route": "app/api/auth/github/status/route.js",
-  "/api/tasks/[taskId]/route": "app/api/tasks/[taskId]/route.js",
-  "/api/tasks/[taskId]/messages/route": "app/api/tasks/[taskId]/messages/route.js",
-  "/api/tasks/[taskId]/start-sandbox/route": "app/api/tasks/[taskId]/start-sandbox/route.js",
-  "/page": "app/page.js",
-  "/tasks/[taskId]/page": "app/tasks/[taskId]/page.js"
+  "/api/tasks/route": "app/api/tasks/route.js"
 }

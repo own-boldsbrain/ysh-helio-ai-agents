@@ -1,0 +1,3 @@
+{
+  "/api/tasks/[taskId]/sync-changes/route": "app/api/tasks/[taskId]/sync-changes/route.js"
+}

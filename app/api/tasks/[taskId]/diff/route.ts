@@ -180,7 +180,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
       try {
         const { getSandbox } = await import('@/lib/sandbox/sandbox-registry')
-        const { Sandbox } = await import('@vercel/sandbox')
+        const { Sandbox } = await import('@/lib/sandbox')
 
         let sandbox = getSandbox(taskId)
 

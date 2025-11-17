@@ -1,4 +1,4 @@
-import { Sandbox } from '@vercel/sandbox'
+import type { SandboxType as Sandbox } from './index'
 
 // Project directory where repo is cloned
 export const PROJECT_DIR = '/vercel/sandbox/project'

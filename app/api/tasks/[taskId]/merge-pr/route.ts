@@ -4,7 +4,7 @@ import { tasks } from '@/lib/db/schema'
 import { eq, and, isNull } from 'drizzle-orm'
 import { getServerSession } from '@/lib/session/get-server-session'
 import { mergePullRequest } from '@/lib/github/client'
-import { Sandbox } from '@vercel/sandbox'
+import { Sandbox } from '@/lib/sandbox'
 import { unregisterSandbox } from '@/lib/sandbox/sandbox-registry'
 
 interface RouteParams {

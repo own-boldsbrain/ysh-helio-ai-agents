@@ -16,6 +16,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { safeJson } from '@/lib/utils/fetch-json'
 
 interface CreatePRDialogProps {
   taskId: string
@@ -74,9 +75,14 @@ export function CreatePRDialog({
         }),
       })
 
-      const result = await response.json()
+      type CreatePRResult = {
+        success: boolean
+        data?: { alreadyExists?: boolean; prUrl?: string; prNumber?: number }
+        error?: string
+      }
+      const result = await safeJson<CreatePRResult>(response)
 
-      if (response.ok && result.success) {
+      if (response.ok && result.success && result.data) {
         if (result.data.alreadyExists) {
           toast.info('Pull request already exists')
         } else {

@@ -1,5 +1,3 @@
-import { Sandbox } from '@vercel/sandbox'
-
 import { Connector } from '@/lib/db/schema'
 import { TaskLogger } from '@/lib/utils/task-logger'
 
@@ -10,6 +8,8 @@ import { executeCopilotInSandbox } from './copilot'
 import { executeCursorInSandbox } from './cursor'
 import { executeGeminiInSandbox } from './gemini'
 import { executeOpenCodeInSandbox } from './opencode'
+
+import type { SandboxType as Sandbox } from '../index'
 
 export type AgentType = 'claude' | 'codex' | 'copilot' | 'cursor' | 'gemini' | 'opencode'
 

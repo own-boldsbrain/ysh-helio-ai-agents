@@ -1,4 +1,3 @@
-import { Sandbox } from '@vercel/sandbox'
 import { eq, desc, or, and, isNull } from 'drizzle-orm'
 import { NextRequest, NextResponse, after } from 'next/server'
 
@@ -9,6 +8,7 @@ import { tasks, insertTaskSchema, connectors, taskMessages } from '@/lib/db/sche
 import { getMaxSandboxDuration } from '@/lib/db/settings'
 import { getGitHubUser } from '@/lib/github/client'
 import { getUserGitHubToken } from '@/lib/github/user-token'
+import { Sandbox } from '@/lib/sandbox'
 import { executeAgentInSandbox, AgentType } from '@/lib/sandbox/agents'
 import { createSandbox } from '@/lib/sandbox/creation'
 import { pushChangesToBranch, shutdownSandbox } from '@/lib/sandbox/git'

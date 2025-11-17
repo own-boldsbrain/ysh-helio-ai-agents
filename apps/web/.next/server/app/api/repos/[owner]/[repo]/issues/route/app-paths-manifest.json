@@ -1,0 +1,3 @@
+{
+  "/api/repos/[owner]/[repo]/issues/route": "app/api/repos/[owner]/[repo]/issues/route.js"
+}

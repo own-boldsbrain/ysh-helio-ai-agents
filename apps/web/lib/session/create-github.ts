@@ -1,10 +1,10 @@
 import 'server-only'
-
 import ms from 'ms'
 
 import { encrypt } from '@/lib/crypto'
 import { upsertUser } from '@/lib/db/users'
 import { encryptJWE } from '@/lib/jwe/encrypt'
+import { safeJson } from '@/lib/utils/fetch-json'
 
 import { SESSION_COOKIE_NAME } from './constants'
 
@@ -32,7 +32,7 @@ export async function createGitHubSession(accessToken: string, scope?: string): 
     return undefined
   }
 
-  const githubUser = (await userResponse.json()) as GitHubUser
+  const githubUser = (await safeJson<GitHubUser>(userResponse)) as GitHubUser
 
   // If email is not public, fetch it from the emails endpoint
   let email = githubUser.email
@@ -45,7 +45,7 @@ export async function createGitHubSession(accessToken: string, scope?: string): 
         },
       })
       if (emailsResponse.ok) {
-        const emails = (await emailsResponse.json()) as Array<{ email: string; primary: boolean; verified: boolean }>
+        const emails = await safeJson<Array<{ email: string; primary: boolean; verified: boolean }>>(emailsResponse)
         const primaryEmail = emails.find((e) => e.primary && e.verified)
         email = primaryEmail?.email || emails[0]?.email || null
       }

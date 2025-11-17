@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 
 import { Task } from '@/lib/db/schema'
+import { safeJson } from '@/lib/utils/fetch-json'
 
 export function useTask(taskId: string) {
   const [task, setTask] = useState<Task | null>(null)
@@ -16,7 +17,7 @@ export function useTask(taskId: string) {
     try {
       const response = await fetch(`/api/tasks/${taskId}`)
       if (response.ok) {
-        const data = await response.json()
+        const data = await safeJson<{ task: Task }>(response)
         setTask(data.task)
         setError(null)
         hasFoundTaskRef.current = true

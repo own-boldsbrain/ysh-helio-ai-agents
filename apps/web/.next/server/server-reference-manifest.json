@@ -1,0 +1,66 @@
+{
+  "node": {
+    "6082b3bbef717f270da0fca64d40811aa494401064": {
+      "workers": {
+        "app/page": {
+          "moduleId": 523096,
+          "async": false,
+          "exportedName": "createConnector",
+          "filename": "apps/web/lib/actions/connectors.ts"
+        }
+      },
+      "layer": {
+        "app/page": "action-browser"
+      },
+      "filename": "apps/web/lib/actions/connectors.ts",
+      "exportedName": "createConnector"
+    },
+    "60b1c489699f5bca3cb8541203b57b06916cd4f816": {
+      "workers": {
+        "app/page": {
+          "moduleId": 523096,
+          "async": false,
+          "exportedName": "updateConnector",
+          "filename": "apps/web/lib/actions/connectors.ts"
+        }
+      },
+      "layer": {
+        "app/page": "action-browser"
+      },
+      "filename": "apps/web/lib/actions/connectors.ts",
+      "exportedName": "updateConnector"
+    },
+    "4066ea20de846685724f2a4f4035cf3169c3290464": {
+      "workers": {
+        "app/page": {
+          "moduleId": 523096,
+          "async": false,
+          "exportedName": "deleteConnector",
+          "filename": "apps/web/lib/actions/connectors.ts"
+        }
+      },
+      "layer": {
+        "app/page": "action-browser"
+      },
+      "filename": "apps/web/lib/actions/connectors.ts",
+      "exportedName": "deleteConnector"
+    },
+    "6053169fa3331d31392621d683d087978d4ada2a83": {
+      "workers": {
+        "app/page": {
+          "moduleId": 523096,
+          "async": false,
+          "exportedName": "toggleConnectorStatus",
+          "filename": "apps/web/lib/actions/connectors.ts"
+        }
+      },
+      "layer": {
+        "app/page": "action-browser"
+      },
+      "filename": "apps/web/lib/actions/connectors.ts",
+      "exportedName": "toggleConnectorStatus"
+    }
+  },
+  "edge": {},
+  "encryptionKey": "ELFLRvuwlZMTBZCqN9jRiW7judHkSbTcYx5z0V8DT6Y="
+}

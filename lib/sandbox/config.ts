@@ -64,8 +64,9 @@ export function createAuthenticatedRepoUrl(repoUrl: string, githubToken?: string
     const url = new URL(repoUrl)
     if (url.hostname === 'github.com') {
       // Add GitHub token for authentication
-      url.username = githubToken
-      url.password = 'x-oauth-basic'
+      // Use x-access-token as username and token as password for better compatibility
+      url.username = 'x-access-token'
+      url.password = githubToken
     }
     return url.toString()
   } catch {

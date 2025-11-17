@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'sonner'
+import { safeJson } from '@/lib/utils/fetch-json'
 import { Loader2 } from 'lucide-react'
 
 interface CreatePRDialogProps {
@@ -73,7 +74,11 @@ export function CreatePRDialog({
         }),
       })
 
-      const result = await response.json()
+      const result = await safeJson<{
+        success: boolean
+        data?: { alreadyExists?: boolean; prUrl?: string; prNumber?: number }
+        error?: string
+      }>(response)
 
       if (response.ok && result.success) {
         if (result.data.alreadyExists) {

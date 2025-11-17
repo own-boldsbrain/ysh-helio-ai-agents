@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { safeJson } from '@/lib/utils/fetch-json'
 
 interface ApiKeysDialogProps {
   open: boolean
@@ -52,11 +53,14 @@ export function ApiKeysDialog({ open, onOpenChange }: ApiKeysDialogProps) {
   const fetchApiKeys = async () => {
     try {
       const response = await fetch('/api/api-keys')
-      const data = await response.json()
+      const data = await safeJson<{ success: boolean; apiKeys?: Array<{ provider: Provider }>; error?: string }>(
+        response,
+      )
 
       if (data.success) {
         const saved = new Set<Provider>()
-        data.apiKeys.forEach((key: { provider: Provider }) => {
+        const apiKeys = data.apiKeys || []
+        apiKeys.forEach((key: { provider: Provider }) => {
           saved.add(key.provider)
         })
         setSavedKeys(saved)
@@ -96,7 +100,7 @@ export function ApiKeysDialog({ open, onOpenChange }: ApiKeysDialogProps) {
         })
         setApiKeys((prev) => ({ ...prev, [provider]: '' }))
       } else {
-        const error = await response.json()
+        const error = await safeJson<{ error?: string }>(response)
         toast.error(error.error || 'Failed to save API key')
       }
     } catch (error) {
@@ -127,7 +131,7 @@ export function ApiKeysDialog({ open, onOpenChange }: ApiKeysDialogProps) {
           return newSet
         })
       } else {
-        const error = await response.json()
+        const error = await safeJson<{ error?: string }>(response)
         toast.error(error.error || 'Failed to delete API key')
       }
     } catch (error) {

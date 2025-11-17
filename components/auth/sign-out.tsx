@@ -2,6 +2,7 @@
 
 import type { Session } from '@/lib/session/types'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { safeJson } from '@/lib/utils/fetch-json'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -72,7 +73,7 @@ export function SignOut({ user, authProvider }: Pick<Session, 'user' | 'authProv
       try {
         const response = await fetch('/api/auth/rate-limit')
         if (response.ok && mounted) {
-          const data = await response.json()
+          const data = await safeJson(response)
           setRateLimit({
             used: data.used,
             total: data.total,
@@ -92,7 +93,7 @@ export function SignOut({ user, authProvider }: Pick<Session, 'user' | 'authProv
     try {
       const response = await fetch('/api/auth/rate-limit')
       if (response.ok) {
-        const data = await response.json()
+        const data = await safeJson(response)
         setRateLimit({
           used: data.used,
           total: data.total,

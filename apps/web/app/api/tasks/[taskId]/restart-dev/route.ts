@@ -1,9 +1,9 @@
-import { Sandbox } from '@vercel/sandbox'
 import { eq } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
 
 import { db } from '@/lib/db/client'
 import { tasks } from '@/lib/db/schema'
+import { Sandbox } from '@/lib/sandbox'
 import { runCommandInSandbox, runInProject, PROJECT_DIR } from '@/lib/sandbox/commands'
 import { detectPackageManager } from '@/lib/sandbox/package-manager'
 import { getServerSession } from '@/lib/session/get-server-session'
@@ -42,6 +42,10 @@ export async function POST(_request: NextRequest, { params }: { params: Promise<
       projectId: process.env.SANDBOX_VERCEL_PROJECT_ID!,
       token: process.env.SANDBOX_VERCEL_TOKEN!,
     })
+
+    if (!sandbox) {
+      return NextResponse.json({ error: 'Failed to reconnect to sandbox' }, { status: 500 })
+    }
 
     const logger = createTaskLogger(taskId)
 

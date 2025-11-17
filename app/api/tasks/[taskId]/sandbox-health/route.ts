@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db/client'
 import { tasks } from '@/lib/db/schema'
 import { eq, and, isNull } from 'drizzle-orm'
-import { Sandbox } from '@vercel/sandbox'
+// Dynamic import of Sandbox for runtime
 import { getServerSession } from '@/lib/session/get-server-session'
 
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ taskId: string }> }) {
@@ -37,6 +37,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 
     // Check if sandbox is still alive
     try {
+      const { Sandbox } = await import('@/lib/sandbox')
       const sandbox = await Sandbox.get({
         teamId: process.env.SANDBOX_VERCEL_TEAM_ID!,
         projectId: process.env.SANDBOX_VERCEL_PROJECT_ID!,

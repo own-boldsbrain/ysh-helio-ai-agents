@@ -55,8 +55,9 @@ export class DockerSandbox implements SandboxType {
       console.error('Failed to create volume:', error)
     }
 
-    // Build port mappings for Docker - use dynamic host ports to avoid conflicts
-    // Docker will automatically assign available host ports
+    // Build port mappings for Docker - request container port mapping and let Docker select host
+    // ports dynamically to avoid host conflicts. After the container starts, we'll inspect
+    // the mapping and return the mapped host port for the sandbox domain.
     const portMappings = ports.map((p) => `-p ${p}`).join(' ')
 
     // Prepare environment variables
@@ -94,11 +95,22 @@ export class DockerSandbox implements SandboxType {
       if (options.source) {
         // Escape Git URL for shell execution (handle special characters like @, :, etc)
         const escapedGitUrl = options.source.url.replace(/'/g, "'\\''")
-        const gitBranch = options.source.revision || 'main'
+        const gitBranch = options.source.revision || ''
         const gitDepth = options.source.depth || 1
 
-        // Add init script to clone repo with properly escaped URL
-        finalCommand += ` /bin/sh -c 'git clone --depth ${gitDepth} -b ${gitBranch} '\\''${escapedGitUrl}'\\'' /workspace/project && tail -f /dev/null'`
+        // Add init script to clone repo (without failing if branch doesn't exist) and try to fetch branch
+        // This approach avoids failing container start for repos with no 'main' branch
+        // Steps:
+        // 1. git clone --depth <depth> <url> /workspace/project || true
+        // 2. cd /workspace/project
+        // 3. If branch provided, try to fetch & checkout it; if it fails, continue
+        // 4. tail -f /dev/null (keep container alive)
+
+        const checkoutBranchScript = gitBranch
+          ? `if git ls-remote --heads '${escapedGitUrl}' '${gitBranch}' >/dev/null 2>&1; then git fetch --depth ${gitDepth} origin ${gitBranch} && git checkout -b ${gitBranch} origin/${gitBranch}; fi;`
+          : ''
+
+        finalCommand += ` /bin/sh -c 'set -e; git clone --depth ${gitDepth} '\''${escapedGitUrl}'\'' /workspace/project || true; cd /workspace/project || exit 0; ${checkoutBranchScript} tail -f /dev/null'`
       } else {
         finalCommand += ' tail -f /dev/null'
       }
@@ -110,7 +122,22 @@ export class DockerSandbox implements SandboxType {
         throw new Error(`Docker run returned empty container ID. Stderr: ${stderr}`)
       }
 
-      const sandbox = new DockerSandbox(sandboxId, containerId, ports, volumeName)
+      // Determine the actual host port mapping (first port mapping is used for domain)
+      let hostPorts: number[] = []
+      try {
+        for (const cp of ports) {
+          const { stdout: portOut } = await execAsync(
+            `docker inspect --format='{{(index (index .NetworkSettings.Ports "${cp}/tcp") 0).HostPort}}' ${containerId}`,
+          )
+          const hostPort = parseInt(portOut.trim(), 10)
+          hostPorts.push(Number.isNaN(hostPort) ? cp : hostPort)
+        }
+      } catch {
+        // Failed to determine host port, fall back to container ports
+        hostPorts = ports
+      }
+
+      const sandbox = new DockerSandbox(sandboxId, containerId, hostPorts, volumeName)
       activeContainers.set(sandboxId, sandbox)
 
       return sandbox

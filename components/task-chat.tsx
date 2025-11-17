@@ -1,7 +1,9 @@
 'use client'
 
 import { TaskMessage, Task } from '@/lib/db/schema'
+import { messageJsonArraySchema, MessageJson } from '@/lib/validators/message'
 import { useState, useEffect, useRef, useCallback, Children, isValidElement } from 'react'
+import { safeJson } from '@/lib/utils/fetch-json'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -118,10 +120,18 @@ export function TaskChat({ taskId, task }: TaskChatProps) {
 
       try {
         const response = await fetch(`/api/tasks/${taskId}/messages`)
-        const data = await response.json()
+        const data = await safeJson<{ success: boolean; messages?: MessageJson[]; error?: string }>(response)
 
         if (response.ok && data.success) {
-          setMessages(data.messages)
+          // Validate incoming messages structure and convert createdAt strings to Date
+          try {
+            const verified = messageJsonArraySchema.parse(data.messages as MessageJson[])
+            const converted: TaskMessage[] = verified.map((m) => ({ ...m, createdAt: new Date(m.createdAt) }))
+            setMessages(converted)
+          } catch (err) {
+            console.error('Invalid messages response', err)
+            setError('Invalid messages response')
+          }
         } else {
           setError(data.error || 'Failed to fetch messages')
         }
@@ -151,7 +161,7 @@ export function TaskChat({ taskId, task }: TaskChatProps) {
 
       try {
         const response = await fetch(`/api/tasks/${taskId}/pr-comments`)
-        const data = await response.json()
+        const data = await safeJson<{ success: boolean; comments?: PRComment[]; error?: string }>(response)
 
         if (response.ok && data.success) {
           setPrComments(data.comments || [])
@@ -185,7 +195,7 @@ export function TaskChat({ taskId, task }: TaskChatProps) {
 
       try {
         const response = await fetch(`/api/tasks/${taskId}/check-runs`)
-        const data = await response.json()
+        const data = await safeJson<{ success: boolean; checkRuns?: CheckRun[]; error?: string }>(response)
 
         if (response.ok && data.success) {
           setCheckRuns(data.checkRuns || [])
@@ -217,7 +227,7 @@ export function TaskChat({ taskId, task }: TaskChatProps) {
 
       try {
         const response = await fetch(`/api/tasks/${taskId}/deployment`)
-        const data = await response.json()
+        const data = await safeJson<{ success: boolean; data?: DeploymentInfo; error?: string }>(response)
 
         if (response.ok && data.success) {
           setDeployment(data.data)
@@ -480,7 +490,7 @@ export function TaskChat({ taskId, task }: TaskChatProps) {
         }),
       })
 
-      const data = await response.json()
+      const data = await safeJson<{ success: boolean; error?: string }>(response)
 
       if (response.ok) {
         // Refresh messages to show the new user message without loading state
@@ -533,7 +543,7 @@ export function TaskChat({ taskId, task }: TaskChatProps) {
         }),
       })
 
-      const data = await response.json()
+      const data = await safeJson(response)
 
       if (response.ok) {
         // Refresh messages to show the new user message without loading state
@@ -565,7 +575,7 @@ export function TaskChat({ taskId, task }: TaskChatProps) {
         toast.success('Task stopped successfully!')
         // Task will update through polling
       } else {
-        const error = await response.json()
+        const error = await safeJson(response)
         toast.error(error.error || 'Failed to stop task')
       }
     } catch (error) {

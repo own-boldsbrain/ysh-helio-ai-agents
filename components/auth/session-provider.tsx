@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import { useSetAtom } from 'jotai'
+import { safeJson } from '@/lib/utils/fetch-json'
 import { sessionAtom, sessionInitializedAtom } from '@/lib/atoms/session'
 import { githubConnectionAtom, githubConnectionInitializedAtom } from '@/lib/atoms/github-connection'
 import type { SessionUserInfo } from '@/lib/session/types'
@@ -17,7 +18,7 @@ export function SessionProvider() {
     const fetchSession = async () => {
       try {
         const response = await fetch('/api/auth/info')
-        const data: SessionUserInfo = await response.json()
+        const data: SessionUserInfo = await safeJson(response)
         setSession(data)
         setInitialized(true)
       } catch (error) {
@@ -30,7 +31,7 @@ export function SessionProvider() {
     const fetchGitHubConnection = async () => {
       try {
         const response = await fetch('/api/auth/github/status')
-        const data: GitHubConnection = await response.json()
+        const data: GitHubConnection = await safeJson(response)
         setGitHubConnection(data)
         setGitHubInitialized(true)
       } catch (error) {

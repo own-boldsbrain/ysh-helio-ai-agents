@@ -1,0 +1,3 @@
+{
+  "/api/tasks/[taskId]/merge-pr/route": "app/api/tasks/[taskId]/merge-pr/route.js"
+}

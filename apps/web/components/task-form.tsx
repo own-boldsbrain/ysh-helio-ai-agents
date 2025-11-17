@@ -27,6 +27,7 @@ import { lastSelectedAgentAtom, lastSelectedModelAtomFamily } from '@/lib/atoms/
 import { githubReposAtomFamily } from '@/lib/atoms/github-cache'
 import { taskPromptAtom } from '@/lib/atoms/task'
 import { setInstallDependencies, setMaxDuration, setKeepAlive } from '@/lib/utils/cookies'
+import { safeJson } from '@/lib/utils/fetch-json'
 
 interface GitHubRepo {
   name: string
@@ -297,7 +298,7 @@ export function TaskForm({
 
         const response = await fetch(`/api/github/repos?owner=${selectedOwner}`)
         if (response.ok) {
-          const reposList = await response.json()
+          const reposList = await safeJson<GitHubRepo[]>(response)
           setRepos(reposList)
         }
       } catch (error) {
@@ -345,7 +346,7 @@ export function TaskForm({
     if (selectedRepoData && selectedAgent !== 'multi-agent') {
       try {
         const response = await fetch(`/api/api-keys/check?agent=${selectedAgent}&model=${selectedModel}`)
-        const data = await response.json()
+        const data = await safeJson<{ hasKey: boolean; provider?: string; agentName?: string }>(response)
 
         if (!data.hasKey) {
           // Show error message with provider name
@@ -356,10 +357,10 @@ export function TaskForm({
             gemini: 'Gemini',
             aigateway: 'AI Gateway',
           }
-          const providerName = providerNames[data.provider] || data.provider
+          const providerName = providerNames[data.provider || ''] || data.provider || ''
 
           toast.error(`${providerName} API key required`, {
-            description: `Please add your ${providerName} API key in the user menu to use the ${data.agentName} agent with this model.`,
+            description: `Please add your ${providerName} API key in the user menu to use the ${data.agentName || ''} agent with this model.`,
           })
           return
         }

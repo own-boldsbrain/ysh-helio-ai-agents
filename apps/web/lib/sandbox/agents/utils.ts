@@ -1,7 +1,7 @@
 import { redactSensitiveInfo } from '@/lib/utils/logging'
 import { TaskLogger } from '@/lib/utils/task-logger'
 
-import type { Sandbox } from '@vercel/sandbox'
+import type { SandboxType as Sandbox } from '../index'
 
 export interface CommandResult {
   success: boolean
@@ -50,7 +50,7 @@ export class SafeCommandExecutor {
           args.length > 0 ? `${command} ${args.map((arg) => `'${arg.replace(/'/g, "'\"'\"'")}'`).join(' ')}` : command
         const result = await this.sandbox.runCommand(safeCommand)
 
-        const output = (await result.output?.())?.trim() || ''
+        const output = (await result.stdout?.())?.trim() || ''
         const redactedOutput = redactSensitiveInfo(output)
 
         if (result.exitCode === 0) {
@@ -60,7 +60,7 @@ export class SafeCommandExecutor {
             output: redactedOutput,
           }
         } else {
-          const error = (await result.output?.('stderr')) || 'Command failed'
+          const error = (await result.stderr?.()) || 'Command failed'
           const redactedError = redactSensitiveInfo(error)
           await this.logger.error(redactedError)
           lastError = redactedError

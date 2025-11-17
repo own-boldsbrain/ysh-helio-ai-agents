@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import { Task } from '@/lib/db/schema'
+import { safeJson } from '@/lib/utils/fetch-json'
 import { PageHeader } from '@/components/page-header'
 import { useTasks } from '@/components/app-layout'
 import { Button } from '@/components/ui/button'
@@ -120,8 +121,12 @@ export function TasksListClient({ user, authProvider, initialStars = 1056 }: Tas
     try {
       const response = await fetch('/api/tasks')
       if (response.ok) {
-        const data = await response.json()
-        setTasks(data.tasks)
+        const result = await safeJson(response)
+        if (result && typeof result === 'object' && 'tasks' in result) {
+          setTasks((result as { tasks: Task[] }).tasks)
+        } else {
+          setTasks([])
+        }
       }
     } catch (error) {
       console.error('Error fetching tasks:', error)

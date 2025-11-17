@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db/client'
 import { tasks } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
-import { Sandbox } from '@vercel/sandbox'
+// Dynamic import of Sandbox when needed to ensure runtime module is loaded
 import { getServerSession } from '@/lib/session/get-server-session'
 import { getGitHubUser } from '@/lib/github/client'
 import { getUserGitHubToken } from '@/lib/github/user-token'
@@ -44,6 +44,7 @@ export async function POST(_request: NextRequest, { params }: { params: Promise<
     // Check if sandbox is already running by verifying if it's actually accessible
     if (task.sandboxId && task.sandboxUrl) {
       try {
+        const { Sandbox } = await import('@/lib/sandbox')
         const existingSandbox = await Sandbox.get({
           sandboxId: task.sandboxId,
           teamId: process.env.SANDBOX_VERCEL_TEAM_ID!,
@@ -88,6 +89,7 @@ export async function POST(_request: NextRequest, { params }: { params: Promise<
     console.log(`Detected port ${port} for project`)
 
     // Create a new sandbox by cloning the repo
+    const { Sandbox } = await import('@/lib/sandbox')
     const sandbox = await Sandbox.create({
       teamId: process.env.SANDBOX_VERCEL_TEAM_ID!,
       projectId: process.env.SANDBOX_VERCEL_PROJECT_ID!,

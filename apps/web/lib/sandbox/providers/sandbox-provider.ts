@@ -2,6 +2,12 @@ export interface SandboxConfig {
   teamId?: string
   projectId?: string
   token?: string
+  source?: {
+    type: 'git'
+    url: string
+    revision?: string
+    depth?: number
+  }
   timeout?: number
   ports?: number[]
   runtime?: string

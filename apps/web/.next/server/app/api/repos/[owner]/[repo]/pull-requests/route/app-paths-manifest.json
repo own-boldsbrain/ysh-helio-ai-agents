@@ -1,0 +1,3 @@
+{
+  "/api/repos/[owner]/[repo]/pull-requests/route": "app/api/repos/[owner]/[repo]/pull-requests/route.js"
+}

@@ -10,6 +10,7 @@
  */
 
 import * as dotenv from 'dotenv'
+import { safeJson } from '@/lib/utils/fetch-json'
 import * as path from 'path'
 import * as fs from 'fs'
 
@@ -168,7 +169,7 @@ async function validateHuggingFace() {
     })
 
     if (response.ok) {
-      const data = await response.json()
+      const data = await safeJson<any>(response)
       addResult('Hugging Face', 'valid', `Token is valid (User: ${data.name})`)
     } else {
       addResult('Hugging Face', 'invalid', `Token is invalid: ${response.status}`)

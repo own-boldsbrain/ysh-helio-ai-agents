@@ -33,6 +33,7 @@ import {
   Minimize,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { safeJson } from '@/lib/utils/fetch-json'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { toast } from 'sonner'
 import { Claude, Codex, Copilot, Cursor, Gemini, OpenCode, Qwen, DeepSeek } from '@/components/logos'
@@ -371,7 +372,9 @@ export function TaskDetails({ task, maxSandboxDuration = 300 }: TaskDetailsProps
         }
 
         const response = await fetch(`${endpoint}?${params.toString()}`)
-        const result = await response.json()
+        const result = await safeJson<{ success: boolean; data?: { newContent?: string; oldContent?: string } }>(
+          response,
+        )
 
         if (result.success && result.data) {
           // Create a simple hash of the content
@@ -617,7 +620,7 @@ export function TaskDetails({ task, maxSandboxDuration = 300 }: TaskDetailsProps
       try {
         const response = await fetch(`/api/tasks/${task.id}/sandbox-health`)
         if (response.ok) {
-          const data = await response.json()
+          const data = await safeJson<{ status: 'running' | 'starting' | 'error' | 'stopped' }>(response)
           const currentStatus = data.status
 
           // If status is 'running', require it to be stable for 2 checks (4 seconds)
@@ -793,7 +796,7 @@ export function TaskDetails({ task, maxSandboxDuration = 300 }: TaskDetailsProps
       try {
         const response = await fetch('/api/connectors')
         if (response.ok) {
-          const result = await response.json()
+          const result = await safeJson<{ success: boolean; data: Connector[] }>(response)
           const taskMcpServers = result.data.filter((c: Connector) => task.mcpServerIds?.includes(c.id))
           setMcpServers(taskMcpServers)
         }
@@ -822,7 +825,10 @@ export function TaskDetails({ task, maxSandboxDuration = 300 }: TaskDetailsProps
       try {
         const response = await fetch(`/api/tasks/${task.id}/deployment`)
         if (response.ok) {
-          const result = await response.json()
+          const result = await safeJson<{
+            success: boolean
+            data?: { hasDeployment: boolean; previewUrl?: string }
+          }>(response)
           if (result.success && result.data.hasDeployment && result.data.previewUrl) {
             setDeploymentUrl(result.data.previewUrl)
           }
@@ -910,7 +916,7 @@ export function TaskDetails({ task, maxSandboxDuration = 300 }: TaskDetailsProps
           const response = await fetch(`/api/tasks/${task.id}/sync-pr`, {
             method: 'POST',
           })
-          const result = await response.json()
+          const result = await safeJson<{ success: boolean; data?: { status?: string } }>(response)
 
           if (response.ok && result.success && result.data.status) {
             // Update local state if status changed
@@ -953,7 +959,7 @@ export function TaskDetails({ task, maxSandboxDuration = 300 }: TaskDetailsProps
             params.set('filename', filename)
 
             const response = await fetch(`/api/tasks/${task.id}/diff?${params.toString()}`)
-            const result = await response.json()
+            const result = await safeJson<{ success: boolean; data?: DiffData }>(response)
 
             if (response.ok && result.success) {
               newDiffsCache[filename] = result.data
@@ -1163,7 +1169,7 @@ export function TaskDetails({ task, maxSandboxDuration = 300 }: TaskDetailsProps
         // Don't show toast yet - wait for UI to update
         await refreshTasks()
       } else {
-        const error = await response.json()
+        const error = await safeJson<{ error?: string }>(response)
         toast.error(error.error || 'Failed to reopen pull request')
         setIsReopeningPR(false)
       }
@@ -1189,7 +1195,7 @@ export function TaskDetails({ task, maxSandboxDuration = 300 }: TaskDetailsProps
         // Don't show toast yet - wait for UI to update
         await refreshTasks()
       } else {
-        const error = await response.json()
+        const error = await safeJson<{ error?: string }>(response)
         toast.error(error.error || 'Failed to close pull request')
         setIsClosingPR(false)
       }
@@ -1220,12 +1226,12 @@ export function TaskDetails({ task, maxSandboxDuration = 300 }: TaskDetailsProps
       })
 
       if (response.ok) {
-        const result = await response.json()
+        const result = await safeJson<{ task: Task }>(response)
         toast.success('New task created successfully!')
         setShowTryAgainDialog(false)
         router.push(`/tasks/${result.task.id}`)
       } else {
-        const error = await response.json()
+        const error = await safeJson<{ error?: string }>(response)
         toast.error(error.error || 'Failed to create new task')
       }
     } catch (error) {
@@ -1248,7 +1254,7 @@ export function TaskDetails({ task, maxSandboxDuration = 300 }: TaskDetailsProps
         refreshTasks() // Refresh the sidebar
         router.push('/')
       } else {
-        const error = await response.json()
+        const error = await safeJson<{ error?: string }>(response)
         toast.error(error.error || 'Failed to delete task')
       }
     } catch (error) {
@@ -1274,7 +1280,7 @@ export function TaskDetails({ task, maxSandboxDuration = 300 }: TaskDetailsProps
           setPreviewKey((prev) => prev + 1)
         }, 2000)
       } else {
-        const error = await response.json()
+        const error = await safeJson<{ error?: string }>(response)
         toast.error(error.error || 'Failed to restart dev server')
       }
     } catch (error) {
@@ -1297,7 +1303,7 @@ export function TaskDetails({ task, maxSandboxDuration = 300 }: TaskDetailsProps
         // Refresh tasks to update UI
         await refreshTasks()
       } else {
-        const error = await response.json()
+        const error = await safeJson<{ error?: string }>(response)
         toast.error(error.error || 'Failed to stop sandbox')
       }
     } catch (error) {
@@ -1320,7 +1326,7 @@ export function TaskDetails({ task, maxSandboxDuration = 300 }: TaskDetailsProps
         // Refresh tasks to update UI
         await refreshTasks()
       } else {
-        const error = await response.json()
+        const error = await safeJson<{ error?: string }>(response)
         toast.error(error.error || 'Failed to start sandbox')
       }
     } catch (error) {

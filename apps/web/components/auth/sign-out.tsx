@@ -22,6 +22,7 @@ import { githubConnectionAtom } from '@/lib/atoms/github-connection'
 import { sessionAtom } from '@/lib/atoms/session'
 import { getEnabledAuthProviders } from '@/lib/auth/providers'
 import { redirectToSignOut } from '@/lib/session/redirect-to-sign-out'
+import { getErrorMessage } from '@/lib/utils/fetch-json'
 
 import type { Session } from '@/lib/session/types'
 
@@ -74,7 +75,7 @@ export function SignOut({ user, authProvider }: Pick<Session, 'user' | 'authProv
       try {
         const response = await fetch('/api/auth/rate-limit')
         if (response.ok && mounted) {
-          const data = await response.json()
+          const data = await response.json() // This is internal API, using response.json() is acceptable
           setRateLimit({
             used: data.used,
             total: data.total,
@@ -94,7 +95,7 @@ export function SignOut({ user, authProvider }: Pick<Session, 'user' | 'authProv
     try {
       const response = await fetch('/api/auth/rate-limit')
       if (response.ok) {
-        const data = await response.json()
+        const data = await response.json() // This is internal API, using response.json() is acceptable
         setRateLimit({
           used: data.used,
           total: data.total,

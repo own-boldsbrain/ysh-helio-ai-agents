@@ -1,3 +1,5 @@
+import { safeJson } from '@/lib/utils/fetch-json'
+
 import type { VercelUser } from './types'
 
 export async function fetchUser(accessToken: string): Promise<VercelUser | undefined> {
@@ -23,7 +25,7 @@ export async function fetchUser(accessToken: string): Promise<VercelUser | undef
   }
 
   // Try to parse response - format may vary by endpoint
-  const data = (await response.json()) as { user?: VercelUser } | VercelUser
+  const data = (await safeJson<{ user?: VercelUser } | VercelUser>(response)) as { user?: VercelUser } | VercelUser
   const user: VercelUser | undefined = 'user' in data && data.user ? data.user : 'username' in data ? data : undefined
 
   if (!user) {

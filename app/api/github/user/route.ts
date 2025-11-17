@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getUserGitHubToken } from '@/lib/github/user-token'
+import { parseJsonResponse } from '@/lib/utils/fetch-json'
 
 export async function GET(req: NextRequest) {
   try {
@@ -20,7 +21,7 @@ export async function GET(req: NextRequest) {
       throw new Error(`GitHub API error: ${response.status}`)
     }
 
-    const user = await response.json()
+    const user = await parseJsonResponse<{ login: string; name?: string; avatar_url?: string }>(response)
 
     return NextResponse.json({
       login: user.login,
@@ -28,7 +29,7 @@ export async function GET(req: NextRequest) {
       avatar_url: user.avatar_url,
     })
   } catch (error) {
-    console.error('Error fetching GitHub user:', error)
+    console.error('Error fetching GitHub user')
     return NextResponse.json({ error: 'Failed to fetch user data' }, { status: 500 })
   }
 }

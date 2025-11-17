@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getUserGitHubToken } from '@/lib/github/user-token'
+import { parseJsonResponse } from '@/lib/utils/fetch-json'
 
 export async function GET(request: NextRequest) {
   try {
@@ -26,7 +27,7 @@ export async function GET(request: NextRequest) {
 
     let isAuthenticatedUser = false
     if (userResponse.ok) {
-      const user = await userResponse.json()
+      const user = await parseJsonResponse<{ login: string }>(userResponse)
       isAuthenticatedUser = user.login === owner
     }
 
@@ -80,7 +81,7 @@ export async function GET(request: NextRequest) {
         throw new Error(`GitHub API error: ${response.status}`)
       }
 
-      const repos = await response.json()
+      const repos = await parseJsonResponse<GitHubRepo[]>(response)
 
       // If we get fewer repos than the per_page limit, we've reached the end
       if (repos.length === 0) {
@@ -117,7 +118,7 @@ export async function GET(request: NextRequest) {
       })),
     )
   } catch (error) {
-    console.error('Error fetching GitHub repositories:', error)
+    console.error('Error fetching GitHub repositories')
     return NextResponse.json({ error: 'Failed to fetch repositories' }, { status: 500 })
   }
 }

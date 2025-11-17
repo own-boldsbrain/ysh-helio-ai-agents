@@ -48,17 +48,6 @@ export function validateEnvironmentVariables(
   }
 
   // Check for Vercel sandbox environment variables
-  if (!process.env.SANDBOX_VERCEL_TEAM_ID) {
-    errors.push('SANDBOX_VERCEL_TEAM_ID is required for sandbox creation')
-  }
-
-  if (!process.env.SANDBOX_VERCEL_PROJECT_ID) {
-    errors.push('SANDBOX_VERCEL_PROJECT_ID is required for sandbox creation')
-  }
-
-  if (!process.env.SANDBOX_VERCEL_TOKEN) {
-    errors.push('SANDBOX_VERCEL_TOKEN is required for sandbox creation')
-  }
 
   return {
     valid: errors.length === 0,
@@ -75,8 +64,9 @@ export function createAuthenticatedRepoUrl(repoUrl: string, githubToken?: string
     const url = new URL(repoUrl)
     if (url.hostname === 'github.com') {
       // Add GitHub token for authentication
-      url.username = githubToken
-      url.password = 'x-oauth-basic'
+      // Use x-access-token as username and token as password for better compatibility
+      url.username = 'x-access-token'
+      url.password = githubToken
     }
     return url.toString()
   } catch {

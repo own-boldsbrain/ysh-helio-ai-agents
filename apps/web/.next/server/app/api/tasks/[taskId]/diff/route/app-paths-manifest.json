@@ -1,0 +1,3 @@
+{
+  "/api/tasks/[taskId]/diff/route": "app/api/tasks/[taskId]/diff/route.js"
+}

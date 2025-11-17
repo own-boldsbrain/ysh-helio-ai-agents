@@ -26,6 +26,7 @@ import { taskPromptAtom } from '@/lib/atoms/task'
 import { lastSelectedAgentAtom, lastSelectedModelAtomFamily } from '@/lib/atoms/agent-selection'
 import { githubReposAtomFamily } from '@/lib/atoms/github-cache'
 import { useSearchParams } from 'next/navigation'
+import { safeJson, getErrorMessage } from '@/lib/utils/fetch-json'
 
 interface GitHubRepo {
   name: string
@@ -310,7 +311,7 @@ export function TaskForm({
 
         const response = await fetch(`/api/github/repos?owner=${selectedOwner}`)
         if (response.ok) {
-          const reposList = await response.json()
+          const reposList = await safeJson(response)
           setRepos(reposList)
         }
       } catch (error) {
@@ -358,7 +359,7 @@ export function TaskForm({
     if (selectedRepoData && selectedAgent !== 'multi-agent') {
       try {
         const response = await fetch(`/api/api-keys/check?agent=${selectedAgent}&model=${selectedModel}`)
-        const data = await response.json()
+        const data = await safeJson(response)
 
         if (!data.hasKey) {
           // Show error message with provider name

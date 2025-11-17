@@ -2,6 +2,7 @@
 
 import { Task, LogEntry } from '@/lib/db/schema'
 import { Button } from '@/components/ui/button'
+import { safeJson } from '@/lib/utils/fetch-json'
 import { Copy, Check, ChevronDown, ChevronUp, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useState, useEffect, useRef } from 'react'
@@ -192,7 +193,7 @@ export function LogsPane({ task, onHeightChange }: LogsPaneProps) {
       if (response.ok) {
         refreshTasks()
       } else {
-        const error = await response.json()
+        const error = await safeJson(response)
         toast.error(error.error || 'Failed to clear logs')
       }
     } catch (error) {

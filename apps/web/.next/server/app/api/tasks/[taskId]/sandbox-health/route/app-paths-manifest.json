@@ -1,0 +1,3 @@
+{
+  "/api/tasks/[taskId]/sandbox-health/route": "app/api/tasks/[taskId]/sandbox-health/route.js"
+}

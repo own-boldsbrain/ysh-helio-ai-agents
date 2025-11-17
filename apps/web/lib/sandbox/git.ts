@@ -1,8 +1,8 @@
-import { Sandbox } from '@vercel/sandbox'
-
 import { TaskLogger } from '@/lib/utils/task-logger'
 
 import { runCommandInSandbox, runInProject } from './commands'
+
+import type { SandboxType as Sandbox } from './index'
 
 export async function pushChangesToBranch(
   sandbox: Sandbox,

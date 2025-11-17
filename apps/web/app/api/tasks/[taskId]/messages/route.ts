@@ -2,7 +2,7 @@ import { eq, and, asc, isNull } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
 
 import { db } from '@/lib/db/client'
-import { taskMessages, tasks } from '@/lib/db/schema'
+import { taskMessages, tasks, selectTaskMessageSchema } from '@/lib/db/schema'
 import { getServerSession } from '@/lib/session/get-server-session'
 
 export async function GET(req: NextRequest, context: { params: Promise<{ taskId: string }> }) {
@@ -32,13 +32,16 @@ export async function GET(req: NextRequest, context: { params: Promise<{ taskId:
       .from(taskMessages)
       .where(eq(taskMessages.taskId, taskId))
       .orderBy(asc(taskMessages.createdAt))
+    // Validate messages from the DB with Zod
+    const verified = messages.map((m) => selectTaskMessageSchema.parse(m))
 
-    return NextResponse.json({
-      success: true,
-      messages,
-    })
+    // Convert createdAt to ISO strings for JSON output
+    const responseMessages = verified.map((m) => ({ ...m, createdAt: new Date(m.createdAt).toISOString() }))
+
+    return NextResponse.json({ success: true, messages: responseMessages })
   } catch (error) {
-    console.error('Error fetching task messages:', error)
+    // Avoid logging dynamic error values
+    console.error('Error fetching task messages')
     return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 })
   }
 }

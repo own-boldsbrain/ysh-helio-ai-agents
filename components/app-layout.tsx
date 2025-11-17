@@ -2,6 +2,7 @@
 
 import { useState, useEffect, createContext, useContext, useCallback } from 'react'
 import { TaskSidebar } from '@/components/task-sidebar'
+import { safeJson } from '@/lib/utils/fetch-json'
 import { Task } from '@/lib/db/schema'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -197,7 +198,7 @@ export function AppLayout({ children, initialSidebarWidth, initialSidebarOpen, i
     try {
       const response = await fetch('/api/tasks')
       if (response.ok) {
-        const data = await response.json()
+        const data = await safeJson<{ tasks: Task[] }>(response)
         setTasks(data.tasks)
       } else if (response.status === 401) {
         // User is not authenticated, show empty tasks
