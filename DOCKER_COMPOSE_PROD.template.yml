@@ -1,0 +1,130 @@
+# docker-compose.prod.yml - Production environment template
+# Usage: docker-compose -f docker-compose.prod.yml up -d
+
+version: '3.8'
+
+services:
+  # PostgreSQL Database with persistence
+  postgres:
+    image: postgres:15-alpine
+    container_name: coding-agent-postgres-prod
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME:-coding_agent}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-change-me-in-production}
+      # Performance tuning
+      POSTGRES_INITDB_ARGS: '-c shared_buffers=256MB -c max_connections=200'
+    ports:
+      - '${DB_PORT:-5432}:5432'
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+      - ./config/postgres:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER:-postgres}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+    security_opt:
+      - no-new-privileges:true
+
+  # Web Application
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+      args:
+        - NODE_ENV=production
+    container_name: coding-agent-web-prod
+    restart: always
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-change-me-in-production}@postgres:5432/${DB_NAME:-coding_agent}
+      PORT: 3000
+      NEXT_PUBLIC_APP_ENV: production
+      # Add other production env vars here
+    ports:
+      - '${WEB_PORT:-3000}:3000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - web_logs:/app/logs
+    healthcheck:
+      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://localhost:3000/api/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - app-network
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /app/.next
+
+  # Optional: Nginx reverse proxy
+  nginx:
+    image: nginx:alpine
+    container_name: coding-agent-nginx-prod
+    restart: always
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./config/ssl:/etc/nginx/ssl:ro
+      - nginx_cache:/var/cache/nginx
+    depends_on:
+      - web
+    networks:
+      - app-network
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Optional: Redis cache
+  redis:
+    image: redis:7-alpine
+    container_name: coding-agent-redis-prod
+    restart: always
+    ports:
+      - '${REDIS_PORT:-6379}:6379'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+    security_opt:
+      - no-new-privileges:true
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-change-me}
+
+volumes:
+  postgres_prod_data:
+    driver: local
+  redis_data:
+    driver: local
+  web_logs:
+    driver: local
+  nginx_cache:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
